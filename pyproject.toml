@@ -1,0 +1,38 @@
+[project]
+name = "flash-research-api"
+version = "0.1.0"
+description = "Flash Research Platform — backend API and worker"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.18.4",
+    "asyncpg>=0.31.0",
+    "fastapi>=0.137.2",
+    "psycopg2-binary>=2.9.12",
+    "pydantic-settings>=2.14.1",
+    "python-dotenv>=1.2.2",
+    "sqlalchemy>=2.0.51",
+    "uvicorn[standard]>=0.49.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.0",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.15.18",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "packages"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
