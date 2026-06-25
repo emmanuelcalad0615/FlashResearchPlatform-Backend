@@ -1,0 +1,32 @@
+name: backend-ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: timescale/timescaledb:latest-pg17
+        env:
+          POSTGRES_USER: flash
+          POSTGRES_PASSWORD: flash_test_pw
+          POSTGRES_DB: flash_test
+        ports:
+          - "5432:5432"
+        options: >-
+          --health-cmd "pg_isready -U flash"
+          --health-interval 5s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: postgresql://flash:flash_test_pw@localhost:5432/flash_test
+      REDIS_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync
+      - run: uv run ruff check .
+      - run: uv run alembic upgrade head
+      - run: uv run pytest
