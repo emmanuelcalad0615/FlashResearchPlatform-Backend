@@ -8,5 +8,9 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     debug: bool = False
 
+    # Proveedor de datos de mercado (Polygon.io)
+    polygon_api_key: str = ""
+    polygon_base_url: str = "https://api.polygon.io"
+
 
 settings = Settings()

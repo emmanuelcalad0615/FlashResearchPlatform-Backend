@@ -1,0 +1,58 @@
+{
+  "results": [
+    {
+      "ticker": "AAPL",
+      "name": "Apple Inc.",
+      "market": "stocks",
+      "locale": "us",
+      "primary_exchange": "XNAS",
+      "type": "CS",
+      "active": true,
+      "currency_name": "usd"
+    },
+    {
+      "ticker": "IBM",
+      "name": "International Business Machines Corp.",
+      "market": "stocks",
+      "locale": "us",
+      "primary_exchange": "XNYS",
+      "type": "CS",
+      "active": true,
+      "currency_name": "usd"
+    },
+    {
+      "ticker": "OLDCO",
+      "name": "Delisted Company Inc.",
+      "market": "stocks",
+      "locale": "us",
+      "primary_exchange": "XNYS",
+      "type": "CS",
+      "active": false,
+      "currency_name": "usd"
+    },
+    {
+      "ticker": "CRYPTOX",
+      "name": "Some Foreign Listing",
+      "market": "stocks",
+      "locale": "us",
+      "primary_exchange": "XLON",
+      "type": "CS",
+      "active": true,
+      "currency_name": "usd"
+    },
+    {
+      "ticker": "AAA",
+      "name": "Alternative Access First Priority CLO Bond ETF",
+      "market": "stocks",
+      "locale": "us",
+      "primary_exchange": "ARCX",
+      "type": "ETF",
+      "active": true,
+      "currency_name": "usd"
+    }
+  ],
+  "status": "OK",
+  "request_id": "test-req-tickers",
+  "count": 5,
+  "next_url": null
+}
