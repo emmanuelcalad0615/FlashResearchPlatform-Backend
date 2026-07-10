@@ -14,6 +14,10 @@ class Instrument(Base):
     ticker: Mapped[str] = mapped_column(Text, primary_key=True)
     name: Mapped[str] = mapped_column(Text, nullable=False)
     exchange: Mapped[str] = mapped_column(Text, nullable=False)
+    type: Mapped[str | None] = mapped_column(
+        Text,
+        comment="Tipo crudo del proveedor: CS (acción común), ETF, ADRC, etc. Para filtrar el universo.",
+    )
     sector: Mapped[str | None] = mapped_column(Text)
     industry: Mapped[str | None] = mapped_column(Text)
     is_active: Mapped[bool] = mapped_column(
