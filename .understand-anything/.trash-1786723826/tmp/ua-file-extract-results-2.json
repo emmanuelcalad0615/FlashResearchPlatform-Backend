@@ -1,0 +1,215 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 5,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "migrations/env.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 49,
+      "nonEmptyLines": 36,
+      "functions": [
+        {
+          "name": "run_migrations_offline",
+          "startLine": 22,
+          "endLine": 31,
+          "params": []
+        },
+        {
+          "name": "run_migrations_online",
+          "startLine": 34,
+          "endLine": 43,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "run_migrations_offline",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "run_migrations_online",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "run_migrations_offline",
+          "callee": "config.get_main_option",
+          "lineNumber": 23
+        },
+        {
+          "caller": "run_migrations_offline",
+          "callee": "context.configure",
+          "lineNumber": 24
+        },
+        {
+          "caller": "run_migrations_offline",
+          "callee": "context.begin_transaction",
+          "lineNumber": 30
+        },
+        {
+          "caller": "run_migrations_offline",
+          "callee": "context.run_migrations",
+          "lineNumber": 31
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "engine_from_config",
+          "lineNumber": 35
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "config.get_section",
+          "lineNumber": 36
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "connectable.connect",
+          "lineNumber": 40
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "context.configure",
+          "lineNumber": 41
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "context.begin_transaction",
+          "lineNumber": 42
+        },
+        {
+          "caller": "run_migrations_online",
+          "callee": "context.run_migrations",
+          "lineNumber": 43
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "packages/core/models/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 5,
+      "nonEmptyLines": 4,
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "packages/core/models/base.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 11,
+      "nonEmptyLines": 7,
+      "classes": [
+        {
+          "name": "Base",
+          "startLine": 4,
+          "endLine": 11,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Base",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "packages/core/models/instrument.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 41,
+      "classes": [
+        {
+          "name": "Instrument",
+          "startLine": 9,
+          "endLine": 48,
+          "methods": [],
+          "properties": [
+            "ticker",
+            "name",
+            "exchange",
+            "type",
+            "sector",
+            "industry",
+            "is_active",
+            "delisted_at",
+            "created_at",
+            "updated_at"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Instrument",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "packages/core/models/profile.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 24,
+      "classes": [
+        {
+          "name": "Profile",
+          "startLine": 11,
+          "endLine": 30,
+          "methods": [],
+          "properties": [
+            "id",
+            "display_name",
+            "settings",
+            "created_at",
+            "updated_at"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Profile",
+          "line": 11,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    }
+  ]
+}

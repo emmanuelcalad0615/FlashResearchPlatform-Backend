@@ -1,0 +1,122 @@
+{
+  "nodes": [
+    {
+      "id": "pipeline:.github/workflows/ci.yml",
+      "type": "pipeline",
+      "name": "ci.yml",
+      "filePath": ".github/workflows/ci.yml",
+      "summary": "GitHub Actions CI workflow (\"backend-ci\") that spins up a TimescaleDB service container and runs dependency sync, linting, database migrations, and the test suite on every pull request and push to main.",
+      "tags": ["ci-cd", "deployment", "infrastructure", "testing", "database"],
+      "complexity": "simple",
+      "languageNotes": "Single-job pipeline using a Postgres/TimescaleDB service container with health checks and uv for fast Python dependency management; database migrations (alembic) run before tests to validate schema changes in CI."
+    },
+    {
+      "id": "step:.github/workflows/ci.yml:lint-test",
+      "type": "resource",
+      "name": "lint-test",
+      "filePath": ".github/workflows/ci.yml",
+      "lineRange": [9, 32],
+      "summary": "CI job that runs on ubuntu-latest with a TimescaleDB Postgres service container, executing dependency install, lint, migration, and test steps against DATABASE_URL and REDIS_URL environment variables.",
+      "tags": ["ci-cd", "job", "database", "testing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "step:.github/workflows/ci.yml:uv-sync",
+      "type": "resource",
+      "name": "uv sync",
+      "filePath": ".github/workflows/ci.yml",
+      "lineRange": [29, 29],
+      "summary": "Installs project dependencies using the uv package manager as the first execution step of the CI job.",
+      "tags": ["ci-cd", "dependency-install", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "step:.github/workflows/ci.yml:ruff-check",
+      "type": "resource",
+      "name": "uv run ruff check .",
+      "filePath": ".github/workflows/ci.yml",
+      "lineRange": [30, 30],
+      "summary": "Runs the ruff linter across the whole repository to enforce Python code style and catch static errors before merge.",
+      "tags": ["ci-cd", "linting", "code-quality"],
+      "complexity": "simple"
+    },
+    {
+      "id": "step:.github/workflows/ci.yml:alembic-upgrade-head",
+      "type": "resource",
+      "name": "uv run alembic upgrade head",
+      "filePath": ".github/workflows/ci.yml",
+      "lineRange": [31, 31],
+      "summary": "Applies all pending Alembic database migrations against the TimescaleDB service container to validate schema migrations in CI.",
+      "tags": ["ci-cd", "database", "migration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "step:.github/workflows/ci.yml:pytest",
+      "type": "resource",
+      "name": "uv run pytest",
+      "filePath": ".github/workflows/ci.yml",
+      "lineRange": [32, 32],
+      "summary": "Runs the project's pytest test suite as the final verification step of the CI pipeline.",
+      "tags": ["ci-cd", "testing"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "pipeline:.github/workflows/ci.yml",
+      "target": "step:.github/workflows/ci.yml:lint-test",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:lint-test",
+      "target": "step:.github/workflows/ci.yml:uv-sync",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:lint-test",
+      "target": "step:.github/workflows/ci.yml:ruff-check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:lint-test",
+      "target": "step:.github/workflows/ci.yml:alembic-upgrade-head",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:lint-test",
+      "target": "step:.github/workflows/ci.yml:pytest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:uv-sync",
+      "target": "step:.github/workflows/ci.yml:ruff-check",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:ruff-check",
+      "target": "step:.github/workflows/ci.yml:alembic-upgrade-head",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:alembic-upgrade-head",
+      "target": "step:.github/workflows/ci.yml:pytest",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

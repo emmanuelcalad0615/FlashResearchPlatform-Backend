@@ -1,0 +1,136 @@
+{
+  "nodes": [
+    {
+      "id": "file:apps/api/main.py",
+      "type": "file",
+      "name": "main.py",
+      "filePath": "apps/api/main.py",
+      "summary": "FastAPI application entry point that instantiates the app and registers the health router.",
+      "tags": ["entry-point", "fastapi", "bootstrap", "api-handler"],
+      "complexity": "simple",
+      "languageNotes": "Minimal FastAPI bootstrap file; app composition happens by including routers rather than defining routes directly."
+    },
+    {
+      "id": "file:apps/api/routers/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "apps/api/routers/__init__.py",
+      "summary": "Empty package marker file that makes apps/api/routers importable as a Python package.",
+      "tags": ["package-init", "empty", "python-package"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:apps/api/routers/health.py",
+      "type": "file",
+      "name": "health.py",
+      "filePath": "apps/api/routers/health.py",
+      "summary": "Defines the health-check and root API routes used to verify the service is running.",
+      "tags": ["api-handler", "health-check", "fastapi", "router"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_health.py",
+      "type": "file",
+      "name": "test_health.py",
+      "filePath": "tests/test_health.py",
+      "summary": "Integration test that exercises the FastAPI app via TestClient to confirm the /health endpoint returns a 200 status with the expected payload.",
+      "tags": ["test", "integration-test", "health-check", "fastapi"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:apps/api/routers/health.py:health_check",
+      "type": "function",
+      "name": "health_check",
+      "filePath": "apps/api/routers/health.py",
+      "lineRange": [7, 8],
+      "summary": "Async handler for GET /health that returns a simple status-ok JSON response for readiness/liveness checks.",
+      "tags": ["api-handler", "health-check", "endpoint"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:apps/api/routers/health.py:root",
+      "type": "function",
+      "name": "root",
+      "filePath": "apps/api/routers/health.py",
+      "lineRange": [11, 12],
+      "summary": "Async handler for GET / that returns a welcome message confirming the Flash Research API is running.",
+      "tags": ["api-handler", "endpoint", "root"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_health.py:test_health_returns_ok",
+      "type": "function",
+      "name": "test_health_returns_ok",
+      "filePath": "tests/test_health.py",
+      "lineRange": [8, 11],
+      "summary": "Test case asserting the /health endpoint responds with HTTP 200 and a JSON body of {\"status\": \"ok\"}.",
+      "tags": ["test", "integration-test", "health-check"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:apps/api/main.py",
+      "target": "file:apps/api/routers/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:apps/api/main.py",
+      "target": "file:apps/api/routers/health.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_health.py",
+      "target": "file:apps/api/main.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:apps/api/routers/health.py",
+      "target": "function:apps/api/routers/health.py:health_check",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:apps/api/routers/health.py",
+      "target": "function:apps/api/routers/health.py:root",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:apps/api/routers/health.py",
+      "target": "function:apps/api/routers/health.py:health_check",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:apps/api/routers/health.py",
+      "target": "function:apps/api/routers/health.py:root",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:tests/test_health.py",
+      "target": "function:tests/test_health.py:test_health_returns_ok",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:apps/api/main.py",
+      "target": "file:tests/test_health.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

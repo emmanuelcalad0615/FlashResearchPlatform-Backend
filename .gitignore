@@ -26,6 +26,14 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
+# Claude
 CLAUDE.md
 .env
+!.claude 
+
 Flash_Research_Sprint2_Backend_Datos.md
+
+# understand-anything
+!.understand-anything
+
+

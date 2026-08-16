@@ -1,0 +1,1211 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "001dfd9ac5deb0b42111af8828ba2afd884cd399",
+  "generatedAt": "2026-08-14T16:10:15.853Z",
+  "files": {
+    ".env.example": {
+      "filePath": ".env.example",
+      "contentHash": "686561a69b2d6708f94e27220d8ca397f6666691b07cd97f15bb81d2388a4cc5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 18,
+      "hasStructuralAnalysis": true
+    },
+    ".github/workflows/ci.yml": {
+      "filePath": ".github/workflows/ci.yml",
+      "contentHash": "8d576339b88b0547209ea23f769cf57ff5465d0d5990d03a27136e464e060a56",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 33,
+      "hasStructuralAnalysis": true
+    },
+    ".python-version": {
+      "filePath": ".python-version",
+      "contentHash": "02e735b3dfe1c32833eb550b7ff8ffa17f5f2bc3fa1e7bae61a8f5a3883ce398",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2,
+      "hasStructuralAnalysis": false
+    },
+    "alembic.ini": {
+      "filePath": "alembic.ini",
+      "contentHash": "8a6a56f58e9e8fc89e77d60990967974140e17677ad1df3d85d964df98141326",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 149,
+      "hasStructuralAnalysis": false
+    },
+    "apps/__init__.py": {
+      "filePath": "apps/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "apps/api/__init__.py": {
+      "filePath": "apps/api/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "apps/api/core/__init__.py": {
+      "filePath": "apps/api/core/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "apps/api/core/config.py": {
+      "filePath": "apps/api/core/config.py",
+      "contentHash": "b065d58195c3d136e80e3f008d3b6c7a61659bfd8d3c08923a3071c8ef332fef",
+      "functions": [],
+      "classes": [
+        {
+          "name": "Settings",
+          "methods": [],
+          "properties": [
+            "database_url",
+            "redis_url",
+            "debug",
+            "polygon_api_key",
+            "polygon_base_url"
+          ],
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "imports": [
+        {
+          "source": "pydantic_settings",
+          "specifiers": [
+            "BaseSettings",
+            "SettingsConfigDict"
+          ]
+        }
+      ],
+      "exports": [
+        "Settings"
+      ],
+      "totalLines": 17,
+      "hasStructuralAnalysis": true
+    },
+    "apps/api/main.py": {
+      "filePath": "apps/api/main.py",
+      "contentHash": "397315ffb86af967b71742b8fdfce34c3ff4afacd4f895eb4afafbd371015b92",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "fastapi",
+          "specifiers": [
+            "FastAPI"
+          ]
+        },
+        {
+          "source": "apps.api.routers",
+          "specifiers": [
+            "health"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": true
+    },
+    "apps/api/routers/__init__.py": {
+      "filePath": "apps/api/routers/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "apps/api/routers/health.py": {
+      "filePath": "apps/api/routers/health.py",
+      "contentHash": "f620b5b074e9c44daf151e8b79cb391a6197fda5b412f7e69b8db275731badd8",
+      "functions": [
+        {
+          "name": "health_check",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "root",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "fastapi",
+          "specifiers": [
+            "APIRouter"
+          ]
+        }
+      ],
+      "exports": [
+        "health_check",
+        "root"
+      ],
+      "totalLines": 13,
+      "hasStructuralAnalysis": true
+    },
+    "apps/worker/__init__.py": {
+      "filePath": "apps/worker/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "apps/worker/main.py": {
+      "filePath": "apps/worker/main.py",
+      "contentHash": "4f642d8e0cd14f7a2335f5fc6050d406f8a170321b3c6a34592804a7a88a17b4",
+      "functions": [
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "logging",
+          "specifiers": [
+            "logging"
+          ]
+        }
+      ],
+      "exports": [
+        "main"
+      ],
+      "totalLines": 13,
+      "hasStructuralAnalysis": true
+    },
+    "docker-compose.yml": {
+      "filePath": "docker-compose.yml",
+      "contentHash": "fa3510832461a6c4ba19f5252e0597e4da40848b4da3950cdf30a838a9bf3a34",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 35,
+      "hasStructuralAnalysis": true
+    },
+    "migrations/env.py": {
+      "filePath": "migrations/env.py",
+      "contentHash": "4fc7c66db6a45001bab7f505769ec8f66591af7425ad1edf75c7519ff7373f87",
+      "functions": [
+        {
+          "name": "run_migrations_offline",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "run_migrations_online",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "logging.config",
+          "specifiers": [
+            "fileConfig"
+          ]
+        },
+        {
+          "source": "alembic",
+          "specifiers": [
+            "context"
+          ]
+        },
+        {
+          "source": "dotenv",
+          "specifiers": [
+            "load_dotenv"
+          ]
+        },
+        {
+          "source": "sqlalchemy",
+          "specifiers": [
+            "engine_from_config",
+            "pool"
+          ]
+        },
+        {
+          "source": "packages.core.models",
+          "specifiers": [
+            "Base"
+          ]
+        }
+      ],
+      "exports": [
+        "run_migrations_offline",
+        "run_migrations_online"
+      ],
+      "totalLines": 50,
+      "hasStructuralAnalysis": true
+    },
+    "migrations/README": {
+      "filePath": "migrations/README",
+      "contentHash": "31595cf53626af9ed16e15c44fa43183209cc163fbc3ebcb904b22ac436a8884",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": false
+    },
+    "migrations/script.py.mako": {
+      "filePath": "migrations/script.py.mako",
+      "contentHash": "d38920781b4d31ae1c0a71bc09f41c2ade8feab9e5a087e3f30cb4bbf0c1c9d3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": false
+    },
+    "migrations/versions/0001_initial_schema.py": {
+      "filePath": "migrations/versions/0001_initial_schema.py",
+      "contentHash": "b9c581b6a77ea553edc61826c51792d48c0bc946724801119256c152315d7e3f",
+      "functions": [
+        {
+          "name": "upgrade",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 89
+        },
+        {
+          "name": "downgrade",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 12
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "alembic",
+          "specifiers": [
+            "op"
+          ]
+        }
+      ],
+      "exports": [
+        "upgrade",
+        "downgrade"
+      ],
+      "totalLines": 119,
+      "hasStructuralAnalysis": true
+    },
+    "migrations/versions/0002_add_instrument_type.py": {
+      "filePath": "migrations/versions/0002_add_instrument_type.py",
+      "contentHash": "7b74aa78edce400eae5fda3da088c2110514388a7bb404d222cc247529cae14a",
+      "functions": [
+        {
+          "name": "upgrade",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "downgrade",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "sqlalchemy",
+          "specifiers": [
+            "sa"
+          ]
+        },
+        {
+          "source": "alembic",
+          "specifiers": [
+            "op"
+          ]
+        }
+      ],
+      "exports": [
+        "upgrade",
+        "downgrade"
+      ],
+      "totalLines": 31,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/__init__.py": {
+      "filePath": "packages/core/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/db/__init__.py": {
+      "filePath": "packages/core/db/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/db/session.py": {
+      "filePath": "packages/core/db/session.py",
+      "contentHash": "ef2d06fac4365cb73063591aeac5005c3ff4eadeccec8dd6c07cea91ed1e68d9",
+      "functions": [
+        {
+          "name": "_async_url",
+          "params": [],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "os",
+          "specifiers": [
+            "os"
+          ]
+        },
+        {
+          "source": "dotenv",
+          "specifiers": [
+            "load_dotenv"
+          ]
+        },
+        {
+          "source": "sqlalchemy.ext.asyncio",
+          "specifiers": [
+            "AsyncSession",
+            "async_sessionmaker",
+            "create_async_engine"
+          ]
+        }
+      ],
+      "exports": [
+        "_async_url"
+      ],
+      "totalLines": 34,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/models/__init__.py": {
+      "filePath": "packages/core/models/__init__.py",
+      "contentHash": "3f76f5161572466e15fe363dd0da17dbbcfb7e4a0e04241221796dfd7ba15999",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "packages.core.models.base",
+          "specifiers": [
+            "Base"
+          ]
+        },
+        {
+          "source": "packages.core.models.instrument",
+          "specifiers": [
+            "Instrument"
+          ]
+        },
+        {
+          "source": "packages.core.models.profile",
+          "specifiers": [
+            "Profile"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 6,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/models/base.py": {
+      "filePath": "packages/core/models/base.py",
+      "contentHash": "ee6be37e0ff4603ae0575aeefe47de30e00f6c72d6e58560519aeb7d881dee0e",
+      "functions": [],
+      "classes": [
+        {
+          "name": "Base",
+          "methods": [],
+          "properties": [],
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "imports": [
+        {
+          "source": "sqlalchemy.orm",
+          "specifiers": [
+            "DeclarativeBase"
+          ]
+        }
+      ],
+      "exports": [
+        "Base"
+      ],
+      "totalLines": 12,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/models/instrument.py": {
+      "filePath": "packages/core/models/instrument.py",
+      "contentHash": "6ada1e631703f8f50e7e317bc7bc67cc7da8a760da3dd9d08ac57f799a4ae131",
+      "functions": [],
+      "classes": [
+        {
+          "name": "Instrument",
+          "methods": [],
+          "properties": [
+            "ticker",
+            "name",
+            "exchange",
+            "type",
+            "sector",
+            "industry",
+            "is_active",
+            "delisted_at",
+            "created_at",
+            "updated_at"
+          ],
+          "exported": true,
+          "lineCount": 40
+        }
+      ],
+      "imports": [
+        {
+          "source": "datetime",
+          "specifiers": [
+            "date",
+            "datetime"
+          ]
+        },
+        {
+          "source": "sqlalchemy",
+          "specifiers": [
+            "CheckConstraint",
+            "DateTime",
+            "Index",
+            "Text",
+            "func",
+            "text"
+          ]
+        },
+        {
+          "source": "sqlalchemy.orm",
+          "specifiers": [
+            "Mapped",
+            "mapped_column"
+          ]
+        },
+        {
+          "source": "packages.core.models.base",
+          "specifiers": [
+            "Base"
+          ]
+        }
+      ],
+      "exports": [
+        "Instrument"
+      ],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/models/profile.py": {
+      "filePath": "packages/core/models/profile.py",
+      "contentHash": "d443c05b5c43b31786bca6ea9248c7e502e8b1a0412cc2ca7bf1a79a39df0b8c",
+      "functions": [],
+      "classes": [
+        {
+          "name": "Profile",
+          "methods": [],
+          "properties": [
+            "id",
+            "display_name",
+            "settings",
+            "created_at",
+            "updated_at"
+          ],
+          "exported": true,
+          "lineCount": 20
+        }
+      ],
+      "imports": [
+        {
+          "source": "uuid",
+          "specifiers": [
+            "uuid"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "datetime"
+          ]
+        },
+        {
+          "source": "sqlalchemy",
+          "specifiers": [
+            "DateTime",
+            "Text",
+            "func"
+          ]
+        },
+        {
+          "source": "sqlalchemy.dialects.postgresql",
+          "specifiers": [
+            "JSONB",
+            "UUID"
+          ]
+        },
+        {
+          "source": "sqlalchemy.orm",
+          "specifiers": [
+            "Mapped",
+            "mapped_column"
+          ]
+        },
+        {
+          "source": "packages.core.models.base",
+          "specifiers": [
+            "Base"
+          ]
+        }
+      ],
+      "exports": [
+        "Profile"
+      ],
+      "totalLines": 31,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/providers/__init__.py": {
+      "filePath": "packages/core/providers/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/providers/base.py": {
+      "filePath": "packages/core/providers/base.py",
+      "contentHash": "6941037519af0744ebeea21178eb84c07bc2b08fe276fb652ae37d8f8bcc2391",
+      "functions": [],
+      "classes": [
+        {
+          "name": "MarketDataProvider",
+          "methods": [
+            "list_instruments",
+            "get_eod_bars"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 20
+        }
+      ],
+      "imports": [
+        {
+          "source": "abc",
+          "specifiers": [
+            "ABC",
+            "abstractmethod"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "date"
+          ]
+        },
+        {
+          "source": "packages.core.schemas",
+          "specifiers": [
+            "InstrumentDTO",
+            "OHLCVBar"
+          ]
+        }
+      ],
+      "exports": [
+        "MarketDataProvider"
+      ],
+      "totalLines": 27,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/providers/polygon.py": {
+      "filePath": "packages/core/providers/polygon.py",
+      "contentHash": "cd2edc098af9715e9b54d7c4d864472a465ff03dbf3574c433fcd11e72fe4390",
+      "functions": [
+        {
+          "name": "_map_exchange",
+          "params": [
+            "mic"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "_to_decimal",
+          "params": [
+            "value"
+          ],
+          "returnType": "Decimal",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "_epoch_ms_to_date",
+          "params": [
+            "ms"
+          ],
+          "returnType": "date",
+          "exported": true,
+          "lineCount": 2
+        }
+      ],
+      "classes": [
+        {
+          "name": "PolygonAdapter",
+          "methods": [
+            "__init__",
+            "close",
+            "__enter__",
+            "__exit__",
+            "_get",
+            "_get_aggs",
+            "list_instruments",
+            "get_eod_bars",
+            "_parse_instruments",
+            "_merge_bars"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 107
+        }
+      ],
+      "imports": [
+        {
+          "source": "datetime",
+          "specifiers": [
+            "UTC",
+            "date",
+            "datetime"
+          ]
+        },
+        {
+          "source": "decimal",
+          "specifiers": [
+            "Decimal"
+          ]
+        },
+        {
+          "source": "urllib.parse",
+          "specifiers": [
+            "parse_qs",
+            "urlparse"
+          ]
+        },
+        {
+          "source": "httpx",
+          "specifiers": [
+            "httpx"
+          ]
+        },
+        {
+          "source": "packages.core.providers.base",
+          "specifiers": [
+            "MarketDataProvider"
+          ]
+        },
+        {
+          "source": "packages.core.schemas",
+          "specifiers": [
+            "InstrumentDTO",
+            "OHLCVBar"
+          ]
+        }
+      ],
+      "exports": [
+        "_map_exchange",
+        "_to_decimal",
+        "_epoch_ms_to_date",
+        "PolygonAdapter"
+      ],
+      "totalLines": 139,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/schemas/__init__.py": {
+      "filePath": "packages/core/schemas/__init__.py",
+      "contentHash": "670aa9ab3f4736b621ba26036196f92961c9ca644a5ab960b1c8ec6c27214964",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "packages.core.schemas.instrument",
+          "specifiers": [
+            "InstrumentDTO"
+          ]
+        },
+        {
+          "source": "packages.core.schemas.market",
+          "specifiers": [
+            "OHLCVBar",
+            "Quote"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 5,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/schemas/instrument.py": {
+      "filePath": "packages/core/schemas/instrument.py",
+      "contentHash": "69d66d5c27372c93104bc5ba18b8503e541e07fbe5bcbe3f939edfecaf6a0700",
+      "functions": [],
+      "classes": [
+        {
+          "name": "InstrumentDTO",
+          "methods": [],
+          "properties": [
+            "ticker",
+            "name",
+            "exchange",
+            "type",
+            "sector",
+            "industry",
+            "is_active"
+          ],
+          "exported": true,
+          "lineCount": 16
+        }
+      ],
+      "imports": [
+        {
+          "source": "pydantic",
+          "specifiers": [
+            "BaseModel",
+            "ConfigDict"
+          ]
+        }
+      ],
+      "exports": [
+        "InstrumentDTO"
+      ],
+      "totalLines": 20,
+      "hasStructuralAnalysis": true
+    },
+    "packages/core/schemas/market.py": {
+      "filePath": "packages/core/schemas/market.py",
+      "contentHash": "838a566ebbf38e858307f7eefad710281292ae50abb58cb7db07029d7feaf659",
+      "functions": [],
+      "classes": [
+        {
+          "name": "OHLCVBar",
+          "methods": [
+            "_check_sane"
+          ],
+          "properties": [
+            "ticker",
+            "trade_date",
+            "open",
+            "high",
+            "low",
+            "close",
+            "adj_close",
+            "volume"
+          ],
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "Quote",
+          "methods": [],
+          "properties": [
+            "ticker",
+            "price",
+            "change_pct",
+            "volume",
+            "timestamp"
+          ],
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "imports": [
+        {
+          "source": "datetime",
+          "specifiers": [
+            "date",
+            "datetime"
+          ]
+        },
+        {
+          "source": "decimal",
+          "specifiers": [
+            "Decimal"
+          ]
+        },
+        {
+          "source": "pydantic",
+          "specifiers": [
+            "BaseModel",
+            "ConfigDict",
+            "model_validator"
+          ]
+        }
+      ],
+      "exports": [
+        "OHLCVBar",
+        "Quote"
+      ],
+      "totalLines": 43,
+      "hasStructuralAnalysis": true
+    },
+    "pyproject.toml": {
+      "filePath": "pyproject.toml",
+      "contentHash": "d63565a217dda916d8aa69b8703c18c812e74d6b38e2ca8bafbdff5b174e09e8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 41,
+      "hasStructuralAnalysis": true
+    },
+    "README.md": {
+      "filePath": "README.md",
+      "contentHash": "1435f645e2761fcd8ea826716b660489b412edb6c9d6f99878074f38bbb4a6f9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 112,
+      "hasStructuralAnalysis": true
+    },
+    "scripts/smoke_polygon.py": {
+      "filePath": "scripts/smoke_polygon.py",
+      "contentHash": "f88e2d9ec77b4407821d042d641f971648ceb5e541b1201a344922f38d12a4d2",
+      "functions": [
+        {
+          "name": "main",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 19
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "datetime",
+          "specifiers": [
+            "date"
+          ]
+        },
+        {
+          "source": "dotenv",
+          "specifiers": [
+            "load_dotenv"
+          ]
+        },
+        {
+          "source": "apps.api.core.config",
+          "specifiers": [
+            "settings"
+          ]
+        },
+        {
+          "source": "packages.core.providers.polygon",
+          "specifiers": [
+            "PolygonAdapter"
+          ]
+        }
+      ],
+      "exports": [
+        "main"
+      ],
+      "totalLines": 42,
+      "hasStructuralAnalysis": true
+    },
+    "tests/__init__.py": {
+      "filePath": "tests/__init__.py",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": true
+    },
+    "tests/fixtures/polygon_aggs_adjusted.json": {
+      "filePath": "tests/fixtures/polygon_aggs_adjusted.json",
+      "contentHash": "e62aa740b21a13687351c018a63548431cc10cb189b350a3b985e5ff17a9394d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": true
+    },
+    "tests/fixtures/polygon_aggs_unadjusted.json": {
+      "filePath": "tests/fixtures/polygon_aggs_unadjusted.json",
+      "contentHash": "2005571c183bd4c84043c85da1900d60cd3dd57df7ded49e74d12639e69ec011",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": true
+    },
+    "tests/fixtures/polygon_tickers.json": {
+      "filePath": "tests/fixtures/polygon_tickers.json",
+      "contentHash": "30b21753861b466aa6b1b2f6a65ded09578aac0acd658bed4b40a872bbfd852f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 59,
+      "hasStructuralAnalysis": true
+    },
+    "tests/test_health.py": {
+      "filePath": "tests/test_health.py",
+      "contentHash": "19c904510efda8861b47107aa330e7b9bbecc4a610e40d90ca0125353d37da49",
+      "functions": [
+        {
+          "name": "test_health_returns_ok",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "fastapi.testclient",
+          "specifiers": [
+            "TestClient"
+          ]
+        },
+        {
+          "source": "apps.api.main",
+          "specifiers": [
+            "app"
+          ]
+        }
+      ],
+      "exports": [
+        "test_health_returns_ok"
+      ],
+      "totalLines": 12,
+      "hasStructuralAnalysis": true
+    },
+    "tests/test_polygon_adapter.py": {
+      "filePath": "tests/test_polygon_adapter.py",
+      "contentHash": "5053346a6e04832395d07ad5d8d2758f5cb2e6c5d52317efc2105e5e6ecd9635",
+      "functions": [
+        {
+          "name": "_load",
+          "params": [
+            "name"
+          ],
+          "returnType": "dict",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "adapter",
+          "params": [],
+          "returnType": "PolygonAdapter",
+          "exported": true,
+          "lineCount": 2
+        },
+        {
+          "name": "test_parse_instruments_maps_exchange_and_active",
+          "params": [
+            "adapter"
+          ],
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "params": [
+            "adapter"
+          ],
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "test_merge_bars_matches_by_timestamp",
+          "params": [
+            "adapter"
+          ],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "test_prices_are_decimal_not_float",
+          "params": [
+            "adapter"
+          ],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "params": [
+            "adapter"
+          ],
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "test_list_instruments_parses_and_stops_without_next_url",
+          "params": [
+            "adapter"
+          ],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "test_list_instruments_respects_max_pages",
+          "params": [
+            "adapter"
+          ],
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "test_http_error_raises",
+          "params": [
+            "adapter"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "test_adapter_requires_api_key",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "json",
+          "specifiers": [
+            "json"
+          ]
+        },
+        {
+          "source": "datetime",
+          "specifiers": [
+            "date"
+          ]
+        },
+        {
+          "source": "decimal",
+          "specifiers": [
+            "Decimal"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "httpx",
+          "specifiers": [
+            "httpx"
+          ]
+        },
+        {
+          "source": "pytest",
+          "specifiers": [
+            "pytest"
+          ]
+        },
+        {
+          "source": "respx",
+          "specifiers": [
+            "respx"
+          ]
+        },
+        {
+          "source": "packages.core.providers.polygon",
+          "specifiers": [
+            "PolygonAdapter"
+          ]
+        }
+      ],
+      "exports": [
+        "_load",
+        "adapter",
+        "test_parse_instruments_maps_exchange_and_active",
+        "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+        "test_merge_bars_matches_by_timestamp",
+        "test_prices_are_decimal_not_float",
+        "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+        "test_list_instruments_parses_and_stops_without_next_url",
+        "test_list_instruments_respects_max_pages",
+        "test_http_error_raises",
+        "test_adapter_requires_api_key"
+      ],
+      "totalLines": 136,
+      "hasStructuralAnalysis": true
+    }
+  }
+}

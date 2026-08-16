@@ -1,0 +1,17 @@
+{
+  "projectRoot": "/Users/andrew/Documents/Projects/flash/FlashResearchPlatform-Backend",
+  "batchFiles": [
+    {"path": "migrations/env.py", "language": "python", "sizeLines": 49, "fileCategory": "code"},
+    {"path": "packages/core/models/__init__.py", "language": "python", "sizeLines": 5, "fileCategory": "code"},
+    {"path": "packages/core/models/base.py", "language": "python", "sizeLines": 11, "fileCategory": "code"},
+    {"path": "packages/core/models/instrument.py", "language": "python", "sizeLines": 48, "fileCategory": "code"},
+    {"path": "packages/core/models/profile.py", "language": "python", "sizeLines": 30, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "migrations/env.py": ["packages/core/models/__init__.py"],
+    "packages/core/models/__init__.py": ["packages/core/models/base.py", "packages/core/models/instrument.py", "packages/core/models/profile.py"],
+    "packages/core/models/base.py": [],
+    "packages/core/models/instrument.py": ["packages/core/models/base.py"],
+    "packages/core/models/profile.py": ["packages/core/models/base.py"]
+  }
+}

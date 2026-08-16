@@ -1,0 +1,373 @@
+{
+  "nodes": [
+    {
+      "id": "file:packages/core/providers/base.py",
+      "type": "file",
+      "name": "base.py",
+      "filePath": "packages/core/providers/base.py",
+      "summary": "Defines the abstract MarketDataProvider port (hexagonal architecture) that all market data adapters must implement, decoupling the rest of the system from any specific data vendor.",
+      "tags": ["interface", "abstract-base-class", "data-provider", "port-adapter"],
+      "complexity": "simple",
+      "languageNotes": "Uses Python's ABC + abstractmethod to define a hexagonal-architecture port; concrete vendor adapters (e.g. PolygonAdapter) implement this contract."
+    },
+    {
+      "id": "class:packages/core/providers/base.py:MarketDataProvider",
+      "type": "class",
+      "name": "MarketDataProvider",
+      "filePath": "packages/core/providers/base.py",
+      "lineRange": [7, 26],
+      "summary": "Abstract port interface declaring list_instruments and get_eod_bars contracts that concrete market data provider adapters must implement.",
+      "tags": ["interface", "abstract-base-class", "port"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:packages/core/providers/polygon.py",
+      "type": "file",
+      "name": "polygon.py",
+      "filePath": "packages/core/providers/polygon.py",
+      "summary": "Concrete adapter implementing MarketDataProvider for Polygon.io, handling paginated instrument listing, adjusted/unadjusted EOD bar fetching, and translation of Polygon's raw JSON into canonical InstrumentDTO/OHLCVBar schemas.",
+      "tags": ["api-handler", "http-client", "adapter", "external-integration", "data-provider"],
+      "complexity": "complex",
+      "languageNotes": "Separates a pure translation layer (_parse_instruments, _merge_bars, module-level helpers) from the networked layer (_get, _get_aggs) to keep the fixture-based unit tests free of HTTP calls."
+    },
+    {
+      "id": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "type": "class",
+      "name": "PolygonAdapter",
+      "filePath": "packages/core/providers/polygon.py",
+      "lineRange": [32, 138],
+      "summary": "Concrete MarketDataProvider adapter for Polygon.io; manages a reused httpx.Client, paginates the reference tickers endpoint via cursor, fetches adjusted and unadjusted daily aggregates, and merges them into canonical OHLCVBar records keyed by timestamp.",
+      "tags": ["adapter", "http-client", "external-integration", "api-handler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:packages/core/schemas/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "packages/core/schemas/__init__.py",
+      "summary": "Barrel module re-exporting the canonical InstrumentDTO, OHLCVBar, and Quote schemas as the package's public schema API.",
+      "tags": ["barrel", "entry-point", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:packages/core/schemas/instrument.py",
+      "type": "file",
+      "name": "instrument.py",
+      "filePath": "packages/core/schemas/instrument.py",
+      "summary": "Defines the canonical, provider-agnostic InstrumentDTO pydantic model representing a tradable instrument, used as the common shape between data providers and the downstream catalog job.",
+      "tags": ["data-model", "type-definition", "dto", "pydantic"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:packages/core/schemas/instrument.py:InstrumentDTO",
+      "type": "class",
+      "name": "InstrumentDTO",
+      "filePath": "packages/core/schemas/instrument.py",
+      "lineRange": [4, 19],
+      "summary": "Immutable pydantic DTO representing a canonical tradable instrument with normalized exchange, raw provider type, and active status.",
+      "tags": ["data-model", "dto", "pydantic", "immutable"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:packages/core/schemas/market.py",
+      "type": "file",
+      "name": "market.py",
+      "filePath": "packages/core/schemas/market.py",
+      "summary": "Defines canonical OHLCVBar and Quote pydantic models for market data, using Decimal for monetary precision and validating OHLCV sanity (high >= low, non-negative volume).",
+      "tags": ["data-model", "type-definition", "dto", "validation"],
+      "complexity": "simple",
+      "languageNotes": "Uses pydantic's model_validator(mode=\"after\") to enforce cross-field invariants, and Decimal fields throughout to avoid float imprecision on prices."
+    },
+    {
+      "id": "class:packages/core/schemas/market.py:OHLCVBar",
+      "type": "class",
+      "name": "OHLCVBar",
+      "filePath": "packages/core/schemas/market.py",
+      "lineRange": [7, 30],
+      "summary": "Immutable pydantic DTO for a canonical daily OHLCV bar with Decimal pricing and a post-validation sanity check (high >= low, non-negative volume).",
+      "tags": ["data-model", "dto", "validation", "pydantic"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:packages/core/schemas/market.py:Quote",
+      "type": "class",
+      "name": "Quote",
+      "filePath": "packages/core/schemas/market.py",
+      "lineRange": [33, 42],
+      "summary": "Immutable pydantic DTO representing a point-in-time price quote with change percentage, volume, and timestamp.",
+      "tags": ["data-model", "dto", "pydantic"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tests/test_polygon_adapter.py",
+      "type": "file",
+      "name": "test_polygon_adapter.py",
+      "filePath": "tests/test_polygon_adapter.py",
+      "summary": "Unit test suite for PolygonAdapter covering instrument parsing, adjusted/unadjusted bar merging, Decimal precision, pagination limits, and HTTP error handling, using respx-mocked responses and JSON fixtures.",
+      "tags": ["test", "unit-test", "fixtures", "http-mocking"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/test_polygon_adapter.py:test_parse_instruments_maps_exchange_and_active",
+      "type": "function",
+      "name": "test_parse_instruments_maps_exchange_and_active",
+      "filePath": "tests/test_polygon_adapter.py",
+      "lineRange": [27, 38],
+      "summary": "Verifies PolygonAdapter._parse_instruments correctly maps Polygon MIC codes to internal exchange enums and preserves each instrument's active status.",
+      "tags": ["test", "unit-test"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_polygon_adapter.py:test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+      "type": "function",
+      "name": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+      "filePath": "tests/test_polygon_adapter.py",
+      "lineRange": [41, 54],
+      "summary": "Verifies _merge_bars combines the raw close price from unadjusted data with the adj_close price from adjusted data into canonical OHLCVBar records.",
+      "tags": ["test", "unit-test"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_polygon_adapter.py:test_merge_bars_matches_by_timestamp",
+      "type": "function",
+      "name": "test_merge_bars_matches_by_timestamp",
+      "filePath": "tests/test_polygon_adapter.py",
+      "lineRange": [57, 66],
+      "summary": "Verifies _merge_bars pairs unadjusted and adjusted bars by their epoch-ms timestamp rather than by list order.",
+      "tags": ["test", "unit-test"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_polygon_adapter.py:test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+      "type": "function",
+      "name": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+      "filePath": "tests/test_polygon_adapter.py",
+      "lineRange": [81, 94],
+      "summary": "Verifies get_eod_bars issues both adjusted and unadjusted HTTP requests via respx mocks and correctly merges the two responses into OHLCVBar records.",
+      "tags": ["test", "integration-test", "http-mocking"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:tests/test_polygon_adapter.py:test_list_instruments_respects_max_pages",
+      "type": "function",
+      "name": "test_list_instruments_respects_max_pages",
+      "filePath": "tests/test_polygon_adapter.py",
+      "lineRange": [110, 120],
+      "summary": "Verifies list_instruments stops paginating once max_pages is reached even when Polygon's response indicates more pages are available.",
+      "tags": ["test", "unit-test", "pagination"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:packages/core/providers/base.py",
+      "target": "file:packages/core/schemas/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:packages/core/providers/polygon.py",
+      "target": "file:packages/core/providers/base.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:packages/core/providers/polygon.py",
+      "target": "file:packages/core/schemas/__init__.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:packages/core/schemas/__init__.py",
+      "target": "file:packages/core/schemas/instrument.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:packages/core/schemas/__init__.py",
+      "target": "file:packages/core/schemas/market.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/test_polygon_adapter.py",
+      "target": "file:packages/core/providers/polygon.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:packages/core/providers/base.py",
+      "target": "class:packages/core/providers/base.py:MarketDataProvider",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:packages/core/providers/polygon.py",
+      "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:packages/core/schemas/instrument.py",
+      "target": "class:packages/core/schemas/instrument.py:InstrumentDTO",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:packages/core/schemas/market.py",
+      "target": "class:packages/core/schemas/market.py:OHLCVBar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:packages/core/schemas/market.py",
+      "target": "class:packages/core/schemas/market.py:Quote",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_polygon_adapter.py",
+      "target": "function:tests/test_polygon_adapter.py:test_parse_instruments_maps_exchange_and_active",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_polygon_adapter.py",
+      "target": "function:tests/test_polygon_adapter.py:test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_polygon_adapter.py",
+      "target": "function:tests/test_polygon_adapter.py:test_merge_bars_matches_by_timestamp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_polygon_adapter.py",
+      "target": "function:tests/test_polygon_adapter.py:test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/test_polygon_adapter.py",
+      "target": "function:tests/test_polygon_adapter.py:test_list_instruments_respects_max_pages",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:packages/core/providers/base.py",
+      "target": "class:packages/core/providers/base.py:MarketDataProvider",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:packages/core/providers/polygon.py",
+      "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:packages/core/schemas/instrument.py",
+      "target": "class:packages/core/schemas/instrument.py:InstrumentDTO",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:packages/core/schemas/market.py",
+      "target": "class:packages/core/schemas/market.py:OHLCVBar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:packages/core/schemas/market.py",
+      "target": "class:packages/core/schemas/market.py:Quote",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "target": "class:packages/core/providers/base.py:MarketDataProvider",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "target": "class:packages/core/schemas/instrument.py:InstrumentDTO",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "target": "class:packages/core/schemas/market.py:OHLCVBar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_polygon_adapter.py:test_parse_instruments_maps_exchange_and_active",
+      "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_polygon_adapter.py:test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+      "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_polygon_adapter.py:test_merge_bars_matches_by_timestamp",
+      "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_polygon_adapter.py:test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+      "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:tests/test_polygon_adapter.py:test_list_instruments_respects_max_pages",
+      "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:packages/core/providers/polygon.py",
+      "target": "file:tests/test_polygon_adapter.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

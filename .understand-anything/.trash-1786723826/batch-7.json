@@ -1,0 +1,422 @@
+{
+  "nodes": [
+    {
+      "id": "file:.python-version",
+      "type": "file",
+      "name": ".python-version",
+      "filePath": ".python-version",
+      "summary": "Pins the project's Python interpreter version (3.13) for version managers such as pyenv and uv.",
+      "tags": ["configuration", "python-version", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:apps/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "apps/__init__.py",
+      "summary": "Empty package marker turning `apps` into a Python package containing the API and worker applications.",
+      "tags": ["package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:apps/api/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "apps/api/__init__.py",
+      "summary": "Empty package marker turning `apps.api` into a Python package for the FastAPI application code.",
+      "tags": ["package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:apps/api/core/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "apps/api/core/__init__.py",
+      "summary": "Empty package marker turning `apps.api.core` into a Python package for core API infrastructure such as settings.",
+      "tags": ["package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:apps/api/core/config.py",
+      "type": "file",
+      "name": "config.py",
+      "filePath": "apps/api/core/config.py",
+      "summary": "Defines the Settings class (pydantic-settings) that loads database, Redis, debug, and Polygon.io API configuration from environment variables / .env, and exposes a module-level `settings` singleton used across the app.",
+      "tags": ["configuration", "settings", "pydantic", "environment"],
+      "complexity": "simple",
+      "languageNotes": "Uses pydantic-settings BaseSettings with SettingsConfigDict to auto-load a .env file into typed fields."
+    },
+    {
+      "id": "file:apps/worker/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "apps/worker/__init__.py",
+      "summary": "Empty package marker turning `apps.worker` into a Python package for the background worker process.",
+      "tags": ["package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:apps/worker/main.py",
+      "type": "file",
+      "name": "main.py",
+      "filePath": "apps/worker/main.py",
+      "summary": "Worker process entry point; configures basic logging and logs a startup message when run directly as a script.",
+      "tags": ["entry-point", "worker", "logging"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/README",
+      "type": "file",
+      "name": "README",
+      "filePath": "migrations/README",
+      "summary": "Minimal Alembic README noting this is a generic single-database migration environment configuration.",
+      "tags": ["documentation", "alembic", "migrations"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:migrations/script.py.mako",
+      "type": "file",
+      "name": "script.py.mako",
+      "filePath": "migrations/script.py.mako",
+      "summary": "Alembic Mako template used to scaffold new migration revision files, generating the revision metadata header plus empty upgrade/downgrade function stubs.",
+      "tags": ["template", "migration", "code-generation", "alembic"],
+      "complexity": "simple",
+      "languageNotes": "Mako templating syntax (${...}) is interpolated by Alembic's `revision` command to produce concrete migration scripts like 0001_initial_schema.py."
+    },
+    {
+      "id": "file:migrations/versions/0001_initial_schema.py",
+      "type": "file",
+      "name": "0001_initial_schema.py",
+      "filePath": "migrations/versions/0001_initial_schema.py",
+      "summary": "Initial Alembic migration that enables the TimescaleDB extension and creates the `profiles` and `instruments` tables with update-timestamp triggers, indexes, and row-level security policies restricting profile access to the owning user while allowing public read of the instrument catalog.",
+      "tags": ["database", "migration", "schema", "row-level-security"],
+      "complexity": "complex",
+      "languageNotes": "Uses raw SQL via op.execute() rather than Alembic's declarative op.create_table/op.add_column helpers, including Postgres-specific RLS policies and a trigger function."
+    },
+    {
+      "id": "file:migrations/versions/0002_add_instrument_type.py",
+      "type": "file",
+      "name": "0002_add_instrument_type.py",
+      "filePath": "migrations/versions/0002_add_instrument_type.py",
+      "summary": "Alembic migration adding a nullable `type` text column to the `instruments` table to capture the data provider's raw instrument classification (e.g. common stock, ETF, ADR) for universe filtering.",
+      "tags": ["database", "migration", "schema-change"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:packages/core/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "packages/core/__init__.py",
+      "summary": "Empty package marker turning `packages.core` into a Python package for shared core infrastructure (db, providers).",
+      "tags": ["package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:packages/core/db/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "packages/core/db/__init__.py",
+      "summary": "Empty package marker turning `packages.core.db` into a Python package for database session and engine setup.",
+      "tags": ["package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:packages/core/db/session.py",
+      "type": "file",
+      "name": "session.py",
+      "filePath": "packages/core/db/session.py",
+      "summary": "Defines the shared async SQLAlchemy engine and session factory (asyncpg driver) intended for use by the API and worker processes, forcing the async driver scheme even if DATABASE_URL specifies the sync `postgresql://` form used by Alembic.",
+      "tags": ["database", "sqlalchemy", "async", "session-factory"],
+      "complexity": "simple",
+      "languageNotes": "Alembic's env.py uses the sync psycopg2 driver while this module rewrites the URL to postgresql+asyncpg:// for runtime async access, keeping migrations and app code on separate drivers."
+    },
+    {
+      "id": "file:packages/core/providers/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "packages/core/providers/__init__.py",
+      "summary": "Empty package marker turning `packages.core.providers` into a Python package for market data provider adapters.",
+      "tags": ["package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/smoke_polygon.py",
+      "type": "file",
+      "name": "smoke_polygon.py",
+      "filePath": "scripts/smoke_polygon.py",
+      "summary": "Manual smoke-test script that exercises the Polygon adapter against the live Polygon.io API, fetching EOD bars for AAPL and listing active instruments to visually verify the integration works end-to-end.",
+      "tags": ["script", "smoke-test", "polygon-api", "manual-test"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/__init__.py",
+      "type": "file",
+      "name": "__init__.py",
+      "filePath": "tests/__init__.py",
+      "summary": "Empty package marker turning `tests` into a Python package for the project's test suite.",
+      "tags": ["test", "package-init"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:migrations/versions/0001_initial_schema.py:profiles",
+      "type": "table",
+      "name": "profiles",
+      "filePath": "migrations/versions/0001_initial_schema.py",
+      "summary": "User profile table (1:1 with an auth user) storing display name and a JSONB settings blob, protected by row-level security policies that scope select/update/insert to the owning user.",
+      "tags": ["database", "table", "user-data", "row-level-security"],
+      "complexity": "simple"
+    },
+    {
+      "id": "table:migrations/versions/0001_initial_schema.py:instruments",
+      "type": "table",
+      "name": "instruments",
+      "filePath": "migrations/versions/0001_initial_schema.py",
+      "summary": "Public catalog of tradable instruments (ticker, name, exchange, sector, industry, active/delisted status) with RLS allowing public read access; rows are never deleted, only marked inactive, to avoid survivorship bias in backtests.",
+      "tags": ["database", "table", "market-data", "reference-data"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:apps/api/core/config.py:Settings",
+      "type": "class",
+      "name": "Settings",
+      "filePath": "apps/api/core/config.py",
+      "lineRange": [4, 13],
+      "summary": "Pydantic-settings model declaring the application's typed configuration fields (database_url, redis_url, debug, Polygon API key/base URL) loaded from environment variables or a .env file.",
+      "tags": ["configuration", "settings", "data-model", "pydantic"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:apps/worker/main.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "apps/worker/main.py",
+      "lineRange": [7, 8],
+      "summary": "Worker entry-point function that logs a startup message; invoked when the module is run as `__main__`.",
+      "tags": ["entry-point", "worker", "logging"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/0001_initial_schema.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/0001_initial_schema.py",
+      "lineRange": [16, 104],
+      "summary": "Applies the initial schema forward: enables TimescaleDB, creates the updated_at trigger function, creates `profiles` and `instruments` tables with indexes and triggers, and enables row-level security policies on both tables.",
+      "tags": ["migration", "database", "schema-creation", "row-level-security"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:migrations/versions/0001_initial_schema.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/0001_initial_schema.py",
+      "lineRange": [107, 118],
+      "summary": "Reverses the initial schema migration by dropping RLS policies, disabling RLS, and dropping the `instruments`/`profiles` tables and the trigger function.",
+      "tags": ["migration", "database", "rollback"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:migrations/versions/0002_add_instrument_type.py:upgrade",
+      "type": "function",
+      "name": "upgrade",
+      "filePath": "migrations/versions/0002_add_instrument_type.py",
+      "lineRange": [17, 26],
+      "summary": "Adds a nullable `type` text column to the `instruments` table to record the provider's raw instrument classification.",
+      "tags": ["migration", "database", "schema-change"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:migrations/versions/0002_add_instrument_type.py:downgrade",
+      "type": "function",
+      "name": "downgrade",
+      "filePath": "migrations/versions/0002_add_instrument_type.py",
+      "lineRange": [29, 30],
+      "summary": "Reverses the migration by dropping the `type` column from the `instruments` table.",
+      "tags": ["migration", "database", "rollback"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:packages/core/db/session.py:_async_url",
+      "type": "function",
+      "name": "_async_url",
+      "filePath": "packages/core/db/session.py",
+      "lineRange": [15, 23],
+      "summary": "Reads DATABASE_URL from the environment (falling back to a local dev default) and rewrites the `postgresql://` scheme to `postgresql+asyncpg://` so the runtime engine always uses the async driver, distinct from Alembic's sync driver.",
+      "tags": ["utility", "database", "async", "url-transform"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/smoke_polygon.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/smoke_polygon.py",
+      "lineRange": [19, 37],
+      "summary": "Entry point that validates a Polygon API key is configured, then uses PolygonAdapter to fetch EOD bars for AAPL and list active instruments, printing results for manual verification.",
+      "tags": ["entry-point", "smoke-test", "polygon-api"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:scripts/smoke_polygon.py",
+      "target": "file:apps/api/core/config.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/smoke_polygon.py",
+      "target": "file:packages/core/providers/polygon.py",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:apps/api/core/config.py",
+      "target": "class:apps/api/core/config.py:Settings",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:apps/api/core/config.py",
+      "target": "class:apps/api/core/config.py:Settings",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:apps/worker/main.py",
+      "target": "function:apps/worker/main.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:apps/worker/main.py",
+      "target": "function:apps/worker/main.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/0001_initial_schema.py",
+      "target": "function:migrations/versions/0001_initial_schema.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:migrations/versions/0001_initial_schema.py",
+      "target": "function:migrations/versions/0001_initial_schema.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/0001_initial_schema.py",
+      "target": "function:migrations/versions/0001_initial_schema.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:migrations/versions/0001_initial_schema.py",
+      "target": "function:migrations/versions/0001_initial_schema.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/0001_initial_schema.py",
+      "target": "table:migrations/versions/0001_initial_schema.py:profiles",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:migrations/versions/0001_initial_schema.py",
+      "target": "table:migrations/versions/0001_initial_schema.py:instruments",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:migrations/versions/0002_add_instrument_type.py",
+      "target": "function:migrations/versions/0002_add_instrument_type.py:upgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:migrations/versions/0002_add_instrument_type.py",
+      "target": "function:migrations/versions/0002_add_instrument_type.py:upgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/0002_add_instrument_type.py",
+      "target": "function:migrations/versions/0002_add_instrument_type.py:downgrade",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:migrations/versions/0002_add_instrument_type.py",
+      "target": "function:migrations/versions/0002_add_instrument_type.py:downgrade",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/versions/0002_add_instrument_type.py",
+      "target": "table:migrations/versions/0001_initial_schema.py:instruments",
+      "type": "migrates",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:packages/core/db/session.py",
+      "target": "function:packages/core/db/session.py:_async_url",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/smoke_polygon.py",
+      "target": "function:scripts/smoke_polygon.py:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:scripts/smoke_polygon.py",
+      "target": "function:scripts/smoke_polygon.py:main",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:scripts/smoke_polygon.py:main",
+      "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:migrations/script.py.mako",
+      "target": "file:migrations/versions/0001_initial_schema.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:migrations/script.py.mako",
+      "target": "file:migrations/versions/0002_add_instrument_type.py",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

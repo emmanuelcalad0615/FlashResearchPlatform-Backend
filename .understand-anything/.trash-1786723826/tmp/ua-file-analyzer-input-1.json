@@ -1,0 +1,19 @@
+{
+  "projectRoot": "/Users/andrew/Documents/Projects/flash/FlashResearchPlatform-Backend",
+  "batchFiles": [
+    {"path": "packages/core/providers/base.py", "language": "python", "sizeLines": 26, "fileCategory": "code"},
+    {"path": "packages/core/providers/polygon.py", "language": "python", "sizeLines": 138, "fileCategory": "code"},
+    {"path": "packages/core/schemas/__init__.py", "language": "python", "sizeLines": 4, "fileCategory": "code"},
+    {"path": "packages/core/schemas/instrument.py", "language": "python", "sizeLines": 19, "fileCategory": "code"},
+    {"path": "packages/core/schemas/market.py", "language": "python", "sizeLines": 42, "fileCategory": "code"},
+    {"path": "tests/test_polygon_adapter.py", "language": "python", "sizeLines": 135, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "packages/core/providers/base.py": ["packages/core/schemas/__init__.py"],
+    "packages/core/providers/polygon.py": ["packages/core/providers/base.py", "packages/core/schemas/__init__.py"],
+    "packages/core/schemas/__init__.py": ["packages/core/schemas/instrument.py", "packages/core/schemas/market.py"],
+    "packages/core/schemas/instrument.py": [],
+    "packages/core/schemas/market.py": [],
+    "tests/test_polygon_adapter.py": ["packages/core/providers/polygon.py"]
+  }
+}

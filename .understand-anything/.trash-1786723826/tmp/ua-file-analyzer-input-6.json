@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/Users/andrew/Documents/Projects/flash/FlashResearchPlatform-Backend",
+  "batchFiles": [
+    {"path": "tests/fixtures/polygon_aggs_adjusted.json", "language": "json", "sizeLines": 30, "fileCategory": "config"},
+    {"path": "tests/fixtures/polygon_aggs_unadjusted.json", "language": "json", "sizeLines": 30, "fileCategory": "config"},
+    {"path": "tests/fixtures/polygon_tickers.json", "language": "json", "sizeLines": 58, "fileCategory": "config"}
+  ],
+  "batchImportData": {
+    "tests/fixtures/polygon_aggs_adjusted.json": [],
+    "tests/fixtures/polygon_aggs_unadjusted.json": [],
+    "tests/fixtures/polygon_tickers.json": []
+  }
+}
