@@ -1,0 +1,121 @@
+[
+  {
+    "source": "file:packages/core/providers/base.py",
+    "target": "file:packages/core/schemas/__init__.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/providers/polygon.py",
+    "target": "file:packages/core/providers/base.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/providers/polygon.py",
+    "target": "file:packages/core/schemas/__init__.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/schemas/__init__.py",
+    "target": "file:packages/core/schemas/instrument.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/schemas/__init__.py",
+    "target": "file:packages/core/schemas/market.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:tests/test_polygon_adapter.py",
+    "target": "file:packages/core/providers/polygon.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:migrations/env.py",
+    "target": "file:packages/core/models/__init__.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/__init__.py",
+    "target": "file:packages/core/models/base.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/__init__.py",
+    "target": "file:packages/core/models/instrument.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/__init__.py",
+    "target": "file:packages/core/models/profile.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/instrument.py",
+    "target": "file:packages/core/models/base.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/profile.py",
+    "target": "file:packages/core/models/base.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:apps/api/main.py",
+    "target": "file:apps/api/routers/__init__.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:apps/api/main.py",
+    "target": "file:apps/api/routers/health.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:tests/test_health.py",
+    "target": "file:apps/api/main.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:scripts/smoke_polygon.py",
+    "target": "file:apps/api/core/config.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:scripts/smoke_polygon.py",
+    "target": "file:packages/core/providers/polygon.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  }
+]

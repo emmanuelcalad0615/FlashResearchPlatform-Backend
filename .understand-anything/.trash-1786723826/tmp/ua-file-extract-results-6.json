@@ -1,0 +1,150 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "tests/fixtures/polygon_aggs_adjusted.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 30,
+      "nonEmptyLines": 30,
+      "sections": [
+        {
+          "heading": "ticker",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "adjusted",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "queryCount",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "resultsCount",
+          "level": 1,
+          "line": 5
+        },
+        {
+          "heading": "status",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "request_id",
+          "level": 1,
+          "line": 7
+        },
+        {
+          "heading": "results",
+          "level": 1,
+          "line": 8
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "tests/fixtures/polygon_aggs_unadjusted.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 30,
+      "nonEmptyLines": 30,
+      "sections": [
+        {
+          "heading": "ticker",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "adjusted",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "queryCount",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "resultsCount",
+          "level": 1,
+          "line": 5
+        },
+        {
+          "heading": "status",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "request_id",
+          "level": 1,
+          "line": 7
+        },
+        {
+          "heading": "results",
+          "level": 1,
+          "line": 8
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "tests/fixtures/polygon_tickers.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 58,
+      "nonEmptyLines": 58,
+      "sections": [
+        {
+          "heading": "results",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "status",
+          "level": 1,
+          "line": 54
+        },
+        {
+          "heading": "request_id",
+          "level": 1,
+          "line": 55
+        },
+        {
+          "heading": "count",
+          "level": 1,
+          "line": 56
+        },
+        {
+          "heading": "next_url",
+          "level": 1,
+          "line": 57
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 5
+      }
+    }
+  ]
+}

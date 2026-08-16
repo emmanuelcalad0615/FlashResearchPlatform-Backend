@@ -1,0 +1,345 @@
+{
+  "name": "flash-research-api",
+  "description": "Flash Research Platform backend — a FastAPI HTTP API and worker service for momentum-trading market intelligence (NYSE/NASDAQ market scanning, quantitative metrics, real-time dashboard), with shared SQLAlchemy models and Pydantic schemas in packages/core.",
+  "languages": [
+    "config",
+    "json",
+    "mako",
+    "markdown",
+    "python",
+    "toml",
+    "unknown",
+    "yaml"
+  ],
+  "frameworks": [
+    "Alembic",
+    "Docker Compose",
+    "FastAPI",
+    "GitHub Actions",
+    "Pytest",
+    "SQLAlchemy",
+    "Uvicorn"
+  ],
+  "files": [
+    {
+      "path": ".env.example",
+      "language": "config",
+      "sizeLines": 17,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "language": "yaml",
+      "sizeLines": 32,
+      "fileCategory": "infra"
+    },
+    {
+      "path": ".python-version",
+      "language": "unknown",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "alembic.ini",
+      "language": "config",
+      "sizeLines": 148,
+      "fileCategory": "config"
+    },
+    {
+      "path": "apps/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/core/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/core/config.py",
+      "language": "python",
+      "sizeLines": 16,
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/main.py",
+      "language": "python",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/routers/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/routers/health.py",
+      "language": "python",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/worker/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/worker/main.py",
+      "language": "python",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "docker-compose.yml",
+      "language": "yaml",
+      "sizeLines": 34,
+      "fileCategory": "infra"
+    },
+    {
+      "path": "migrations/env.py",
+      "language": "python",
+      "sizeLines": 49,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/README",
+      "language": "unknown",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/script.py.mako",
+      "language": "mako",
+      "sizeLines": 28,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/0001_initial_schema.py",
+      "language": "python",
+      "sizeLines": 118,
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/0002_add_instrument_type.py",
+      "language": "python",
+      "sizeLines": 30,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/db/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/db/session.py",
+      "language": "python",
+      "sizeLines": 33,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/models/__init__.py",
+      "language": "python",
+      "sizeLines": 5,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/models/base.py",
+      "language": "python",
+      "sizeLines": 11,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/models/instrument.py",
+      "language": "python",
+      "sizeLines": 48,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/models/profile.py",
+      "language": "python",
+      "sizeLines": 30,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/providers/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/providers/base.py",
+      "language": "python",
+      "sizeLines": 26,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/providers/polygon.py",
+      "language": "python",
+      "sizeLines": 138,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/schemas/__init__.py",
+      "language": "python",
+      "sizeLines": 4,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/schemas/instrument.py",
+      "language": "python",
+      "sizeLines": 19,
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/schemas/market.py",
+      "language": "python",
+      "sizeLines": 42,
+      "fileCategory": "code"
+    },
+    {
+      "path": "pyproject.toml",
+      "language": "toml",
+      "sizeLines": 40,
+      "fileCategory": "config"
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "sizeLines": 111,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "scripts/smoke_polygon.py",
+      "language": "python",
+      "sizeLines": 41,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/__init__.py",
+      "language": "python",
+      "sizeLines": 0,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/fixtures/polygon_aggs_adjusted.json",
+      "language": "json",
+      "sizeLines": 30,
+      "fileCategory": "config"
+    },
+    {
+      "path": "tests/fixtures/polygon_aggs_unadjusted.json",
+      "language": "json",
+      "sizeLines": 30,
+      "fileCategory": "config"
+    },
+    {
+      "path": "tests/fixtures/polygon_tickers.json",
+      "language": "json",
+      "sizeLines": 58,
+      "fileCategory": "config"
+    },
+    {
+      "path": "tests/test_health.py",
+      "language": "python",
+      "sizeLines": 11,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_polygon_adapter.py",
+      "language": "python",
+      "sizeLines": 135,
+      "fileCategory": "code"
+    }
+  ],
+  "totalFiles": 41,
+  "filteredByIgnore": 0,
+  "estimatedComplexity": "moderate",
+  "importMap": {
+    ".env.example": [],
+    ".github/workflows/ci.yml": [],
+    ".python-version": [],
+    "alembic.ini": [],
+    "apps/__init__.py": [],
+    "apps/api/__init__.py": [],
+    "apps/api/core/__init__.py": [],
+    "apps/api/core/config.py": [],
+    "apps/api/main.py": [
+      "apps/api/routers/__init__.py",
+      "apps/api/routers/health.py"
+    ],
+    "apps/api/routers/__init__.py": [],
+    "apps/api/routers/health.py": [],
+    "apps/worker/__init__.py": [],
+    "apps/worker/main.py": [],
+    "docker-compose.yml": [],
+    "migrations/env.py": [
+      "packages/core/models/__init__.py"
+    ],
+    "migrations/README": [],
+    "migrations/script.py.mako": [],
+    "migrations/versions/0001_initial_schema.py": [],
+    "migrations/versions/0002_add_instrument_type.py": [],
+    "packages/core/__init__.py": [],
+    "packages/core/db/__init__.py": [],
+    "packages/core/db/session.py": [],
+    "packages/core/models/__init__.py": [
+      "packages/core/models/base.py",
+      "packages/core/models/instrument.py",
+      "packages/core/models/profile.py"
+    ],
+    "packages/core/models/base.py": [],
+    "packages/core/models/instrument.py": [
+      "packages/core/models/base.py"
+    ],
+    "packages/core/models/profile.py": [
+      "packages/core/models/base.py"
+    ],
+    "packages/core/providers/__init__.py": [],
+    "packages/core/providers/base.py": [
+      "packages/core/schemas/__init__.py"
+    ],
+    "packages/core/providers/polygon.py": [
+      "packages/core/providers/base.py",
+      "packages/core/schemas/__init__.py"
+    ],
+    "packages/core/schemas/__init__.py": [
+      "packages/core/schemas/instrument.py",
+      "packages/core/schemas/market.py"
+    ],
+    "packages/core/schemas/instrument.py": [],
+    "packages/core/schemas/market.py": [],
+    "pyproject.toml": [],
+    "README.md": [],
+    "scripts/smoke_polygon.py": [
+      "apps/api/core/config.py",
+      "packages/core/providers/polygon.py"
+    ],
+    "tests/__init__.py": [],
+    "tests/fixtures/polygon_aggs_adjusted.json": [],
+    "tests/fixtures/polygon_aggs_unadjusted.json": [],
+    "tests/fixtures/polygon_tickers.json": [],
+    "tests/test_health.py": [
+      "apps/api/main.py"
+    ],
+    "tests/test_polygon_adapter.py": [
+      "packages/core/providers/polygon.py"
+    ]
+  }
+}

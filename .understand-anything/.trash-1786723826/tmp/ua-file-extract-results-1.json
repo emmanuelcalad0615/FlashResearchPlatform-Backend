@@ -1,0 +1,930 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "packages/core/providers/base.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 19,
+      "classes": [
+        {
+          "name": "MarketDataProvider",
+          "startLine": 7,
+          "endLine": 26,
+          "methods": [
+            "list_instruments",
+            "get_eod_bars"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MarketDataProvider",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "packages/core/providers/polygon.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 138,
+      "nonEmptyLines": 109,
+      "functions": [
+        {
+          "name": "_map_exchange",
+          "startLine": 18,
+          "endLine": 20,
+          "params": [
+            "mic"
+          ]
+        },
+        {
+          "name": "_to_decimal",
+          "startLine": 23,
+          "endLine": 25,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "_epoch_ms_to_date",
+          "startLine": 28,
+          "endLine": 29,
+          "params": [
+            "ms"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "PolygonAdapter",
+          "startLine": 32,
+          "endLine": 138,
+          "methods": [
+            "__init__",
+            "close",
+            "__enter__",
+            "__exit__",
+            "_get",
+            "_get_aggs",
+            "list_instruments",
+            "get_eod_bars",
+            "_parse_instruments",
+            "_merge_bars"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_map_exchange",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "_to_decimal",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "_epoch_ms_to_date",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "PolygonAdapter",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_map_exchange",
+          "callee": "_EXCHANGE_MAP.get",
+          "lineNumber": 20
+        },
+        {
+          "caller": "_to_decimal",
+          "callee": "Decimal",
+          "lineNumber": 25
+        },
+        {
+          "caller": "_to_decimal",
+          "callee": "str",
+          "lineNumber": 25
+        },
+        {
+          "caller": "_epoch_ms_to_date",
+          "callee": "datetime.fromtimestamp(ms / 1000, tz=UTC).date",
+          "lineNumber": 29
+        },
+        {
+          "caller": "_epoch_ms_to_date",
+          "callee": "datetime.fromtimestamp",
+          "lineNumber": 29
+        },
+        {
+          "caller": "__init__",
+          "callee": "ValueError",
+          "lineNumber": 37
+        },
+        {
+          "caller": "__init__",
+          "callee": "base_url.rstrip",
+          "lineNumber": 39
+        },
+        {
+          "caller": "__init__",
+          "callee": "httpx.Client",
+          "lineNumber": 42
+        },
+        {
+          "caller": "close",
+          "callee": "self._client.close",
+          "lineNumber": 46
+        },
+        {
+          "caller": "__exit__",
+          "callee": "self.close",
+          "lineNumber": 52
+        },
+        {
+          "caller": "_get",
+          "callee": "self._client.get",
+          "lineNumber": 58
+        },
+        {
+          "caller": "_get",
+          "callee": "resp.raise_for_status",
+          "lineNumber": 59
+        },
+        {
+          "caller": "_get",
+          "callee": "resp.json",
+          "lineNumber": 60
+        },
+        {
+          "caller": "_get_aggs",
+          "callee": "start.isoformat",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_get_aggs",
+          "callee": "end.isoformat",
+          "lineNumber": 65
+        },
+        {
+          "caller": "_get_aggs",
+          "callee": "self._get",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_get_aggs",
+          "callee": "str(adjusted).lower",
+          "lineNumber": 67
+        },
+        {
+          "caller": "_get_aggs",
+          "callee": "str",
+          "lineNumber": 67
+        },
+        {
+          "caller": "list_instruments",
+          "callee": "dict",
+          "lineNumber": 75
+        },
+        {
+          "caller": "list_instruments",
+          "callee": "self._get",
+          "lineNumber": 79
+        },
+        {
+          "caller": "list_instruments",
+          "callee": "instruments.extend",
+          "lineNumber": 80
+        },
+        {
+          "caller": "list_instruments",
+          "callee": "self._parse_instruments",
+          "lineNumber": 80
+        },
+        {
+          "caller": "list_instruments",
+          "callee": "payload.get",
+          "lineNumber": 83
+        },
+        {
+          "caller": "list_instruments",
+          "callee": "parse_qs(urlparse(next_url).query).get",
+          "lineNumber": 89
+        },
+        {
+          "caller": "list_instruments",
+          "callee": "parse_qs",
+          "lineNumber": 89
+        },
+        {
+          "caller": "list_instruments",
+          "callee": "urlparse",
+          "lineNumber": 89
+        },
+        {
+          "caller": "get_eod_bars",
+          "callee": "self._get_aggs",
+          "lineNumber": 95
+        },
+        {
+          "caller": "get_eod_bars",
+          "callee": "self._get_aggs",
+          "lineNumber": 96
+        },
+        {
+          "caller": "get_eod_bars",
+          "callee": "self._merge_bars",
+          "lineNumber": 97
+        },
+        {
+          "caller": "_parse_instruments",
+          "callee": "payload.get",
+          "lineNumber": 104
+        },
+        {
+          "caller": "_parse_instruments",
+          "callee": "out.append",
+          "lineNumber": 105
+        },
+        {
+          "caller": "_parse_instruments",
+          "callee": "InstrumentDTO",
+          "lineNumber": 106
+        },
+        {
+          "caller": "_parse_instruments",
+          "callee": "r.get",
+          "lineNumber": 108
+        },
+        {
+          "caller": "_parse_instruments",
+          "callee": "_map_exchange",
+          "lineNumber": 109
+        },
+        {
+          "caller": "_parse_instruments",
+          "callee": "r.get",
+          "lineNumber": 109
+        },
+        {
+          "caller": "_parse_instruments",
+          "callee": "r.get",
+          "lineNumber": 110
+        },
+        {
+          "caller": "_parse_instruments",
+          "callee": "r.get",
+          "lineNumber": 111
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "adjusted.get",
+          "lineNumber": 120
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "unadjusted.get",
+          "lineNumber": 123
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "adj_close_by_ts.get",
+          "lineNumber": 125
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "bars.append",
+          "lineNumber": 126
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "OHLCVBar",
+          "lineNumber": 127
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "_epoch_ms_to_date",
+          "lineNumber": 129
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "_to_decimal",
+          "lineNumber": 130
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "_to_decimal",
+          "lineNumber": 131
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "_to_decimal",
+          "lineNumber": 132
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "_to_decimal",
+          "lineNumber": 133
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "_to_decimal",
+          "lineNumber": 134
+        },
+        {
+          "caller": "_merge_bars",
+          "callee": "int",
+          "lineNumber": 135
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 4,
+        "functionCount": 3,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "packages/core/schemas/__init__.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 4,
+      "nonEmptyLines": 3,
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "packages/core/schemas/instrument.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 19,
+      "nonEmptyLines": 14,
+      "classes": [
+        {
+          "name": "InstrumentDTO",
+          "startLine": 4,
+          "endLine": 19,
+          "methods": [],
+          "properties": [
+            "ticker",
+            "name",
+            "exchange",
+            "type",
+            "sector",
+            "industry",
+            "is_active"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "InstrumentDTO",
+          "line": 4,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "packages/core/schemas/market.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 31,
+      "classes": [
+        {
+          "name": "OHLCVBar",
+          "startLine": 7,
+          "endLine": 30,
+          "methods": [
+            "_check_sane"
+          ],
+          "properties": [
+            "ticker",
+            "trade_date",
+            "open",
+            "high",
+            "low",
+            "close",
+            "adj_close",
+            "volume"
+          ]
+        },
+        {
+          "name": "Quote",
+          "startLine": 33,
+          "endLine": 42,
+          "methods": [],
+          "properties": [
+            "ticker",
+            "price",
+            "change_pct",
+            "volume",
+            "timestamp"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "OHLCVBar",
+          "line": 7,
+          "isDefault": false
+        },
+        {
+          "name": "Quote",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_check_sane",
+          "callee": "ValueError",
+          "lineNumber": 27
+        },
+        {
+          "caller": "_check_sane",
+          "callee": "ValueError",
+          "lineNumber": 29
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "tests/test_polygon_adapter.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 135,
+      "nonEmptyLines": 94,
+      "functions": [
+        {
+          "name": "_load",
+          "startLine": 15,
+          "endLine": 16,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "adapter",
+          "startLine": 20,
+          "endLine": 21,
+          "params": []
+        },
+        {
+          "name": "test_parse_instruments_maps_exchange_and_active",
+          "startLine": 27,
+          "endLine": 38,
+          "params": [
+            "adapter"
+          ]
+        },
+        {
+          "name": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "startLine": 41,
+          "endLine": 54,
+          "params": [
+            "adapter"
+          ]
+        },
+        {
+          "name": "test_merge_bars_matches_by_timestamp",
+          "startLine": 57,
+          "endLine": 66,
+          "params": [
+            "adapter"
+          ]
+        },
+        {
+          "name": "test_prices_are_decimal_not_float",
+          "startLine": 69,
+          "endLine": 74,
+          "params": [
+            "adapter"
+          ]
+        },
+        {
+          "name": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "startLine": 81,
+          "endLine": 94,
+          "params": [
+            "adapter"
+          ]
+        },
+        {
+          "name": "test_list_instruments_parses_and_stops_without_next_url",
+          "startLine": 98,
+          "endLine": 106,
+          "params": [
+            "adapter"
+          ]
+        },
+        {
+          "name": "test_list_instruments_respects_max_pages",
+          "startLine": 110,
+          "endLine": 120,
+          "params": [
+            "adapter"
+          ]
+        },
+        {
+          "name": "test_http_error_raises",
+          "startLine": 124,
+          "endLine": 130,
+          "params": [
+            "adapter"
+          ]
+        },
+        {
+          "name": "test_adapter_requires_api_key",
+          "startLine": 133,
+          "endLine": 135,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "_load",
+          "line": 15,
+          "isDefault": false
+        },
+        {
+          "name": "adapter",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "test_parse_instruments_maps_exchange_and_active",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "test_merge_bars_matches_by_timestamp",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "test_prices_are_decimal_not_float",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "line": 80,
+          "isDefault": false
+        },
+        {
+          "name": "test_list_instruments_parses_and_stops_without_next_url",
+          "line": 97,
+          "isDefault": false
+        },
+        {
+          "name": "test_list_instruments_respects_max_pages",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "test_http_error_raises",
+          "line": 123,
+          "isDefault": false
+        },
+        {
+          "name": "test_adapter_requires_api_key",
+          "line": 133,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "_load",
+          "callee": "json.loads",
+          "lineNumber": 16
+        },
+        {
+          "caller": "_load",
+          "callee": "(FIXTURES / name).read_text",
+          "lineNumber": 16
+        },
+        {
+          "caller": "adapter",
+          "callee": "PolygonAdapter",
+          "lineNumber": 21
+        },
+        {
+          "caller": "test_parse_instruments_maps_exchange_and_active",
+          "callee": "_load",
+          "lineNumber": 28
+        },
+        {
+          "caller": "test_parse_instruments_maps_exchange_and_active",
+          "callee": "adapter._parse_instruments",
+          "lineNumber": 29
+        },
+        {
+          "caller": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "callee": "_load",
+          "lineNumber": 42
+        },
+        {
+          "caller": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "callee": "_load",
+          "lineNumber": 43
+        },
+        {
+          "caller": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "callee": "adapter._merge_bars",
+          "lineNumber": 45
+        },
+        {
+          "caller": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "callee": "len",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "callee": "date",
+          "lineNumber": 50
+        },
+        {
+          "caller": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "callee": "Decimal",
+          "lineNumber": 51
+        },
+        {
+          "caller": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "callee": "Decimal",
+          "lineNumber": 52
+        },
+        {
+          "caller": "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+          "callee": "Decimal",
+          "lineNumber": 53
+        },
+        {
+          "caller": "test_merge_bars_matches_by_timestamp",
+          "callee": "_load",
+          "lineNumber": 59
+        },
+        {
+          "caller": "test_merge_bars_matches_by_timestamp",
+          "callee": "_load",
+          "lineNumber": 60
+        },
+        {
+          "caller": "test_merge_bars_matches_by_timestamp",
+          "callee": "adapter._merge_bars",
+          "lineNumber": 62
+        },
+        {
+          "caller": "test_merge_bars_matches_by_timestamp",
+          "callee": "date",
+          "lineNumber": 64
+        },
+        {
+          "caller": "test_merge_bars_matches_by_timestamp",
+          "callee": "Decimal",
+          "lineNumber": 65
+        },
+        {
+          "caller": "test_merge_bars_matches_by_timestamp",
+          "callee": "Decimal",
+          "lineNumber": 66
+        },
+        {
+          "caller": "test_prices_are_decimal_not_float",
+          "callee": "adapter._merge_bars",
+          "lineNumber": 70
+        },
+        {
+          "caller": "test_prices_are_decimal_not_float",
+          "callee": "_load",
+          "lineNumber": 71
+        },
+        {
+          "caller": "test_prices_are_decimal_not_float",
+          "callee": "_load",
+          "lineNumber": 71
+        },
+        {
+          "caller": "test_prices_are_decimal_not_float",
+          "callee": "isinstance",
+          "lineNumber": 73
+        },
+        {
+          "caller": "test_prices_are_decimal_not_float",
+          "callee": "isinstance",
+          "lineNumber": 74
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "respx.get(url, params={\"adjusted\": \"false\"}).mock",
+          "lineNumber": 83
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "respx.get",
+          "lineNumber": 83
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "httpx.Response",
+          "lineNumber": 84
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "_load",
+          "lineNumber": 84
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "respx.get(url, params={\"adjusted\": \"true\"}).mock",
+          "lineNumber": 86
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "respx.get",
+          "lineNumber": 86
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "httpx.Response",
+          "lineNumber": 87
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "_load",
+          "lineNumber": 87
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "adapter.get_eod_bars",
+          "lineNumber": 90
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "date",
+          "lineNumber": 90
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "date",
+          "lineNumber": 90
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "len",
+          "lineNumber": 92
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "Decimal",
+          "lineNumber": 93
+        },
+        {
+          "caller": "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+          "callee": "Decimal",
+          "lineNumber": 94
+        },
+        {
+          "caller": "test_list_instruments_parses_and_stops_without_next_url",
+          "callee": "respx.get(\"https://api.polygon.io/v3/reference/tickers\").mock",
+          "lineNumber": 99
+        },
+        {
+          "caller": "test_list_instruments_parses_and_stops_without_next_url",
+          "callee": "respx.get",
+          "lineNumber": 99
+        },
+        {
+          "caller": "test_list_instruments_parses_and_stops_without_next_url",
+          "callee": "httpx.Response",
+          "lineNumber": 100
+        },
+        {
+          "caller": "test_list_instruments_parses_and_stops_without_next_url",
+          "callee": "_load",
+          "lineNumber": 100
+        },
+        {
+          "caller": "test_list_instruments_parses_and_stops_without_next_url",
+          "callee": "adapter.list_instruments",
+          "lineNumber": 103
+        },
+        {
+          "caller": "test_list_instruments_parses_and_stops_without_next_url",
+          "callee": "len",
+          "lineNumber": 105
+        },
+        {
+          "caller": "test_list_instruments_respects_max_pages",
+          "callee": "_load",
+          "lineNumber": 112
+        },
+        {
+          "caller": "test_list_instruments_respects_max_pages",
+          "callee": "respx.get(\"https://api.polygon.io/v3/reference/tickers\").mock",
+          "lineNumber": 113
+        },
+        {
+          "caller": "test_list_instruments_respects_max_pages",
+          "callee": "respx.get",
+          "lineNumber": 113
+        },
+        {
+          "caller": "test_list_instruments_respects_max_pages",
+          "callee": "httpx.Response",
+          "lineNumber": 114
+        },
+        {
+          "caller": "test_list_instruments_respects_max_pages",
+          "callee": "adapter.list_instruments",
+          "lineNumber": 117
+        },
+        {
+          "caller": "test_list_instruments_respects_max_pages",
+          "callee": "len",
+          "lineNumber": 119
+        },
+        {
+          "caller": "test_http_error_raises",
+          "callee": "respx.get(\"https://api.polygon.io/v3/reference/tickers\").mock",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_http_error_raises",
+          "callee": "respx.get",
+          "lineNumber": 125
+        },
+        {
+          "caller": "test_http_error_raises",
+          "callee": "httpx.Response",
+          "lineNumber": 126
+        },
+        {
+          "caller": "test_http_error_raises",
+          "callee": "pytest.raises",
+          "lineNumber": 129
+        },
+        {
+          "caller": "test_http_error_raises",
+          "callee": "adapter.list_instruments",
+          "lineNumber": 130
+        },
+        {
+          "caller": "test_adapter_requires_api_key",
+          "callee": "pytest.raises",
+          "lineNumber": 134
+        },
+        {
+          "caller": "test_adapter_requires_api_key",
+          "callee": "PolygonAdapter",
+          "lineNumber": 135
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 11,
+        "functionCount": 11,
+        "classCount": 0
+      }
+    }
+  ]
+}

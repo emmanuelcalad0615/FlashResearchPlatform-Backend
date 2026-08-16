@@ -1,0 +1,165 @@
+{
+  "nodes": [
+    {
+      "id": "config:.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": ".env.example",
+      "summary": "Template for local environment variables (DATABASE_URL, REDIS_URL, DEBUG, POLYGON_API_KEY) that must be copied to .env and match the docker-compose services for local development.",
+      "tags": ["configuration", "environment-variables", "database", "redis"],
+      "complexity": "simple",
+      "languageNotes": "DATABASE_URL and REDIS_URL values are hard-coded to match the credentials and ports defined in docker-compose.yml."
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Project overview and onboarding guide for the Flash Research API backend, covering the tech stack, local setup steps (uv sync, docker compose up, alembic upgrade), common commands, repo structure, and data conventions (numeric prices, no hard deletes for delisted instruments, Alembic-only schema changes).",
+      "tags": ["documentation", "entry-point", "onboarding", "conventions"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:alembic.ini",
+      "type": "config",
+      "name": "alembic.ini",
+      "filePath": "alembic.ini",
+      "summary": "Alembic migration tool configuration; sets the migration script location to migrations/ (via the %(here)s token) and leaves most options at their generic, commented-out defaults.",
+      "tags": ["configuration", "database", "migration", "alembic"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "service:docker-compose.yml",
+      "type": "service",
+      "name": "docker-compose.yml",
+      "filePath": "docker-compose.yml",
+      "summary": "Docker Compose definition for local infrastructure: a TimescaleDB-on-Postgres 17 database service and a Redis 7 cache/bus service, each with health checks and persistent named volumes.",
+      "tags": ["containerization", "infrastructure", "orchestration", "database", "redis"],
+      "complexity": "simple",
+      "languageNotes": "Uses named volumes (flash_db_data, flash_redis_data) so `docker compose down` preserves data unless run with -v."
+    },
+    {
+      "id": "service:docker-compose.yml:db",
+      "type": "service",
+      "name": "db",
+      "filePath": "docker-compose.yml",
+      "lineRange": [2, 17],
+      "summary": "TimescaleDB (Postgres 17) service exposing port 5432 with user flash / password flash_dev_pw / database flash_research, backed by a persistent volume and a pg_isready health check.",
+      "tags": ["database", "timescaledb", "postgres", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:docker-compose.yml:redis",
+      "type": "service",
+      "name": "redis",
+      "filePath": "docker-compose.yml",
+      "lineRange": [19, 30],
+      "summary": "Redis 7 (alpine) service exposing port 6379 for caching/messaging, backed by a persistent volume and a redis-cli ping health check.",
+      "tags": ["redis", "cache", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:pyproject.toml",
+      "type": "config",
+      "name": "pyproject.toml",
+      "filePath": "pyproject.toml",
+      "summary": "Python project manifest for flash-research-api defining runtime dependencies (FastAPI, SQLAlchemy, Alembic, asyncpg, psycopg2-binary, pydantic-settings, uvicorn), dev dependencies (pytest, ruff, respx), and tool configuration for Ruff linting and pytest.",
+      "tags": ["configuration", "build-system", "dependencies", "python"],
+      "complexity": "simple",
+      "languageNotes": "Uses PEP 735 dependency-groups for dev dependencies and configures ruff lint rule sets (E, F, I, UP, B, SIM) with first-party import grouping for apps/packages."
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:.env.example",
+      "target": "service:docker-compose.yml:db",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.env.example",
+      "target": "service:docker-compose.yml:redis",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:db",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml",
+      "target": "service:docker-compose.yml:redis",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:db",
+      "target": "file:packages/core/db/session.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:db",
+      "target": "file:apps/api/core/config.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:docker-compose.yml:redis",
+      "target": "file:apps/api/core/config.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:alembic.ini",
+      "target": "service:docker-compose.yml:db",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:pyproject.toml",
+      "target": "file:apps/api/main.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:apps/api/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "service:docker-compose.yml",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "config:alembic.ini",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "config:.env.example",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "nodes": [
+    {
+      "id": "config:tests/fixtures/polygon_aggs_adjusted.json",
+      "type": "config",
+      "name": "polygon_aggs_adjusted.json",
+      "filePath": "tests/fixtures/polygon_aggs_adjusted.json",
+      "summary": "Static mock response fixture representing a Polygon.io aggregates (OHLCV bars) API reply with adjusted=true, used to stub network calls when testing the split/dividend-adjusted price path of the Polygon adapter.",
+      "tags": ["test-fixture", "mock-data", "polygon", "market-data", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:tests/fixtures/polygon_aggs_unadjusted.json",
+      "type": "config",
+      "name": "polygon_aggs_unadjusted.json",
+      "filePath": "tests/fixtures/polygon_aggs_unadjusted.json",
+      "summary": "Static mock response fixture representing a Polygon.io aggregates (OHLCV bars) API reply with adjusted=false, used to stub network calls when testing the raw (unadjusted) price path of the Polygon adapter.",
+      "tags": ["test-fixture", "mock-data", "polygon", "market-data", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:tests/fixtures/polygon_tickers.json",
+      "type": "config",
+      "name": "polygon_tickers.json",
+      "filePath": "tests/fixtures/polygon_tickers.json",
+      "summary": "Static mock response fixture listing sample Polygon.io tickers (active/delisted equities, a non-US-exchange listing, and an ETF) used to test ticker-universe filtering logic in the Polygon adapter without hitting the live API.",
+      "tags": ["test-fixture", "mock-data", "polygon", "market-data", "configuration"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:tests/fixtures/polygon_aggs_adjusted.json",
+      "target": "file:tests/test_polygon_adapter.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tests/fixtures/polygon_aggs_adjusted.json",
+      "target": "file:tests/test_polygon_adapter.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:tests/fixtures/polygon_aggs_unadjusted.json",
+      "target": "file:tests/test_polygon_adapter.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tests/fixtures/polygon_aggs_unadjusted.json",
+      "target": "file:tests/test_polygon_adapter.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:tests/fixtures/polygon_tickers.json",
+      "target": "file:tests/test_polygon_adapter.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tests/fixtures/polygon_tickers.json",
+      "target": "file:tests/test_polygon_adapter.py",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

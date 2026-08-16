@@ -1,0 +1,9 @@
+{
+  "projectRoot": "/Users/andrew/Documents/Projects/flash/FlashResearchPlatform-Backend",
+  "batchFiles": [
+    {"path": ".github/workflows/ci.yml", "language": "yaml", "sizeLines": 32, "fileCategory": "infra"}
+  ],
+  "batchImportData": {
+    ".github/workflows/ci.yml": []
+  }
+}

@@ -1,0 +1,627 @@
+[
+  {
+    "id": "file:packages/core/providers/base.py",
+    "type": "file",
+    "name": "base.py",
+    "filePath": "packages/core/providers/base.py",
+    "summary": "Defines the abstract MarketDataProvider port (hexagonal architecture) that all market data adapters must implement, decoupling the rest of the system from any specific data vendor.",
+    "tags": [
+      "interface",
+      "abstract-base-class",
+      "data-provider",
+      "port-adapter"
+    ]
+  },
+  {
+    "id": "file:packages/core/providers/polygon.py",
+    "type": "file",
+    "name": "polygon.py",
+    "filePath": "packages/core/providers/polygon.py",
+    "summary": "Concrete adapter implementing MarketDataProvider for Polygon.io, handling paginated instrument listing, adjusted/unadjusted EOD bar fetching, and translation of Polygon's raw JSON into canonical InstrumentDTO/OHLCVBar schemas.",
+    "tags": [
+      "api-handler",
+      "http-client",
+      "adapter",
+      "external-integration",
+      "data-provider",
+      "tested"
+    ]
+  },
+  {
+    "id": "file:packages/core/schemas/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "packages/core/schemas/__init__.py",
+    "summary": "Barrel module re-exporting the canonical InstrumentDTO, OHLCVBar, and Quote schemas as the package's public schema API.",
+    "tags": [
+      "barrel",
+      "entry-point",
+      "type-definition"
+    ]
+  },
+  {
+    "id": "file:packages/core/schemas/instrument.py",
+    "type": "file",
+    "name": "instrument.py",
+    "filePath": "packages/core/schemas/instrument.py",
+    "summary": "Defines the canonical, provider-agnostic InstrumentDTO pydantic model representing a tradable instrument, used as the common shape between data providers and the downstream catalog job.",
+    "tags": [
+      "data-model",
+      "type-definition",
+      "dto",
+      "pydantic"
+    ]
+  },
+  {
+    "id": "file:packages/core/schemas/market.py",
+    "type": "file",
+    "name": "market.py",
+    "filePath": "packages/core/schemas/market.py",
+    "summary": "Defines canonical OHLCVBar and Quote pydantic models for market data, using Decimal for monetary precision and validating OHLCV sanity (high >= low, non-negative volume).",
+    "tags": [
+      "data-model",
+      "type-definition",
+      "dto",
+      "validation"
+    ]
+  },
+  {
+    "id": "file:tests/test_polygon_adapter.py",
+    "type": "file",
+    "name": "test_polygon_adapter.py",
+    "filePath": "tests/test_polygon_adapter.py",
+    "summary": "Unit test suite for PolygonAdapter covering instrument parsing, adjusted/unadjusted bar merging, Decimal precision, pagination limits, and HTTP error handling, using respx-mocked responses and JSON fixtures.",
+    "tags": [
+      "test",
+      "unit-test",
+      "fixtures",
+      "http-mocking"
+    ]
+  },
+  {
+    "id": "file:migrations/env.py",
+    "type": "file",
+    "name": "env.py",
+    "filePath": "migrations/env.py",
+    "summary": "Alembic migration environment script that loads DATABASE_URL from the environment, wires SQLAlchemy's Base.metadata as the migration target, and dispatches to offline or online migration execution.",
+    "tags": [
+      "migration",
+      "database",
+      "alembic",
+      "entry-point",
+      "configuration"
+    ]
+  },
+  {
+    "id": "file:packages/core/models/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "packages/core/models/__init__.py",
+    "summary": "Package barrel for the core ORM models, re-exporting Base, Instrument, and Profile as the public surface of packages.core.models.",
+    "tags": [
+      "entry-point",
+      "barrel",
+      "data-model",
+      "package-init"
+    ]
+  },
+  {
+    "id": "file:packages/core/models/base.py",
+    "type": "file",
+    "name": "base.py",
+    "filePath": "packages/core/models/base.py",
+    "summary": "Defines the SQLAlchemy DeclarativeBase subclass that all ORM models inherit from, whose metadata registry is consumed by Alembic for autogenerate.",
+    "tags": [
+      "data-model",
+      "orm",
+      "base-class",
+      "database"
+    ]
+  },
+  {
+    "id": "file:packages/core/models/instrument.py",
+    "type": "file",
+    "name": "instrument.py",
+    "filePath": "packages/core/models/instrument.py",
+    "summary": "Defines the Instrument ORM model, the catalog of tradable tickers (ticker, exchange, sector, active/delisted status) with constraints and indexes for the market-scanning universe.",
+    "tags": [
+      "data-model",
+      "database",
+      "orm",
+      "table-definition",
+      "market-data"
+    ]
+  },
+  {
+    "id": "file:packages/core/models/profile.py",
+    "type": "file",
+    "name": "profile.py",
+    "filePath": "packages/core/models/profile.py",
+    "summary": "Defines the Profile ORM model, a 1:1 user profile linked to the auth user, storing display name and app settings as JSONB.",
+    "tags": [
+      "data-model",
+      "database",
+      "orm",
+      "user-profile"
+    ]
+  },
+  {
+    "id": "file:apps/api/main.py",
+    "type": "file",
+    "name": "main.py",
+    "filePath": "apps/api/main.py",
+    "summary": "FastAPI application entry point that instantiates the app and registers the health router.",
+    "tags": [
+      "entry-point",
+      "fastapi",
+      "bootstrap",
+      "api-handler",
+      "tested"
+    ]
+  },
+  {
+    "id": "file:apps/api/routers/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "apps/api/routers/__init__.py",
+    "summary": "Empty package marker file that makes apps/api/routers importable as a Python package.",
+    "tags": [
+      "package-init",
+      "empty",
+      "python-package"
+    ]
+  },
+  {
+    "id": "file:apps/api/routers/health.py",
+    "type": "file",
+    "name": "health.py",
+    "filePath": "apps/api/routers/health.py",
+    "summary": "Defines the health-check and root API routes used to verify the service is running.",
+    "tags": [
+      "api-handler",
+      "health-check",
+      "fastapi",
+      "router"
+    ]
+  },
+  {
+    "id": "file:tests/test_health.py",
+    "type": "file",
+    "name": "test_health.py",
+    "filePath": "tests/test_health.py",
+    "summary": "Integration test that exercises the FastAPI app via TestClient to confirm the /health endpoint returns a 200 status with the expected payload.",
+    "tags": [
+      "test",
+      "integration-test",
+      "health-check",
+      "fastapi"
+    ]
+  },
+  {
+    "id": "pipeline:.github/workflows/ci.yml",
+    "type": "pipeline",
+    "name": "ci.yml",
+    "filePath": ".github/workflows/ci.yml",
+    "summary": "GitHub Actions CI workflow (\"backend-ci\") that spins up a TimescaleDB service container and runs dependency sync, linting, database migrations, and the test suite on every pull request and push to main.",
+    "tags": [
+      "ci-cd",
+      "deployment",
+      "infrastructure",
+      "testing",
+      "database"
+    ]
+  },
+  {
+    "id": "step:.github/workflows/ci.yml:lint-test",
+    "type": "resource",
+    "name": "lint-test",
+    "filePath": ".github/workflows/ci.yml",
+    "summary": "CI job that runs on ubuntu-latest with a TimescaleDB Postgres service container, executing dependency install, lint, migration, and test steps against DATABASE_URL and REDIS_URL environment variables.",
+    "tags": [
+      "ci-cd",
+      "job",
+      "database",
+      "testing"
+    ]
+  },
+  {
+    "id": "step:.github/workflows/ci.yml:uv-sync",
+    "type": "resource",
+    "name": "uv sync",
+    "filePath": ".github/workflows/ci.yml",
+    "summary": "Installs project dependencies using the uv package manager as the first execution step of the CI job.",
+    "tags": [
+      "ci-cd",
+      "dependency-install",
+      "build-system"
+    ]
+  },
+  {
+    "id": "step:.github/workflows/ci.yml:ruff-check",
+    "type": "resource",
+    "name": "uv run ruff check .",
+    "filePath": ".github/workflows/ci.yml",
+    "summary": "Runs the ruff linter across the whole repository to enforce Python code style and catch static errors before merge.",
+    "tags": [
+      "ci-cd",
+      "linting",
+      "code-quality"
+    ]
+  },
+  {
+    "id": "step:.github/workflows/ci.yml:alembic-upgrade-head",
+    "type": "resource",
+    "name": "uv run alembic upgrade head",
+    "filePath": ".github/workflows/ci.yml",
+    "summary": "Applies all pending Alembic database migrations against the TimescaleDB service container to validate schema migrations in CI.",
+    "tags": [
+      "ci-cd",
+      "database",
+      "migration"
+    ]
+  },
+  {
+    "id": "step:.github/workflows/ci.yml:pytest",
+    "type": "resource",
+    "name": "uv run pytest",
+    "filePath": ".github/workflows/ci.yml",
+    "summary": "Runs the project's pytest test suite as the final verification step of the CI pipeline.",
+    "tags": [
+      "ci-cd",
+      "testing"
+    ]
+  },
+  {
+    "id": "config:.env.example",
+    "type": "config",
+    "name": ".env.example",
+    "filePath": ".env.example",
+    "summary": "Template for local environment variables (DATABASE_URL, REDIS_URL, DEBUG, POLYGON_API_KEY) that must be copied to .env and match the docker-compose services for local development.",
+    "tags": [
+      "configuration",
+      "environment-variables",
+      "database",
+      "redis"
+    ]
+  },
+  {
+    "id": "document:README.md",
+    "type": "document",
+    "name": "README.md",
+    "filePath": "README.md",
+    "summary": "Project overview and onboarding guide for the Flash Research API backend, covering the tech stack, local setup steps (uv sync, docker compose up, alembic upgrade), common commands, repo structure, and data conventions (numeric prices, no hard deletes for delisted instruments, Alembic-only schema changes).",
+    "tags": [
+      "documentation",
+      "entry-point",
+      "onboarding",
+      "conventions"
+    ]
+  },
+  {
+    "id": "config:alembic.ini",
+    "type": "config",
+    "name": "alembic.ini",
+    "filePath": "alembic.ini",
+    "summary": "Alembic migration tool configuration; sets the migration script location to migrations/ (via the %(here)s token) and leaves most options at their generic, commented-out defaults.",
+    "tags": [
+      "configuration",
+      "database",
+      "migration",
+      "alembic"
+    ]
+  },
+  {
+    "id": "service:docker-compose.yml",
+    "type": "service",
+    "name": "docker-compose.yml",
+    "filePath": "docker-compose.yml",
+    "summary": "Docker Compose definition for local infrastructure: a TimescaleDB-on-Postgres 17 database service and a Redis 7 cache/bus service, each with health checks and persistent named volumes.",
+    "tags": [
+      "containerization",
+      "infrastructure",
+      "orchestration",
+      "database",
+      "redis"
+    ]
+  },
+  {
+    "id": "service:docker-compose.yml:db",
+    "type": "service",
+    "name": "db",
+    "filePath": "docker-compose.yml",
+    "summary": "TimescaleDB (Postgres 17) service exposing port 5432 with user flash / password flash_dev_pw / database flash_research, backed by a persistent volume and a pg_isready health check.",
+    "tags": [
+      "database",
+      "timescaledb",
+      "postgres",
+      "infrastructure"
+    ]
+  },
+  {
+    "id": "service:docker-compose.yml:redis",
+    "type": "service",
+    "name": "redis",
+    "filePath": "docker-compose.yml",
+    "summary": "Redis 7 (alpine) service exposing port 6379 for caching/messaging, backed by a persistent volume and a redis-cli ping health check.",
+    "tags": [
+      "redis",
+      "cache",
+      "infrastructure"
+    ]
+  },
+  {
+    "id": "config:pyproject.toml",
+    "type": "config",
+    "name": "pyproject.toml",
+    "filePath": "pyproject.toml",
+    "summary": "Python project manifest for flash-research-api defining runtime dependencies (FastAPI, SQLAlchemy, Alembic, asyncpg, psycopg2-binary, pydantic-settings, uvicorn), dev dependencies (pytest, ruff, respx), and tool configuration for Ruff linting and pytest.",
+    "tags": [
+      "configuration",
+      "build-system",
+      "dependencies",
+      "python"
+    ]
+  },
+  {
+    "id": "config:tests/fixtures/polygon_aggs_adjusted.json",
+    "type": "config",
+    "name": "polygon_aggs_adjusted.json",
+    "filePath": "tests/fixtures/polygon_aggs_adjusted.json",
+    "summary": "Static mock response fixture representing a Polygon.io aggregates (OHLCV bars) API reply with adjusted=true, used to stub network calls when testing the split/dividend-adjusted price path of the Polygon adapter.",
+    "tags": [
+      "test-fixture",
+      "mock-data",
+      "polygon",
+      "market-data",
+      "configuration"
+    ]
+  },
+  {
+    "id": "config:tests/fixtures/polygon_aggs_unadjusted.json",
+    "type": "config",
+    "name": "polygon_aggs_unadjusted.json",
+    "filePath": "tests/fixtures/polygon_aggs_unadjusted.json",
+    "summary": "Static mock response fixture representing a Polygon.io aggregates (OHLCV bars) API reply with adjusted=false, used to stub network calls when testing the raw (unadjusted) price path of the Polygon adapter.",
+    "tags": [
+      "test-fixture",
+      "mock-data",
+      "polygon",
+      "market-data",
+      "configuration"
+    ]
+  },
+  {
+    "id": "config:tests/fixtures/polygon_tickers.json",
+    "type": "config",
+    "name": "polygon_tickers.json",
+    "filePath": "tests/fixtures/polygon_tickers.json",
+    "summary": "Static mock response fixture listing sample Polygon.io tickers (active/delisted equities, a non-US-exchange listing, and an ETF) used to test ticker-universe filtering logic in the Polygon adapter without hitting the live API.",
+    "tags": [
+      "test-fixture",
+      "mock-data",
+      "polygon",
+      "market-data",
+      "configuration"
+    ]
+  },
+  {
+    "id": "file:.python-version",
+    "type": "file",
+    "name": ".python-version",
+    "filePath": ".python-version",
+    "summary": "Pins the project's Python interpreter version (3.13) for version managers such as pyenv and uv.",
+    "tags": [
+      "configuration",
+      "python-version",
+      "build-system"
+    ]
+  },
+  {
+    "id": "file:apps/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "apps/__init__.py",
+    "summary": "Empty package marker turning `apps` into a Python package containing the API and worker applications.",
+    "tags": [
+      "package-init"
+    ]
+  },
+  {
+    "id": "file:apps/api/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "apps/api/__init__.py",
+    "summary": "Empty package marker turning `apps.api` into a Python package for the FastAPI application code.",
+    "tags": [
+      "package-init"
+    ]
+  },
+  {
+    "id": "file:apps/api/core/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "apps/api/core/__init__.py",
+    "summary": "Empty package marker turning `apps.api.core` into a Python package for core API infrastructure such as settings.",
+    "tags": [
+      "package-init"
+    ]
+  },
+  {
+    "id": "file:apps/api/core/config.py",
+    "type": "file",
+    "name": "config.py",
+    "filePath": "apps/api/core/config.py",
+    "summary": "Defines the Settings class (pydantic-settings) that loads database, Redis, debug, and Polygon.io API configuration from environment variables / .env, and exposes a module-level `settings` singleton used across the app.",
+    "tags": [
+      "configuration",
+      "settings",
+      "pydantic",
+      "environment"
+    ]
+  },
+  {
+    "id": "file:apps/worker/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "apps/worker/__init__.py",
+    "summary": "Empty package marker turning `apps.worker` into a Python package for the background worker process.",
+    "tags": [
+      "package-init"
+    ]
+  },
+  {
+    "id": "file:apps/worker/main.py",
+    "type": "file",
+    "name": "main.py",
+    "filePath": "apps/worker/main.py",
+    "summary": "Worker process entry point; configures basic logging and logs a startup message when run directly as a script.",
+    "tags": [
+      "entry-point",
+      "worker",
+      "logging"
+    ]
+  },
+  {
+    "id": "file:migrations/README",
+    "type": "file",
+    "name": "README",
+    "filePath": "migrations/README",
+    "summary": "Minimal Alembic README noting this is a generic single-database migration environment configuration.",
+    "tags": [
+      "documentation",
+      "alembic",
+      "migrations"
+    ]
+  },
+  {
+    "id": "file:migrations/script.py.mako",
+    "type": "file",
+    "name": "script.py.mako",
+    "filePath": "migrations/script.py.mako",
+    "summary": "Alembic Mako template used to scaffold new migration revision files, generating the revision metadata header plus empty upgrade/downgrade function stubs.",
+    "tags": [
+      "template",
+      "migration",
+      "code-generation",
+      "alembic"
+    ]
+  },
+  {
+    "id": "file:migrations/versions/0001_initial_schema.py",
+    "type": "file",
+    "name": "0001_initial_schema.py",
+    "filePath": "migrations/versions/0001_initial_schema.py",
+    "summary": "Initial Alembic migration that enables the TimescaleDB extension and creates the `profiles` and `instruments` tables with update-timestamp triggers, indexes, and row-level security policies restricting profile access to the owning user while allowing public read of the instrument catalog.",
+    "tags": [
+      "database",
+      "migration",
+      "schema",
+      "row-level-security"
+    ]
+  },
+  {
+    "id": "file:migrations/versions/0002_add_instrument_type.py",
+    "type": "file",
+    "name": "0002_add_instrument_type.py",
+    "filePath": "migrations/versions/0002_add_instrument_type.py",
+    "summary": "Alembic migration adding a nullable `type` text column to the `instruments` table to capture the data provider's raw instrument classification (e.g. common stock, ETF, ADR) for universe filtering.",
+    "tags": [
+      "database",
+      "migration",
+      "schema-change"
+    ]
+  },
+  {
+    "id": "file:packages/core/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "packages/core/__init__.py",
+    "summary": "Empty package marker turning `packages.core` into a Python package for shared core infrastructure (db, providers).",
+    "tags": [
+      "package-init"
+    ]
+  },
+  {
+    "id": "file:packages/core/db/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "packages/core/db/__init__.py",
+    "summary": "Empty package marker turning `packages.core.db` into a Python package for database session and engine setup.",
+    "tags": [
+      "package-init"
+    ]
+  },
+  {
+    "id": "file:packages/core/db/session.py",
+    "type": "file",
+    "name": "session.py",
+    "filePath": "packages/core/db/session.py",
+    "summary": "Defines the shared async SQLAlchemy engine and session factory (asyncpg driver) intended for use by the API and worker processes, forcing the async driver scheme even if DATABASE_URL specifies the sync `postgresql://` form used by Alembic.",
+    "tags": [
+      "database",
+      "sqlalchemy",
+      "async",
+      "session-factory"
+    ]
+  },
+  {
+    "id": "file:packages/core/providers/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "packages/core/providers/__init__.py",
+    "summary": "Empty package marker turning `packages.core.providers` into a Python package for market data provider adapters.",
+    "tags": [
+      "package-init"
+    ]
+  },
+  {
+    "id": "file:scripts/smoke_polygon.py",
+    "type": "file",
+    "name": "smoke_polygon.py",
+    "filePath": "scripts/smoke_polygon.py",
+    "summary": "Manual smoke-test script that exercises the Polygon adapter against the live Polygon.io API, fetching EOD bars for AAPL and listing active instruments to visually verify the integration works end-to-end.",
+    "tags": [
+      "script",
+      "smoke-test",
+      "polygon-api",
+      "manual-test"
+    ]
+  },
+  {
+    "id": "file:tests/__init__.py",
+    "type": "file",
+    "name": "__init__.py",
+    "filePath": "tests/__init__.py",
+    "summary": "Empty package marker turning `tests` into a Python package for the project's test suite.",
+    "tags": [
+      "test",
+      "package-init"
+    ]
+  },
+  {
+    "id": "table:migrations/versions/0001_initial_schema.py:profiles",
+    "type": "table",
+    "name": "profiles",
+    "filePath": "migrations/versions/0001_initial_schema.py",
+    "summary": "User profile table (1:1 with an auth user) storing display name and a JSONB settings blob, protected by row-level security policies that scope select/update/insert to the owning user.",
+    "tags": [
+      "database",
+      "table",
+      "user-data",
+      "row-level-security"
+    ]
+  },
+  {
+    "id": "table:migrations/versions/0001_initial_schema.py:instruments",
+    "type": "table",
+    "name": "instruments",
+    "filePath": "migrations/versions/0001_initial_schema.py",
+    "summary": "Public catalog of tradable instruments (ticker, name, exchange, sector, industry, active/delisted status) with RLS allowing public read access; rows are never deleted, only marked inactive, to avoid survivorship bias in backtests.",
+    "tags": [
+      "database",
+      "table",
+      "market-data",
+      "reference-data"
+    ]
+  }
+]

@@ -1,0 +1,751 @@
+[
+  {
+    "source": "file:packages/core/providers/base.py",
+    "target": "file:packages/core/schemas/__init__.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/providers/polygon.py",
+    "target": "file:packages/core/providers/base.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/providers/polygon.py",
+    "target": "file:packages/core/schemas/__init__.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/schemas/__init__.py",
+    "target": "file:packages/core/schemas/instrument.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/schemas/__init__.py",
+    "target": "file:packages/core/schemas/market.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:tests/test_polygon_adapter.py",
+    "target": "file:packages/core/providers/polygon.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/providers/base.py",
+    "target": "class:packages/core/providers/base.py:MarketDataProvider",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:packages/core/providers/polygon.py",
+    "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:packages/core/schemas/instrument.py",
+    "target": "class:packages/core/schemas/instrument.py:InstrumentDTO",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:packages/core/schemas/market.py",
+    "target": "class:packages/core/schemas/market.py:OHLCVBar",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:packages/core/schemas/market.py",
+    "target": "class:packages/core/schemas/market.py:Quote",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:tests/test_polygon_adapter.py",
+    "target": "function:tests/test_polygon_adapter.py:test_parse_instruments_maps_exchange_and_active",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:tests/test_polygon_adapter.py",
+    "target": "function:tests/test_polygon_adapter.py:test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:tests/test_polygon_adapter.py",
+    "target": "function:tests/test_polygon_adapter.py:test_merge_bars_matches_by_timestamp",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:tests/test_polygon_adapter.py",
+    "target": "function:tests/test_polygon_adapter.py:test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:tests/test_polygon_adapter.py",
+    "target": "function:tests/test_polygon_adapter.py:test_list_instruments_respects_max_pages",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:packages/core/providers/base.py",
+    "target": "class:packages/core/providers/base.py:MarketDataProvider",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/providers/polygon.py",
+    "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/schemas/instrument.py",
+    "target": "class:packages/core/schemas/instrument.py:InstrumentDTO",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/schemas/market.py",
+    "target": "class:packages/core/schemas/market.py:OHLCVBar",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/schemas/market.py",
+    "target": "class:packages/core/schemas/market.py:Quote",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "target": "class:packages/core/providers/base.py:MarketDataProvider",
+    "type": "inherits",
+    "direction": "forward",
+    "weight": 0.9
+  },
+  {
+    "source": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "target": "class:packages/core/schemas/instrument.py:InstrumentDTO",
+    "type": "calls",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "target": "class:packages/core/schemas/market.py:OHLCVBar",
+    "type": "calls",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "function:tests/test_polygon_adapter.py:test_parse_instruments_maps_exchange_and_active",
+    "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "type": "calls",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "function:tests/test_polygon_adapter.py:test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+    "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "type": "calls",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "function:tests/test_polygon_adapter.py:test_merge_bars_matches_by_timestamp",
+    "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "type": "calls",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "function:tests/test_polygon_adapter.py:test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+    "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "type": "calls",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "function:tests/test_polygon_adapter.py:test_list_instruments_respects_max_pages",
+    "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "type": "calls",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/providers/polygon.py",
+    "target": "file:tests/test_polygon_adapter.py",
+    "type": "tested_by",
+    "direction": "forward",
+    "weight": 0.5
+  },
+  {
+    "source": "file:migrations/env.py",
+    "target": "file:packages/core/models/__init__.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/__init__.py",
+    "target": "file:packages/core/models/base.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/__init__.py",
+    "target": "file:packages/core/models/instrument.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/__init__.py",
+    "target": "file:packages/core/models/profile.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/instrument.py",
+    "target": "file:packages/core/models/base.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/models/profile.py",
+    "target": "file:packages/core/models/base.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:migrations/env.py",
+    "target": "function:migrations/env.py:run_migrations_offline",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:migrations/env.py",
+    "target": "function:migrations/env.py:run_migrations_online",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:migrations/env.py",
+    "target": "function:migrations/env.py:run_migrations_offline",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:migrations/env.py",
+    "target": "function:migrations/env.py:run_migrations_online",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/models/base.py",
+    "target": "class:packages/core/models/base.py:Base",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:packages/core/models/base.py",
+    "target": "class:packages/core/models/base.py:Base",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/models/instrument.py",
+    "target": "class:packages/core/models/instrument.py:Instrument",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:packages/core/models/instrument.py",
+    "target": "class:packages/core/models/instrument.py:Instrument",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/models/profile.py",
+    "target": "class:packages/core/models/profile.py:Profile",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:packages/core/models/profile.py",
+    "target": "class:packages/core/models/profile.py:Profile",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "class:packages/core/models/instrument.py:Instrument",
+    "target": "class:packages/core/models/base.py:Base",
+    "type": "inherits",
+    "direction": "forward",
+    "weight": 0.9
+  },
+  {
+    "source": "class:packages/core/models/profile.py:Profile",
+    "target": "class:packages/core/models/base.py:Base",
+    "type": "inherits",
+    "direction": "forward",
+    "weight": 0.9
+  },
+  {
+    "source": "file:packages/core/models/__init__.py",
+    "target": "class:packages/core/models/base.py:Base",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/models/__init__.py",
+    "target": "class:packages/core/models/instrument.py:Instrument",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:packages/core/models/__init__.py",
+    "target": "class:packages/core/models/profile.py:Profile",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:apps/api/main.py",
+    "target": "file:apps/api/routers/__init__.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:apps/api/main.py",
+    "target": "file:apps/api/routers/health.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:tests/test_health.py",
+    "target": "file:apps/api/main.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:apps/api/routers/health.py",
+    "target": "function:apps/api/routers/health.py:health_check",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:apps/api/routers/health.py",
+    "target": "function:apps/api/routers/health.py:root",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:apps/api/routers/health.py",
+    "target": "function:apps/api/routers/health.py:health_check",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:apps/api/routers/health.py",
+    "target": "function:apps/api/routers/health.py:root",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:tests/test_health.py",
+    "target": "function:tests/test_health.py:test_health_returns_ok",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:apps/api/main.py",
+    "target": "file:tests/test_health.py",
+    "type": "tested_by",
+    "direction": "forward",
+    "weight": 0.5
+  },
+  {
+    "source": "pipeline:.github/workflows/ci.yml",
+    "target": "step:.github/workflows/ci.yml:lint-test",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "step:.github/workflows/ci.yml:lint-test",
+    "target": "step:.github/workflows/ci.yml:uv-sync",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "step:.github/workflows/ci.yml:lint-test",
+    "target": "step:.github/workflows/ci.yml:ruff-check",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "step:.github/workflows/ci.yml:lint-test",
+    "target": "step:.github/workflows/ci.yml:alembic-upgrade-head",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "step:.github/workflows/ci.yml:lint-test",
+    "target": "step:.github/workflows/ci.yml:pytest",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "step:.github/workflows/ci.yml:uv-sync",
+    "target": "step:.github/workflows/ci.yml:ruff-check",
+    "type": "depends_on",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "step:.github/workflows/ci.yml:ruff-check",
+    "target": "step:.github/workflows/ci.yml:alembic-upgrade-head",
+    "type": "depends_on",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "step:.github/workflows/ci.yml:alembic-upgrade-head",
+    "target": "step:.github/workflows/ci.yml:pytest",
+    "type": "depends_on",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "config:.env.example",
+    "target": "service:docker-compose.yml:db",
+    "type": "configures",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "config:.env.example",
+    "target": "service:docker-compose.yml:redis",
+    "type": "configures",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "service:docker-compose.yml",
+    "target": "service:docker-compose.yml:db",
+    "type": "depends_on",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "service:docker-compose.yml",
+    "target": "service:docker-compose.yml:redis",
+    "type": "depends_on",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "service:docker-compose.yml:db",
+    "target": "file:packages/core/db/session.py",
+    "type": "configures",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "service:docker-compose.yml:db",
+    "target": "file:apps/api/core/config.py",
+    "type": "configures",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "service:docker-compose.yml:redis",
+    "target": "file:apps/api/core/config.py",
+    "type": "configures",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "config:alembic.ini",
+    "target": "service:docker-compose.yml:db",
+    "type": "depends_on",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "config:pyproject.toml",
+    "target": "file:apps/api/main.py",
+    "type": "configures",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "document:README.md",
+    "target": "file:apps/api/main.py",
+    "type": "documents",
+    "direction": "forward",
+    "weight": 0.5
+  },
+  {
+    "source": "document:README.md",
+    "target": "service:docker-compose.yml",
+    "type": "documents",
+    "direction": "forward",
+    "weight": 0.5
+  },
+  {
+    "source": "document:README.md",
+    "target": "config:alembic.ini",
+    "type": "documents",
+    "direction": "forward",
+    "weight": 0.5
+  },
+  {
+    "source": "document:README.md",
+    "target": "config:.env.example",
+    "type": "documents",
+    "direction": "forward",
+    "weight": 0.5
+  },
+  {
+    "source": "config:tests/fixtures/polygon_aggs_adjusted.json",
+    "target": "file:tests/test_polygon_adapter.py",
+    "type": "configures",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "config:tests/fixtures/polygon_aggs_unadjusted.json",
+    "target": "file:tests/test_polygon_adapter.py",
+    "type": "configures",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "config:tests/fixtures/polygon_tickers.json",
+    "target": "file:tests/test_polygon_adapter.py",
+    "type": "configures",
+    "direction": "forward",
+    "weight": 0.6
+  },
+  {
+    "source": "file:scripts/smoke_polygon.py",
+    "target": "file:apps/api/core/config.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:scripts/smoke_polygon.py",
+    "target": "file:packages/core/providers/polygon.py",
+    "type": "imports",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:apps/api/core/config.py",
+    "target": "class:apps/api/core/config.py:Settings",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:apps/api/core/config.py",
+    "target": "class:apps/api/core/config.py:Settings",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:apps/worker/main.py",
+    "target": "function:apps/worker/main.py:main",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:apps/worker/main.py",
+    "target": "function:apps/worker/main.py:main",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:migrations/versions/0001_initial_schema.py",
+    "target": "function:migrations/versions/0001_initial_schema.py:upgrade",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:migrations/versions/0001_initial_schema.py",
+    "target": "function:migrations/versions/0001_initial_schema.py:upgrade",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:migrations/versions/0001_initial_schema.py",
+    "target": "function:migrations/versions/0001_initial_schema.py:downgrade",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:migrations/versions/0001_initial_schema.py",
+    "target": "function:migrations/versions/0001_initial_schema.py:downgrade",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:migrations/versions/0001_initial_schema.py",
+    "target": "table:migrations/versions/0001_initial_schema.py:profiles",
+    "type": "migrates",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:migrations/versions/0001_initial_schema.py",
+    "target": "table:migrations/versions/0001_initial_schema.py:instruments",
+    "type": "migrates",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:migrations/versions/0002_add_instrument_type.py",
+    "target": "function:migrations/versions/0002_add_instrument_type.py:upgrade",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:migrations/versions/0002_add_instrument_type.py",
+    "target": "function:migrations/versions/0002_add_instrument_type.py:upgrade",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:migrations/versions/0002_add_instrument_type.py",
+    "target": "function:migrations/versions/0002_add_instrument_type.py:downgrade",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:migrations/versions/0002_add_instrument_type.py",
+    "target": "function:migrations/versions/0002_add_instrument_type.py:downgrade",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:migrations/versions/0002_add_instrument_type.py",
+    "target": "table:migrations/versions/0001_initial_schema.py:instruments",
+    "type": "migrates",
+    "direction": "forward",
+    "weight": 0.7
+  },
+  {
+    "source": "file:packages/core/db/session.py",
+    "target": "function:packages/core/db/session.py:_async_url",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:scripts/smoke_polygon.py",
+    "target": "function:scripts/smoke_polygon.py:main",
+    "type": "contains",
+    "direction": "forward",
+    "weight": 1.0
+  },
+  {
+    "source": "file:scripts/smoke_polygon.py",
+    "target": "function:scripts/smoke_polygon.py:main",
+    "type": "exports",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "function:scripts/smoke_polygon.py:main",
+    "target": "class:packages/core/providers/polygon.py:PolygonAdapter",
+    "type": "calls",
+    "direction": "forward",
+    "weight": 0.8
+  },
+  {
+    "source": "file:migrations/script.py.mako",
+    "target": "file:migrations/versions/0001_initial_schema.py",
+    "type": "related",
+    "direction": "forward",
+    "weight": 0.5
+  },
+  {
+    "source": "file:migrations/script.py.mako",
+    "target": "file:migrations/versions/0002_add_instrument_type.py",
+    "type": "related",
+    "direction": "forward",
+    "weight": 0.5
+  }
+]

@@ -1,0 +1,542 @@
+{
+  "scriptCompleted": true,
+  "entryPointCandidates": [
+    {
+      "id": "document:README.md",
+      "score": 5,
+      "name": "README.md",
+      "summary": "Project overview and onboarding guide covering stack, setup steps, commands, structure, and data conventions."
+    },
+    {
+      "id": "file:apps/api/main.py",
+      "score": 4,
+      "name": "main.py",
+      "summary": "FastAPI application entry point that instantiates the app and registers the health router."
+    },
+    {
+      "id": "file:apps/worker/main.py",
+      "score": 4,
+      "name": "main.py",
+      "summary": "Worker process entry point — skeleton, logs startup only, no business logic yet."
+    },
+    {
+      "id": "file:migrations/env.py",
+      "score": 2,
+      "name": "env.py",
+      "summary": "Alembic migration environment script wiring SQLAlchemy's Base.metadata as the migration target."
+    },
+    {
+      "id": "file:scripts/smoke_polygon.py",
+      "score": 2,
+      "name": "smoke_polygon.py",
+      "summary": "Manual smoke-test script exercising the Polygon adapter against the live API."
+    }
+  ],
+  "fanInRanking": [
+    {
+      "id": "file:tests/test_polygon_adapter.py",
+      "fanIn": 4,
+      "name": "test_polygon_adapter.py"
+    },
+    {
+      "id": "file:packages/core/models/base.py",
+      "fanIn": 3,
+      "name": "base.py"
+    },
+    {
+      "id": "file:apps/api/main.py",
+      "fanIn": 3,
+      "name": "main.py"
+    },
+    {
+      "id": "file:apps/api/core/config.py",
+      "fanIn": 3,
+      "name": "config.py"
+    },
+    {
+      "id": "file:packages/core/providers/polygon.py",
+      "fanIn": 2,
+      "name": "polygon.py"
+    },
+    {
+      "id": "file:packages/core/schemas/__init__.py",
+      "fanIn": 2,
+      "name": "__init__.py"
+    },
+    {
+      "id": "table:migrations/versions/0001_initial_schema.py:instruments",
+      "fanIn": 2,
+      "name": "instruments"
+    },
+    {
+      "id": "file:packages/core/providers/base.py",
+      "fanIn": 1,
+      "name": "base.py"
+    },
+    {
+      "id": "file:packages/core/schemas/instrument.py",
+      "fanIn": 1,
+      "name": "instrument.py"
+    },
+    {
+      "id": "file:packages/core/schemas/market.py",
+      "fanIn": 1,
+      "name": "market.py"
+    },
+    {
+      "id": "file:packages/core/models/__init__.py",
+      "fanIn": 1,
+      "name": "__init__.py"
+    },
+    {
+      "id": "file:packages/core/models/instrument.py",
+      "fanIn": 1,
+      "name": "instrument.py"
+    },
+    {
+      "id": "file:packages/core/models/profile.py",
+      "fanIn": 1,
+      "name": "profile.py"
+    },
+    {
+      "id": "file:apps/api/routers/__init__.py",
+      "fanIn": 1,
+      "name": "__init__.py"
+    },
+    {
+      "id": "file:apps/api/routers/health.py",
+      "fanIn": 1,
+      "name": "health.py"
+    },
+    {
+      "id": "file:tests/test_health.py",
+      "fanIn": 1,
+      "name": "test_health.py"
+    },
+    {
+      "id": "config:.env.example",
+      "fanIn": 1,
+      "name": ".env.example"
+    },
+    {
+      "id": "config:alembic.ini",
+      "fanIn": 1,
+      "name": "alembic.ini"
+    },
+    {
+      "id": "service:docker-compose.yml",
+      "fanIn": 1,
+      "name": "docker-compose.yml"
+    },
+    {
+      "id": "file:migrations/versions/0001_initial_schema.py",
+      "fanIn": 1,
+      "name": "0001_initial_schema.py"
+    }
+  ],
+  "fanOutRanking": [
+    {
+      "id": "document:README.md",
+      "fanOut": 4,
+      "name": "README.md"
+    },
+    {
+      "id": "file:packages/core/providers/polygon.py",
+      "fanOut": 3,
+      "name": "polygon.py"
+    },
+    {
+      "id": "file:packages/core/models/__init__.py",
+      "fanOut": 3,
+      "name": "__init__.py"
+    },
+    {
+      "id": "file:apps/api/main.py",
+      "fanOut": 3,
+      "name": "main.py"
+    },
+    {
+      "id": "file:packages/core/schemas/__init__.py",
+      "fanOut": 2,
+      "name": "__init__.py"
+    },
+    {
+      "id": "config:.env.example",
+      "fanOut": 2,
+      "name": ".env.example"
+    },
+    {
+      "id": "file:migrations/versions/0001_initial_schema.py",
+      "fanOut": 2,
+      "name": "0001_initial_schema.py"
+    },
+    {
+      "id": "file:scripts/smoke_polygon.py",
+      "fanOut": 2,
+      "name": "smoke_polygon.py"
+    },
+    {
+      "id": "file:packages/core/providers/base.py",
+      "fanOut": 1,
+      "name": "base.py"
+    },
+    {
+      "id": "file:tests/test_polygon_adapter.py",
+      "fanOut": 1,
+      "name": "test_polygon_adapter.py"
+    },
+    {
+      "id": "file:migrations/env.py",
+      "fanOut": 1,
+      "name": "env.py"
+    },
+    {
+      "id": "file:packages/core/models/instrument.py",
+      "fanOut": 1,
+      "name": "instrument.py"
+    },
+    {
+      "id": "file:packages/core/models/profile.py",
+      "fanOut": 1,
+      "name": "profile.py"
+    },
+    {
+      "id": "file:tests/test_health.py",
+      "fanOut": 1,
+      "name": "test_health.py"
+    },
+    {
+      "id": "pipeline:.github/workflows/ci.yml",
+      "fanOut": 1,
+      "name": "ci.yml"
+    },
+    {
+      "id": "config:alembic.ini",
+      "fanOut": 1,
+      "name": "alembic.ini"
+    },
+    {
+      "id": "config:pyproject.toml",
+      "fanOut": 1,
+      "name": "pyproject.toml"
+    },
+    {
+      "id": "config:tests/fixtures/polygon_aggs_adjusted.json",
+      "fanOut": 1,
+      "name": "polygon_aggs_adjusted.json"
+    },
+    {
+      "id": "config:tests/fixtures/polygon_aggs_unadjusted.json",
+      "fanOut": 1,
+      "name": "polygon_aggs_unadjusted.json"
+    },
+    {
+      "id": "config:tests/fixtures/polygon_tickers.json",
+      "fanOut": 1,
+      "name": "polygon_tickers.json"
+    }
+  ],
+  "bfsTraversal": {
+    "startNode": "file:apps/api/main.py",
+    "order": [
+      "file:apps/api/main.py",
+      "file:apps/api/routers/__init__.py",
+      "file:apps/api/routers/health.py"
+    ],
+    "depthMap": {
+      "file:apps/api/main.py": 0,
+      "file:apps/api/routers/__init__.py": 1,
+      "file:apps/api/routers/health.py": 1
+    },
+    "byDepth": {
+      "0": [
+        "file:apps/api/main.py"
+      ],
+      "1": [
+        "file:apps/api/routers/__init__.py",
+        "file:apps/api/routers/health.py"
+      ]
+    }
+  },
+  "nonCodeFiles": {
+    "documentation": [
+      {
+        "id": "document:README.md",
+        "name": "README.md",
+        "type": "document",
+        "summary": "Project overview and onboarding guide covering stack, setup steps, commands, structure, and data conventions."
+      }
+    ],
+    "infrastructure": [
+      {
+        "id": "pipeline:.github/workflows/ci.yml",
+        "name": "ci.yml",
+        "type": "pipeline",
+        "summary": "GitHub Actions CI workflow running sync, lint, migrations, and tests against a TimescaleDB service container."
+      },
+      {
+        "id": "service:docker-compose.yml",
+        "name": "docker-compose.yml",
+        "type": "service",
+        "summary": "Docker Compose definition for local TimescaleDB and Redis infrastructure."
+      }
+    ],
+    "data": [
+      {
+        "id": "table:migrations/versions/0001_initial_schema.py:profiles",
+        "name": "profiles",
+        "type": "table",
+        "summary": "User profile table with RLS scoping access to the owning user."
+      },
+      {
+        "id": "table:migrations/versions/0001_initial_schema.py:instruments",
+        "name": "instruments",
+        "type": "table",
+        "summary": "Public catalog of tradable instruments; rows never deleted, only marked inactive."
+      }
+    ],
+    "config": [
+      {
+        "id": "config:.env.example",
+        "name": ".env.example",
+        "type": "config",
+        "summary": "Template for local environment variables (DATABASE_URL, REDIS_URL, DEBUG, POLYGON_API_KEY)."
+      },
+      {
+        "id": "config:alembic.ini",
+        "name": "alembic.ini",
+        "type": "config",
+        "summary": "Alembic migration tool configuration."
+      },
+      {
+        "id": "config:pyproject.toml",
+        "name": "pyproject.toml",
+        "type": "config",
+        "summary": "Python project manifest with dependencies and tool config (Ruff, pytest)."
+      },
+      {
+        "id": "config:tests/fixtures/polygon_aggs_adjusted.json",
+        "name": "polygon_aggs_adjusted.json",
+        "type": "config",
+        "summary": "Mock Polygon aggregates fixture, adjusted=true."
+      },
+      {
+        "id": "config:tests/fixtures/polygon_aggs_unadjusted.json",
+        "name": "polygon_aggs_unadjusted.json",
+        "type": "config",
+        "summary": "Mock Polygon aggregates fixture, adjusted=false."
+      },
+      {
+        "id": "config:tests/fixtures/polygon_tickers.json",
+        "name": "polygon_tickers.json",
+        "type": "config",
+        "summary": "Mock Polygon tickers fixture."
+      }
+    ]
+  },
+  "clusters": [],
+  "layers": {
+    "count": 7,
+    "list": [
+      {
+        "id": "layer:api",
+        "name": "Application Layer",
+        "description": "The two deployable Python processes (FastAPI API and background worker) — app bootstrap, health-check routing, and settings."
+      },
+      {
+        "id": "layer:provider",
+        "name": "Market Data Provider Layer",
+        "description": "The hexagonal port/adapter boundary for external market data — MarketDataProvider port and the Polygon.io adapter."
+      },
+      {
+        "id": "layer:types",
+        "name": "Schema / DTO Layer",
+        "description": "Canonical, provider-agnostic pydantic data shapes forming the contract between providers and downstream consumers."
+      },
+      {
+        "id": "layer:data",
+        "name": "Data Layer",
+        "description": "Persistence: SQLAlchemy ORM models, async DB session factory, and Alembic migration history."
+      },
+      {
+        "id": "layer:test",
+        "name": "Testing Layer",
+        "description": "Automated pytest coverage, JSON fixtures, and the manual smoke-test script."
+      },
+      {
+        "id": "layer:infrastructure",
+        "name": "Infrastructure & Configuration",
+        "description": "Root-level project setup: docker-compose, env/alembic templates, dependency manifest, README."
+      },
+      {
+        "id": "layer:ci-cd",
+        "name": "CI/CD Pipeline",
+        "description": "GitHub Actions workflow gating pull requests against a TimescaleDB service container."
+      }
+    ]
+  },
+  "nodeSummaryIndex": {
+    "file:packages/core/providers/base.py": {
+      "name": "base.py",
+      "type": "file",
+      "summary": "Defines the abstract MarketDataProvider port (hexagonal architecture) that all market data adapters must implement, decoupling the rest of the system from any specific data vendor."
+    },
+    "file:packages/core/providers/polygon.py": {
+      "name": "polygon.py",
+      "type": "file",
+      "summary": "Concrete adapter implementing MarketDataProvider for Polygon.io, handling paginated instrument listing, adjusted/unadjusted EOD bar fetching, and translation of raw JSON into canonical DTOs."
+    },
+    "file:packages/core/schemas/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "Barrel module re-exporting InstrumentDTO, OHLCVBar, and Quote as the public schema API."
+    },
+    "file:packages/core/schemas/instrument.py": {
+      "name": "instrument.py",
+      "type": "file",
+      "summary": "Canonical, provider-agnostic InstrumentDTO pydantic model."
+    },
+    "file:packages/core/schemas/market.py": {
+      "name": "market.py",
+      "type": "file",
+      "summary": "Canonical OHLCVBar and Quote pydantic models using Decimal for monetary precision."
+    },
+    "file:tests/test_polygon_adapter.py": {
+      "name": "test_polygon_adapter.py",
+      "type": "file",
+      "summary": "Unit test suite for PolygonAdapter, using respx-mocked responses and JSON fixtures."
+    },
+    "file:migrations/env.py": {
+      "name": "env.py",
+      "type": "file",
+      "summary": "Alembic migration environment script wiring SQLAlchemy's Base.metadata as the migration target."
+    },
+    "file:packages/core/models/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "Package barrel re-exporting Base, Instrument, and Profile ORM models."
+    },
+    "file:packages/core/models/base.py": {
+      "name": "base.py",
+      "type": "file",
+      "summary": "SQLAlchemy DeclarativeBase subclass that all ORM models inherit from."
+    },
+    "file:packages/core/models/instrument.py": {
+      "name": "instrument.py",
+      "type": "file",
+      "summary": "Instrument ORM model — catalog of tradable tickers with constraints/indexes."
+    },
+    "file:packages/core/models/profile.py": {
+      "name": "profile.py",
+      "type": "file",
+      "summary": "Profile ORM model — 1:1 user profile with JSONB settings."
+    },
+    "file:apps/api/main.py": {
+      "name": "main.py",
+      "type": "file",
+      "summary": "FastAPI application entry point that instantiates the app and registers the health router."
+    },
+    "file:apps/api/routers/__init__.py": {
+      "name": "__init__.py",
+      "type": "file",
+      "summary": "Empty package marker for apps.api.routers."
+    },
+    "file:apps/api/routers/health.py": {
+      "name": "health.py",
+      "type": "file",
+      "summary": "Health-check and root API routes."
+    },
+    "file:tests/test_health.py": {
+      "name": "test_health.py",
+      "type": "file",
+      "summary": "Integration test exercising the FastAPI app via TestClient against /health."
+    },
+    "pipeline:.github/workflows/ci.yml": {
+      "name": "ci.yml",
+      "type": "pipeline",
+      "summary": "GitHub Actions CI workflow running sync, lint, migrations, and tests against a TimescaleDB service container."
+    },
+    "config:.env.example": {
+      "name": ".env.example",
+      "type": "config",
+      "summary": "Template for local environment variables (DATABASE_URL, REDIS_URL, DEBUG, POLYGON_API_KEY)."
+    },
+    "document:README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "Project overview and onboarding guide covering stack, setup steps, commands, structure, and data conventions."
+    },
+    "config:alembic.ini": {
+      "name": "alembic.ini",
+      "type": "config",
+      "summary": "Alembic migration tool configuration."
+    },
+    "service:docker-compose.yml": {
+      "name": "docker-compose.yml",
+      "type": "service",
+      "summary": "Docker Compose definition for local TimescaleDB and Redis infrastructure."
+    },
+    "config:pyproject.toml": {
+      "name": "pyproject.toml",
+      "type": "config",
+      "summary": "Python project manifest with dependencies and tool config (Ruff, pytest)."
+    },
+    "config:tests/fixtures/polygon_aggs_adjusted.json": {
+      "name": "polygon_aggs_adjusted.json",
+      "type": "config",
+      "summary": "Mock Polygon aggregates fixture, adjusted=true."
+    },
+    "config:tests/fixtures/polygon_aggs_unadjusted.json": {
+      "name": "polygon_aggs_unadjusted.json",
+      "type": "config",
+      "summary": "Mock Polygon aggregates fixture, adjusted=false."
+    },
+    "config:tests/fixtures/polygon_tickers.json": {
+      "name": "polygon_tickers.json",
+      "type": "config",
+      "summary": "Mock Polygon tickers fixture."
+    },
+    "file:apps/api/core/config.py": {
+      "name": "config.py",
+      "type": "file",
+      "summary": "pydantic-settings Settings class loading DB/Redis/Polygon config from environment."
+    },
+    "file:apps/worker/main.py": {
+      "name": "main.py",
+      "type": "file",
+      "summary": "Worker process entry point — skeleton, logs startup only, no business logic yet."
+    },
+    "file:migrations/versions/0001_initial_schema.py": {
+      "name": "0001_initial_schema.py",
+      "type": "file",
+      "summary": "Initial migration: TimescaleDB extension, profiles/instruments tables, triggers, indexes, RLS."
+    },
+    "file:migrations/versions/0002_add_instrument_type.py": {
+      "name": "0002_add_instrument_type.py",
+      "type": "file",
+      "summary": "Migration adding nullable type column to instruments."
+    },
+    "file:packages/core/db/session.py": {
+      "name": "session.py",
+      "type": "file",
+      "summary": "Shared async SQLAlchemy engine and session factory (asyncpg) for API/worker use."
+    },
+    "file:scripts/smoke_polygon.py": {
+      "name": "smoke_polygon.py",
+      "type": "file",
+      "summary": "Manual smoke-test script exercising the Polygon adapter against the live API."
+    },
+    "table:migrations/versions/0001_initial_schema.py:profiles": {
+      "name": "profiles",
+      "type": "table",
+      "summary": "User profile table with RLS scoping access to the owning user."
+    },
+    "table:migrations/versions/0001_initial_schema.py:instruments": {
+      "name": "instruments",
+      "type": "table",
+      "summary": "Public catalog of tradable instruments; rows never deleted, only marked inactive."
+    }
+  },
+  "totalNodes": 32,
+  "totalEdges": 39
+}

@@ -1,0 +1,18 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 0,
+  "edgesRestored": 0,
+  "crossBatchEdgesAdded": 0,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "Merge script's 'Fixed' section only contains 3 dropped tested_by edges (config:tests/fixtures/*.json -> file:tests/test_polygon_adapter.py); verified these are correctly dropped as test-fixture-to-test pairs (tested_by is defined as production -> test), not dangling references. Both endpoints exist in the graph.",
+    "No 'could not fix' items were reported: 0 nodes missing id, 0 unknown node types, 0 unknown complexity values across all 76 nodes.",
+    "Verified all 41 importMap entries with non-empty import lists (17 total relationships) already have corresponding 'imports' edges in assembled-graph.json with correct source/target/weight(0.7)/direction(forward) -- explains why the script's automated recovery pass found 0 to add; no cross-batch gap exists.",
+    "Sanity checks: 0 dangling edges, 0 duplicate node ids, 0 duplicate edges (source,target,type).",
+    "10 orphan nodes (no edges) found, all legitimate: empty __init__.py files, .python-version, migrations/README -- these are correctly disconnected leaf files per importMap, not a data-quality problem.",
+    "5 node ids use a 'step:' prefix (type=resource) for CI pipeline steps under pipeline:.github/workflows/ci.yml -- looked like a prefix/type mismatch at first glance but is a deliberate, consistent sub-resource naming convention; no fix needed.",
+    "Complexity distribution (simple 61 / moderate 11 / complex 4) and node type distribution (file 32, function 17, class 9, config 6, resource 5, service 3, table 2, pipeline 1, document 1) both look reasonable with no single value dominating suspiciously.",
+    "Overall assembled-graph.json required no modifications; it was already clean."
+  ]
+}
