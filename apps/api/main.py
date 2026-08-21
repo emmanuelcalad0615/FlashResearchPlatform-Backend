@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from apps.api.core.error_handlers import register_error_handlers
 from apps.api.core.logging import configure_logging
 from apps.api.core.middleware import RequestIDMiddleware
 from apps.api.routers import health
@@ -11,5 +12,6 @@ configure_logging()
 app = FastAPI(title="Flash Research API", version="0.1.0")
 
 app.add_middleware(RequestIDMiddleware)
+register_error_handlers(app)
 
 app.include_router(health.router)
