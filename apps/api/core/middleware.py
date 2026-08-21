@@ -15,9 +15,13 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
-from apps.api.core.logging import bind_request_id, clear_request_id, get_logger
-
-REQUEST_ID_HEADER = "X-Request-ID"
+from apps.api.core.error_handlers import unhandled_exception_handler
+from apps.api.core.logging import (
+    REQUEST_ID_HEADER,
+    bind_request_id,
+    clear_request_id,
+    get_logger,
+)
 
 # El header entrante lo controla el cliente, asi que no se acepta tal cual:
 # un valor con saltos de linea podria inyectar lineas falsas en los logs, y uno
@@ -46,24 +50,26 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
     ) -> Response:
         request_id = resolve_request_id(request.headers.get(REQUEST_ID_HEADER))
         bind_request_id(request_id)
-        # Queda disponible para los endpoints y, mas adelante, para los
-        # handlers de error que lo devuelven en el cuerpo.
+        # Queda disponible para los endpoints y para los handlers de error, que
+        # lo devuelven en el cuerpo.
         request.state.request_id = request_id
 
         start = time.perf_counter()
         try:
-            response = await call_next(request)
-        except Exception:
-            # .exception() agrega el stacktrace. Se relanza para que el manejo
-            # de errores centralizado decida que responder: aqui solo se observa.
-            logger.exception(
-                "http_request_failed",
-                method=request.method,
-                path=request.url.path,
-                duration_ms=_elapsed_ms(start),
-            )
-            raise
-        else:
+            try:
+                response = await call_next(request)
+            except Exception as exc:
+                # La excepcion se atiende AQUI en vez de relanzarse. Si subiera,
+                # la atenderia ServerErrorMiddleware, que Starlette monta por
+                # FUERA de CORSMiddleware: la respuesta saldria sin cabeceras
+                # CORS, el navegador la bloquearia, y el frontend nunca podria
+                # leer el 500 ni el request_id que necesita para reportarlo.
+                #
+                # El middleware sigue sin decidir el formato: delega en el mismo
+                # handler que registra register_error_handlers, que ademas es
+                # quien loguea el stacktrace.
+                response = await unhandled_exception_handler(request, exc)
+
             logger.info(
                 "http_request",
                 method=request.method,
