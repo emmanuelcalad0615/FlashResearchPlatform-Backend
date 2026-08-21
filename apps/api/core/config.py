@@ -26,16 +26,25 @@ class Settings(BaseSettings):
     # separada por comas, que es lo comodo en un .env.
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173"]
 
+    # Rate limiting (ventana fija por IP, contador en Redis)
+    # rate_limit_enabled: se apaga en los tests, que no tocan la red.
+    # /health exento: el healthcheck de Docker lo llama cada 5s y se
+    # autobloquearia, haciendo que Docker reiniciara la API en bucle.
+    rate_limit_enabled: bool = True
+    rate_limit_requests: int = 60
+    rate_limit_window_seconds: int = 60
+    rate_limit_exempt_paths: Annotated[list[str], NoDecode] = ["/health"]
+
     # Proveedor de datos de mercado (Polygon.io)
     polygon_api_key: str = ""
     polygon_base_url: str = "https://api.polygon.io"
 
-    @field_validator("cors_origins", mode="before")
+    @field_validator("cors_origins", "rate_limit_exempt_paths", mode="before")
     @classmethod
-    def _split_origins(cls, value: object) -> object:
-        """Acepta 'http://a,http://b' ademas de una lista."""
+    def _split_csv(cls, value: object) -> object:
+        """Acepta 'a,b' ademas de una lista."""
         if isinstance(value, str):
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
+            return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
 

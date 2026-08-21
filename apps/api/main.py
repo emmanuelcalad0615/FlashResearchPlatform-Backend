@@ -3,8 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from apps.api.core.config import settings
 from apps.api.core.error_handlers import register_error_handlers
-from apps.api.core.logging import configure_logging
-from apps.api.core.middleware import REQUEST_ID_HEADER, RequestIDMiddleware
+from apps.api.core.logging import REQUEST_ID_HEADER, configure_logging
+from apps.api.core.middleware import RequestIDMiddleware
+from apps.api.core.rate_limit import RateLimitMiddleware
 from apps.api.routers import health
 
 # Antes de crear la app, para que hasta los logs de arranque de uvicorn
@@ -12,6 +13,19 @@ from apps.api.routers import health
 configure_logging()
 
 app = FastAPI(title="Flash Research API", version="0.1.0")
+
+# El orden de registro es al reves del orden de ejecucion: Starlette apila
+# cada middleware por FUERA del anterior. Queda, de afuera hacia adentro:
+#   CORS -> RequestID -> RateLimit -> rutas
+# RateLimit va por dentro de RequestID para que el 429 salga con su request_id
+# y quede en el log de acceso.
+if settings.rate_limit_enabled:
+    app.add_middleware(
+        RateLimitMiddleware,
+        limit=settings.rate_limit_requests,
+        window_seconds=settings.rate_limit_window_seconds,
+        exempt_paths=frozenset(settings.rate_limit_exempt_paths),
+    )
 
 app.add_middleware(RequestIDMiddleware)
 
