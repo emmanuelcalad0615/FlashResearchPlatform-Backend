@@ -7,6 +7,7 @@ import httpx
 import pytest
 import respx
 
+from packages.core.errors import ExternalServiceError
 from packages.core.providers.polygon import PolygonAdapter
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -121,13 +122,62 @@ def test_list_instruments_respects_max_pages(adapter):
 
 
 @respx.mock
-def test_http_error_raises(adapter):
+def test_http_error_becomes_a_domain_error(adapter):
+    """El puerto no filtra httpx: quien llama solo ve errores de dominio."""
     respx.get("https://api.polygon.io/v3/reference/tickers").mock(
         return_value=httpx.Response(401, json={"error": "unauthorized"})
     )
 
-    with pytest.raises(httpx.HTTPStatusError):
+    with pytest.raises(ExternalServiceError) as caught:
         adapter.list_instruments()
+
+    error = caught.value
+    assert error.code == "external_service_error"
+    assert error.details == {"provider": "polygon", "status_code": 401}
+    # La causa tecnica se conserva para el log, sin salir del adapter.
+    assert isinstance(error.__cause__, httpx.HTTPStatusError)
+
+
+@respx.mock
+def test_upstream_5xx_carries_the_status_for_retry_decisions(adapter):
+    respx.get("https://api.polygon.io/v3/reference/tickers").mock(
+        return_value=httpx.Response(503, json={"error": "service unavailable"})
+    )
+
+    with pytest.raises(ExternalServiceError) as caught:
+        adapter.list_instruments()
+
+    # El worker decide reintentar leyendo esto, sin importar httpx.
+    assert caught.value.details["status_code"] == 503
+
+
+@respx.mock
+def test_network_failure_also_becomes_a_domain_error(adapter):
+    """Sin respuesta (timeout, DNS, conexion rechazada): la otra rama de httpx."""
+    respx.get("https://api.polygon.io/v3/reference/tickers").mock(
+        side_effect=httpx.ConnectTimeout("timed out")
+    )
+
+    with pytest.raises(ExternalServiceError) as caught:
+        adapter.list_instruments()
+
+    assert caught.value.details["reason"] == "ConnectTimeout"
+    assert "status_code" not in caught.value.details
+
+
+@respx.mock
+def test_provider_error_never_leaks_the_api_key(adapter):
+    """SEGURIDAD: la api_key viaja como query param; no puede acabar en el log."""
+    respx.get("https://api.polygon.io/v3/reference/tickers").mock(
+        return_value=httpx.Response(401, json={"error": "unauthorized"})
+    )
+
+    with pytest.raises(ExternalServiceError) as caught:
+        adapter.list_instruments()
+
+    rendered = f"{caught.value.message} {caught.value.details}"
+    assert "test-key" not in rendered
+    assert "apiKey" not in rendered
 
 
 def test_adapter_requires_api_key():

@@ -4,6 +4,7 @@ from urllib.parse import parse_qs, urlparse
 
 import httpx
 
+from packages.core.errors import ExternalServiceError
 from packages.core.providers.base import MarketDataProvider
 from packages.core.schemas import InstrumentDTO, OHLCVBar
 
@@ -54,9 +55,38 @@ class PolygonAdapter(MarketDataProvider):
     # ---- HTTP (capa que toca la red) --------------------------------------
 
     def _get(self, url: str, params: dict | None = None) -> dict:
+        """Unico punto del adapter que toca la red.
+
+        Envuelve los fallos de httpx en ExternalServiceError: el puerto promete
+        que nadie fuera de aqui conoce la libreria HTTP, y las excepciones son
+        parte del contrato tanto como la firma.
+        """
         params = {**(params or {}), "apiKey": self._api_key}
-        resp = self._client.get(url, params=params)
-        resp.raise_for_status()
+        try:
+            resp = self._client.get(url, params=params)
+            resp.raise_for_status()
+        except httpx.HTTPStatusError as exc:
+            # Polygon respondio, pero con 4xx/5xx. El status viaja en details
+            # para que el worker decida si reintentar (429/5xx) o no (401/404),
+            # sin tener que importar httpx.
+            raise ExternalServiceError(
+                f"Polygon returned {exc.response.status_code}",
+                details={
+                    "provider": "polygon",
+                    "status_code": exc.response.status_code,
+                },
+            ) from exc
+        except httpx.RequestError as exc:
+            # Nunca hubo respuesta: timeout, DNS, conexion rechazada, TLS.
+            # Rama distinta de HTTPStatusError; atrapar solo la otra dejaria
+            # abierto el caso mas comun en produccion.
+            #
+            # SEGURIDAD: nada de exc.request.url en details. La api_key viaja
+            # como query param, y acabaria escrita en texto plano en el log.
+            raise ExternalServiceError(
+                "Polygon is unreachable",
+                details={"provider": "polygon", "reason": type(exc).__name__},
+            ) from exc
         return resp.json()
 
     def _get_aggs(self, ticker: str, start: date, end: date, *, adjusted: bool) -> dict:
