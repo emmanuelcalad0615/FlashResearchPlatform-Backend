@@ -243,14 +243,114 @@ Ver `HU-A07-auth-plan.md` §1.2 para el detalle.
 
 ## Decisiones pendientes
 
-No están tomadas. Se convertirán en `DD-002` y siguientes cuando se resuelvan.
+Ninguna está tomada. Cada una se convertirá en `DD-002` y siguientes cuando se
+resuelva, con su contexto, sus alternativas y sus consecuencias.
+
+Este registro se mantiene **vivo**: cuando aparece una tecnología o un ajuste que habrá
+que elegir en algún momento, se anota aquí en vez de dejarlo en la memoria de alguien.
+
+### Infraestructura
 
 | Tema | Opciones en juego | Cuándo decidir |
 |---|---|---|
-| Proveedor de servidor | VPS (Hetzner, DigitalOcean) · PaaS con dominio propio | Al preparar el despliegue |
-| Reverse proxy | **Caddy** (HTTPS automático) · Nginx (más control, más configuración) | Con lo anterior |
+| Proveedor de servidor | VPS (Hetzner, DigitalOcean, Vultr) · PaaS con dominio propio (Railway, Render, Fly.io) | Al preparar el despliegue |
+| Reverse proxy | **Caddy** (HTTPS automático, cero configuración) · Nginx (más control) · Traefik (nativo en Docker) | Con lo anterior |
 | Registrador del dominio | Cloudflare · Namecheap · Porkbun | Con lo anterior |
-| Estrategia de despliegue | Push desde CI · imágenes en un registry · `git pull` en el servidor | Al preparar el despliegue |
-| Backups de Postgres | Frecuencia, retención, destino | Antes de tener datos reales |
-| Proveedor SMTP | Resend · SendGrid · Amazon SES | Al desplegar la HU-A07 |
+| CDN / protección DDoS | Cloudflare (gratis) · ninguno al principio | Cuando haya tráfico real |
+| Orquestación | Docker Compose en un VPS · Kubernetes · PaaS gestionado | Al preparar el despliegue |
+
+### Observabilidad
+
+Hoy la API emite logs estructurados en JSON (HU-A08), pero **nadie los recoge**: se van a
+stdout y se pierden al reiniciar el contenedor. Todo lo de abajo está sin decidir.
+
+| Tema | Opciones en juego | Cuándo decidir |
+|---|---|---|
+| Agregación de logs | Grafana Loki (autoalojado, barato) · Datadog (gestionado, caro) · CloudWatch · Better Stack | Antes del primer despliegue: sin esto, un fallo nocturno no deja rastro |
+| Métricas | Prometheus + Grafana · Datadog · ninguna al principio | Cuando haya usuarios reales |
+| Seguimiento de errores | Sentry (tiene plan gratis) · Rollbar · solo logs | Con el primer despliegue |
+| Trazas distribuidas (APM) | OpenTelemetry · Datadog APM · ninguna | Cuando existan API + worker + gateway y haga falta seguir una petición entre servicios |
+| Alertas | ¿Qué dispara un aviso, y a dónde llega? (correo, Slack, Telegram) | Con la agregación de logs |
+| Uptime externo | UptimeRobot · Better Stack · ninguno | Con el primer despliegue |
+
+> El `request_id` de la HU-A08 solo rinde de verdad cuando existe un agregador donde poder
+> filtrar por él. Hoy solo sirve leyendo la terminal.
+
+### Correo
+
+| Tema | Opciones en juego | Cuándo decidir |
+|---|---|---|
+| Proveedor SMTP en producción | Resend · SendGrid · Amazon SES · Postmark · Mailgun | Al desplegar la HU-A07 |
+| Dominio remitente y verificación | Registros SPF, DKIM y DMARC del dominio propio | Con lo anterior — sin esto los correos van a spam |
+| Correo transaccional vs marketing | ¿Un solo proveedor o dos? | Cuando exista comunicación no transaccional |
+
+En desarrollo ya está resuelto: **Mailpit** en `docker-compose.yml`, bandeja en
+`http://localhost:8025`, sin salir a internet.
+
+### Base de datos
+
+| Tema | Opciones en juego | Cuándo decidir |
+|---|---|---|
+| **Rol de aplicación separado del dueño** | Crear `flash_app` sin privilegios de superusuario | **Antes de producción** — ver la nota de abajo |
+| Backups | Frecuencia, retención, destino (S3, Backblaze), y **prueba de restauración** | Antes de tener datos reales |
+| Pool de conexiones | El de SQLAlchemy · PgBouncer delante | Cuando haya varias instancias de la API |
+| Escalado de TimescaleDB | Políticas de retención y compresión de las hypertables | Con la Épica B, cuando lleguen las velas |
+
+> **Hallazgo pendiente (2026-08-27).** La RLS del esquema no se está aplicando. Alembic
+> crea las tablas como `flash`, la API se conecta como el mismo `flash`, y ese rol es
+> **superusuario**: los superusuarios se saltan la RLS incondicionalmente, y
+> `FORCE ROW LEVEL SECURITY` (migración `0004`) no los alcanza — solo cubre el caso del
+> dueño de la tabla.
+>
+> El arreglo es un rol `flash_app` sin privilegios especiales, con `GRANT` sobre las
+> tablas, usado por la API y el worker; `flash` queda solo para las migraciones. Implica
+> dos URLs de conexión y tocar el CI.
+>
+> No es urgente: la RLS es una **segunda** línea de defensa, y la primera —el
+> `WHERE user_id = ...` del código— sí funciona. Pero debe cerrarse antes de producción.
+
+### Despliegue y entornos
+
+| Tema | Opciones en juego | Cuándo decidir |
+|---|---|---|
+| Estrategia de despliegue | Push desde CI · imágenes en un registry (GHCR, Docker Hub) · `git pull` en el servidor | Al preparar el despliegue |
 | Entorno de staging | ¿Existe uno, o solo local y producción? | Antes del primer despliegue |
+| Gestión de secretos | `.env` en el servidor · Doppler · 1Password · los secretos del proveedor | Con el primer despliegue |
+| Migraciones en despliegue | ¿Automáticas al arrancar, o paso manual aprobado? | Antes del primer despliegue |
+| Rollback | ¿Cómo se vuelve atrás, y qué pasa con las migraciones ya aplicadas? | Con lo anterior |
+
+---
+
+## Configuración que cambia al salir a producción
+
+Estos valores **no** son decisiones abiertas: ya están decididos. Es una lista de
+verificación para el día del despliegue, porque son fáciles de olvidar y cada uno tiene
+consecuencias de seguridad.
+
+| Variable | Desarrollo | Producción | Por qué |
+|---|---|---|---|
+| `LOG_JSON` | `false` | **`true`** | En consola el texto plano es legible; en producción el agregador de logs necesita JSON para poder indexar y consultar |
+| `LOG_LEVEL` | `INFO` | `INFO` | Igual. `DEBUG` en producción llena el disco y ralentiza |
+| `DEBUG` | `true` | **`false`** | Activa las guardas de arranque que se describen abajo |
+| `COOKIE_SECURE` | `false` | **`true`** | En local no hay HTTPS; en producción la cookie no puede viajar en claro |
+| `ACCESS_TOKEN_MINUTES` | `60` | **`15`** | Es la ventana que tiene un token robado. En dev prima no re-loguearse a cada rato |
+| `REFRESH_TOKEN_DAYS` | `30` | **`7`** | Un refresh robado y no detectado caduca en una semana |
+| `JWT_SECRET` | uno cualquiera | **uno propio, en el gestor de secretos** | Compartirlo entre entornos permitiría firmar tokens válidos contra producción desde una máquina de desarrollo |
+| `CORS_ORIGINS` | `http://localhost:5173` | el dominio real | Nunca `*` |
+| `SMTP_HOST` / `SMTP_PORT` | Mailpit (`localhost:1025`) | el proveedor real | |
+| `SMTP_USER` / `SMTP_PASSWORD` | vacías | credenciales del proveedor | |
+| `SMTP_FROM` | `no-reply@flashresearch.local` | dirección de un dominio verificado | Sin SPF/DKIM los correos van a spam |
+| `FRONTEND_BASE_URL` | `http://localhost:5173` | `https://flashresearch.com` | Se usa para armar el enlace del correo de verificación |
+| `RATE_LIMIT_REQUESTS` | `60` | a revisar con tráfico real | 60/min es una estimación, no una medición |
+| `DATABASE_URL` | contenedor local | servidor real, contraseña fuerte, y con el rol `flash_app` cuando exista | |
+
+### Guardas de arranque (a implementar en la HU-A07)
+
+La aplicación debe **negarse a arrancar** si:
+
+- `DEBUG=false` y `COOKIE_SECURE=false` → configuración insegura en producción.
+- `JWT_SECRET` vacío, en cualquier entorno.
+- `len(JWT_SECRET) < 32`.
+- El adapter de correo que escribe en el log estuviera activo con `DEBUG=false`.
+
+Una configuración insegura debe fallar ruidosamente, no pasar desapercibida.
