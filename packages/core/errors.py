@@ -81,3 +81,44 @@ class RateLimitError(AppError):
 
     code = "rate_limited"
     default_message = "Too many requests"
+
+
+class InvalidCredentialsError(AppError):
+    """Email inexistente o contrasena incorrecta.
+
+    UN SOLO error para los dos casos, a proposito. Distinguirlos le permitiria
+    a un atacante averiguar que emails estan registrados (user enumeration).
+    """
+
+    code = "invalid_credentials"
+    default_message = "Invalid email or password"
+
+
+class EmailNotVerifiedError(AppError):
+    """La cuenta existe y la contrasena es correcta, pero falta verificar el email.
+
+    Excepcion deliberada a la regla de arriba: quien llega aqui ya demostro que
+    sabe la contrasena, asi que decirselo no filtra nada nuevo, y necesita saber
+    que tiene que revisar su correo.
+    """
+
+    code = "email_not_verified"
+    default_message = "Verify your email address before signing in"
+
+
+class InvalidTokenError(AppError):
+    """Token malformado, desconocido, ya usado o revocado."""
+
+    code = "invalid_token"
+    default_message = "The token is not valid"
+
+
+class TokenExpiredError(AppError):
+    """Token bien formado pero fuera de su ventana de validez.
+
+    Separado de InvalidTokenError porque el cliente reacciona distinto: ante un
+    access token expirado pide un refresh; ante uno invalido, manda al login.
+    """
+
+    code = "token_expired"
+    default_message = "The token has expired"

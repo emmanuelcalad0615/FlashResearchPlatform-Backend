@@ -23,10 +23,14 @@ from packages.core.errors import (
     AppError,
     ConflictError,
     DomainValidationError,
+    EmailNotVerifiedError,
     ExternalServiceError,
     ForbiddenError,
+    InvalidCredentialsError,
+    InvalidTokenError,
     NotFoundError,
     RateLimitError,
+    TokenExpiredError,
     UnauthorizedError,
 )
 
@@ -43,6 +47,13 @@ STATUS_BY_ERROR: dict[type[AppError], int] = {
     DomainValidationError: 422,
     RateLimitError: 429,
     ExternalServiceError: 502,
+    # Auth
+    InvalidCredentialsError: 401,
+    EmailNotVerifiedError: 403,
+    InvalidTokenError: 400,
+    # 410 Gone y no 401: el token existio y era valido, pero ya no. Le dice al
+    # cliente que pida uno nuevo en vez de mandar al usuario al login.
+    TokenExpiredError: 410,
 }
 
 # Un AppError sin mapear cae aqui. El test test_every_domain_error_has_a_status
@@ -61,6 +72,7 @@ CODE_BY_STATUS: dict[int, str] = {
     409: "conflict",
     415: "unsupported_media_type",
     422: "validation_error",
+    410: "gone",
     429: "rate_limited",
     500: "internal_error",
     502: "bad_gateway",

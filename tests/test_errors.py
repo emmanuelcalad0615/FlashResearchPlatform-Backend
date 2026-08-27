@@ -5,8 +5,12 @@ from apps.api.core.error_handlers import STATUS_BY_ERROR, register_error_handler
 from apps.api.core.middleware import REQUEST_ID_HEADER, RequestIDMiddleware
 from packages.core.errors import (
     AppError,
+    EmailNotVerifiedError,
     ExternalServiceError,
+    InvalidCredentialsError,
+    InvalidTokenError,
     NotFoundError,
+    TokenExpiredError,
 )
 
 # Cadena que un bug podria filtrar: si aparece en una respuesta HTTP, es una fuga.
@@ -137,13 +141,43 @@ def test_successful_response_has_no_error_key():
     assert "error" not in response.json()
 
 
+def _all_subclasses(klass: type) -> set[type]:
+    """Toda la descendencia, no solo los hijos directos.
+
+    __subclasses__() devuelve un solo nivel. Si manana alguien hereda de
+    NotFoundError, el guardian de abajo tiene que verlo igual.
+    """
+    found = set()
+    for child in klass.__subclasses__():
+        found.add(child)
+        found |= _all_subclasses(child)
+    return found
+
+
 def test_every_domain_error_has_a_status():
     """El precio de mapear fuera del dominio: nadie puede quedarse sin status.
 
     Si se agrega una excepcion a packages/core/errors.py y se olvida
     registrarla, este test lo detecta en vez de dejarla caer a un 500 mudo.
     """
-    subclasses = AppError.__subclasses__()
+    subclasses = _all_subclasses(AppError)
     assert subclasses, "no se encontraron subclases de AppError"
     for klass in subclasses:
         assert klass in STATUS_BY_ERROR, f"{klass.__name__} no tiene status HTTP asignado"
+
+
+def test_auth_errors_map_to_their_expected_status():
+    """Los codigos de auth son contrato con el frontend: se fijan aqui."""
+    assert STATUS_BY_ERROR[InvalidCredentialsError] == 401
+    assert STATUS_BY_ERROR[EmailNotVerifiedError] == 403
+    assert STATUS_BY_ERROR[InvalidTokenError] == 400
+    # 410 Gone: el token fue valido y ya no lo es. El cliente pide un refresh
+    # en vez de mandar al usuario al login.
+    assert STATUS_BY_ERROR[TokenExpiredError] == 410
+
+
+def test_credentials_error_does_not_reveal_which_half_failed():
+    """SEGURIDAD: el mensaje no puede delatar si el email existe."""
+    message = InvalidCredentialsError().message.lower()
+    for leak in ("no existe", "not found", "unknown", "wrong password", "incorrect password"):
+        assert leak not in message
