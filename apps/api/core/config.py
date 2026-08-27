@@ -35,6 +35,20 @@ class Settings(BaseSettings):
     rate_limit_window_seconds: int = 60
     rate_limit_exempt_paths: Annotated[list[str], NoDecode] = ["/health"]
 
+    # Correo saliente
+    # En desarrollo apunta a Mailpit (docker compose), que atrapa los correos y
+    # los muestra en http://localhost:8025 sin reenviar nada a internet.
+    # user/password van vacios en desarrollo: Mailpit no pide autenticacion.
+    smtp_host: str = "localhost"
+    smtp_port: int = 1025
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = "no-reply@flashresearch.local"
+
+    # Base para armar el enlace de verificacion que viaja en el correo.
+    # El backend no puede adivinar donde vive el frontend.
+    frontend_base_url: str = "http://localhost:5173"
+
     # Proveedor de datos de mercado (Polygon.io)
     polygon_api_key: str = ""
     polygon_base_url: str = "https://api.polygon.io"
