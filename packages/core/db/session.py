@@ -9,15 +9,21 @@ from sqlalchemy.ext.asyncio import (
 
 load_dotenv()
 
-_DEFAULT_URL = "postgresql://flash:flash_dev_pw@localhost:5432/flash_research"
-
-
 def _async_url() -> str:
     """DATABASE_URL del entorno, forzando el driver async (asyncpg).
 
     Alembic usa el driver sync (psycopg2); la API y el worker usan async.
+
+    No hay valor por defecto: una configuracion critica ausente debe fallar de
+    inmediato, no caer a una base de desarrollo que en produccion seria la
+    equivocada o inexistente.
     """
-    url = os.environ.get("DATABASE_URL", _DEFAULT_URL)
+    url = os.environ.get("DATABASE_URL")
+    if not url:
+        raise RuntimeError(
+            "DATABASE_URL no esta definida. Copia .env.example a .env, "
+            "o exportala en el entorno."
+        )
     if url.startswith("postgresql://"):
         return url.replace("postgresql://", "postgresql+asyncpg://", 1)
     return url

@@ -7,7 +7,10 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
-    database_url: str = "postgresql://flash:flash_dev_pw@localhost:5432/flash_research"
+    # Sin valor por defecto a proposito: Pydantic exige que DATABASE_URL exista.
+    # Un default aqui esconderia un despliegue mal configurado, que arrancaria
+    # apuntando a localhost en vez de fallar.
+    database_url: str
     redis_url: str = "redis://localhost:6379/0"
     debug: bool = False
 
