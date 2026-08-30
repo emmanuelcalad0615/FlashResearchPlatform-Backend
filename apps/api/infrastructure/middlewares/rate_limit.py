@@ -17,10 +17,10 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
-from apps.api.core.error_handlers import build_error_response
-from apps.api.core.logging import get_logger
-from packages.core.errors import RateLimitError
-from packages.core.redis_client import get_redis
+from apps.api.infrastructure.logging import get_logger
+from apps.api.infrastructure.middlewares.error_handlers import build_error_response
+from packages.core.domain.errors import RateLimitError
+from packages.core.infrastructure.cache.redis_client import get_redis
 
 logger = get_logger(__name__)
 

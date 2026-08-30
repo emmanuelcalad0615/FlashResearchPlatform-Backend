@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import date
 
-from packages.core.schemas import InstrumentDTO, OHLCVBar
+from packages.core.domain.entities import InstrumentDTO, OHLCVBar
 
 
 class MarketDataProvider(ABC):

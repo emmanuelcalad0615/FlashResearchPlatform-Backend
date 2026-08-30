@@ -3,7 +3,7 @@ from datetime import date, datetime
 from sqlalchemy import CheckConstraint, DateTime, Index, Text, func, text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from packages.core.models.base import Base
+from packages.core.infrastructure.db.models.base import Base
 
 
 class Instrument(Base):

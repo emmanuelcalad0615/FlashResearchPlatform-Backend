@@ -2,10 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.testclient import TestClient
 
-from apps.api.core.config import settings
-from apps.api.core.error_handlers import register_error_handlers
-from apps.api.core.logging import REQUEST_ID_HEADER
-from apps.api.core.middleware import RequestIDMiddleware
+from apps.api.config import settings
+from apps.api.infrastructure.logging import REQUEST_ID_HEADER
+from apps.api.infrastructure.middlewares.error_handlers import register_error_handlers
+from apps.api.infrastructure.middlewares.request_id import RequestIDMiddleware
 from apps.api.main import app
 
 client = TestClient(app)

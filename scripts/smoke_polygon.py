@@ -10,8 +10,8 @@ from datetime import date
 
 from dotenv import load_dotenv
 
-from apps.api.core.config import settings
-from packages.core.providers.polygon import PolygonAdapter
+from apps.api.config import settings
+from packages.core.infrastructure.providers.polygon import PolygonAdapter
 
 load_dotenv()
 

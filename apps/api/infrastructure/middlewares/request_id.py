@@ -15,13 +15,13 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
-from apps.api.core.error_handlers import unhandled_exception_handler
-from apps.api.core.logging import (
+from apps.api.infrastructure.logging import (
     REQUEST_ID_HEADER,
     bind_request_id,
     clear_request_id,
     get_logger,
 )
+from apps.api.infrastructure.middlewares.error_handlers import unhandled_exception_handler
 
 # El header entrante lo controla el cliente, asi que no se acepta tal cual:
 # un valor con saltos de linea podria inyectar lineas falsas en los logs, y uno

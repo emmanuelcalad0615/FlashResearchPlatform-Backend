@@ -4,9 +4,9 @@ import re
 
 from fastapi.testclient import TestClient
 
-from apps.api.core.config import settings
-from apps.api.core.logging import configure_logging
-from apps.api.core.middleware import REQUEST_ID_HEADER, resolve_request_id
+from apps.api.config import settings
+from apps.api.infrastructure.logging import configure_logging
+from apps.api.infrastructure.middlewares.request_id import REQUEST_ID_HEADER, resolve_request_id
 from apps.api.main import app
 
 client = TestClient(app)

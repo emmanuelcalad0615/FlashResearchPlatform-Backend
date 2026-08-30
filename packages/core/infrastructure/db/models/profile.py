@@ -5,7 +5,7 @@ from sqlalchemy import DateTime, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from packages.core.models.base import Base
+from packages.core.infrastructure.db.models.base import Base
 
 
 class Profile(Base):

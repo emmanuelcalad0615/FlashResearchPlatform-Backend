@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from apps.api.core.config import settings
-from apps.api.core.error_handlers import register_error_handlers
-from apps.api.core.logging import REQUEST_ID_HEADER, configure_logging
-from apps.api.core.middleware import RequestIDMiddleware
-from apps.api.core.rate_limit import RateLimitMiddleware
-from apps.api.routers import health
+from apps.api.config import settings
+from apps.api.infrastructure.logging import REQUEST_ID_HEADER, configure_logging
+from apps.api.infrastructure.middlewares.error_handlers import register_error_handlers
+from apps.api.infrastructure.middlewares.rate_limit import RateLimitMiddleware
+from apps.api.infrastructure.middlewares.request_id import RequestIDMiddleware
+from apps.api.interfaces.routes import health
 
 # Antes de crear la app, para que hasta los logs de arranque de uvicorn
 # salgan ya con el formato configurado.

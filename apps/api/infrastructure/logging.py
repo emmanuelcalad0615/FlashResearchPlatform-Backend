@@ -17,7 +17,7 @@ from typing import Any, TextIO
 import structlog
 from structlog.typing import EventDict, Processor, WrappedLogger
 
-from apps.api.core.config import settings
+from apps.api.config import settings
 
 # Cabecera de correlacion. Vive aqui junto al ContextVar que transporta el
 # mismo id: asi middleware.py y error_handlers.py la comparten sin importarse

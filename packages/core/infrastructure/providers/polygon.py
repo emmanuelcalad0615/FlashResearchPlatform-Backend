@@ -4,9 +4,9 @@ from urllib.parse import parse_qs, urlparse
 
 import httpx
 
-from packages.core.errors import ExternalServiceError
-from packages.core.providers.base import MarketDataProvider
-from packages.core.schemas import InstrumentDTO, OHLCVBar
+from packages.core.domain.entities import InstrumentDTO, OHLCVBar
+from packages.core.domain.errors import ExternalServiceError
+from packages.core.domain.ports.market_data import MarketDataProvider
 
 # MIC (Market Identifier Code) de Polygon → enum interno de exchange.
 _EXCHANGE_MAP = {

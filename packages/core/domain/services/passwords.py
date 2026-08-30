@@ -7,7 +7,7 @@ Lo comparten la API y el worker.
 from argon2 import PasswordHasher
 from argon2.exceptions import Argon2Error, InvalidHashError
 
-from packages.core.errors import DomainValidationError
+from packages.core.domain.errors import DomainValidationError
 
 MIN_PASSWORD_LENGTH = 12
 

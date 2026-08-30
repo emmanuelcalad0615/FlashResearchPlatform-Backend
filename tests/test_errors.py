@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from apps.api.core.error_handlers import STATUS_BY_ERROR, register_error_handlers
-from apps.api.core.middleware import REQUEST_ID_HEADER, RequestIDMiddleware
-from packages.core.errors import (
+from apps.api.infrastructure.middlewares.error_handlers import (
+    STATUS_BY_ERROR,
+    register_error_handlers,
+)
+from apps.api.infrastructure.middlewares.request_id import REQUEST_ID_HEADER, RequestIDMiddleware
+from packages.core.domain.errors import (
     AppError,
     EmailNotVerifiedError,
     ExternalServiceError,
@@ -157,7 +160,7 @@ def _all_subclasses(klass: type) -> set[type]:
 def test_every_domain_error_has_a_status():
     """El precio de mapear fuera del dominio: nadie puede quedarse sin status.
 
-    Si se agrega una excepcion a packages/core/errors.py y se olvida
+    Si se agrega una excepcion a packages/core/domain/errors.py y se olvida
     registrarla, este test lo detecta en vez de dejarla caer a un 500 mudo.
     """
     subclasses = _all_subclasses(AppError)

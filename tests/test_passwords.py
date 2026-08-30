@@ -1,6 +1,7 @@
 import pytest
 
-from packages.core.auth.passwords import (
+from packages.core.domain.errors import DomainValidationError
+from packages.core.domain.services.passwords import (
     MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH,
     decoy_verify,
@@ -9,7 +10,6 @@ from packages.core.auth.passwords import (
     validate_password_policy,
     verify_password,
 )
-from packages.core.errors import DomainValidationError
 
 VALID = "una-frase-larga-y-facil-de-recordar"
 
@@ -112,7 +112,7 @@ def test_decoy_does_real_work():
     Se comprueba estructuralmente y no cronometrando: un test con umbrales de
     tiempo falla de forma aleatoria segun la carga de la maquina.
     """
-    from packages.core.auth.passwords import _DECOY_HASH
+    from packages.core.domain.services.passwords import _DECOY_HASH
 
     assert _DECOY_HASH.startswith("$argon2id$")
     # Verificar contra el es tan caro como contra cualquier hash real.

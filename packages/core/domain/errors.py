@@ -2,7 +2,7 @@
 
 Python puro: no importa FastAPI, ni HTTP, ni SQLAlchemy. Lo comparten la API y
 el worker, porque ambos lanzan errores de negocio. La traduccion a codigos de
-estado HTTP vive en la capa de API (apps/api/core/error_handlers.py): el
+estado HTTP vive en la capa de API (apps/api/infrastructure/middlewares/error_handlers.py): el
 dominio no sabe que existe HTTP.
 """
 

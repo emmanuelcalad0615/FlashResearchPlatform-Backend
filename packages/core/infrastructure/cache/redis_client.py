@@ -1,7 +1,7 @@
 """Cliente Redis compartido por la API y el worker.
 
 Sigue el mismo patron que db/session.py: lee la configuracion del entorno con
-os.environ, no de apps.api.core.config, porque packages/core es la capa de
+os.environ, no de apps.api.config, porque packages/core es la capa de
 abajo y no puede importar hacia arriba.
 """
 

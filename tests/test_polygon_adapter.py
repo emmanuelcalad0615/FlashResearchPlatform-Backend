@@ -7,8 +7,8 @@ import httpx
 import pytest
 import respx
 
-from packages.core.errors import ExternalServiceError
-from packages.core.providers.polygon import PolygonAdapter
+from packages.core.domain.errors import ExternalServiceError
+from packages.core.infrastructure.providers.polygon import PolygonAdapter
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
