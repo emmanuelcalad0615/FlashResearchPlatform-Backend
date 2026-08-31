@@ -37,4 +37,5 @@ coverage.xml
 
 # Contiene el token de SonarQube
 sonar-project.properties
+Personales
 
