@@ -20,13 +20,36 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U flash"
           --health-interval 5s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - "6379:6379"
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 5
     env:
       DATABASE_URL: postgresql://flash:flash_test_pw@localhost:5432/flash_test
       REDIS_URL: redis://localhost:6379/0
+      # Valor de usar y tirar: el CI no firma nada que salga de aqui.
+      JWT_SECRET: ci-only-not-a-real-secret-at-least-32-bytes-long
     steps:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v6
       - run: uv sync
       - run: uv run ruff check .
-      - run: uv run alembic upgrade head
-      - run: uv run pytest
+      # Las migraciones tienen dos direcciones y solo se probaba una. Un
+      # downgrade roto se descubriria el dia que haya que revertir un
+      # despliegue, con el sistema caido.
+      - name: migrations run forward and back
+        run: |
+          uv run alembic upgrade head
+          uv run alembic downgrade base
+          uv run alembic upgrade head
+
+      - name: tests with coverage
+        run: uv run pytest --cov=apps --cov=packages --cov-report=xml --cov-report=term
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.xml
