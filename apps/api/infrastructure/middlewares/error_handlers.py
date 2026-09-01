@@ -23,6 +23,7 @@ from packages.core.domain.errors import (
     AppError,
     ConflictError,
     DomainValidationError,
+    EmailDeliveryError,
     EmailNotVerifiedError,
     ExternalServiceError,
     ForbiddenError,
@@ -51,6 +52,8 @@ STATUS_BY_ERROR: dict[type[AppError], int] = {
     InvalidCredentialsError: 401,
     EmailNotVerifiedError: 403,
     InvalidTokenError: 400,
+    # Un fallo de entrega es culpa de un tercero, no del cliente.
+    EmailDeliveryError: 502,
     # 410 Gone y no 401: el token existio y era valido, pero ya no. Le dice al
     # cliente que pida uno nuevo en vez de mandar al usuario al login.
     TokenExpiredError: 410,

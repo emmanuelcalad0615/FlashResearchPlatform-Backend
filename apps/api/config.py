@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
@@ -31,12 +31,12 @@ class Settings(BaseSettings):
 
     # Rate limiting (ventana fija por IP, contador en Redis)
     # rate_limit_enabled: se apaga en los tests, que no tocan la red.
-    # /health exento: el healthcheck de Docker lo llama cada 5s y se
+    # /api/health exento: el healthcheck lo llama cada 5s y se
     # autobloquearia, haciendo que Docker reiniciara la API en bucle.
     rate_limit_enabled: bool = True
     rate_limit_requests: int = 60
     rate_limit_window_seconds: int = 60
-    rate_limit_exempt_paths: Annotated[list[str], NoDecode] = ["/health"]
+    rate_limit_exempt_paths: Annotated[list[str], NoDecode] = ["/api/health"]
 
     # Correo saliente
     # En desarrollo apunta a Mailpit (docker compose), que atrapa los correos y
@@ -52,6 +52,12 @@ class Settings(BaseSettings):
     # El backend no puede adivinar donde vive el frontend.
     frontend_base_url: str = "http://localhost:5173"
 
+    # Solo la leen los tests de integracion (tests/conftest.py). Se declara
+    # aqui porque Settings rechaza variables desconocidas del .env, y esa
+    # estrictez es deseable: un typo en el nombre impide arrancar en vez de
+    # caer en silencio al valor por defecto.
+    test_database_url: str = ""
+
     # Proveedor de datos de mercado (Polygon.io)
     polygon_api_key: str = ""
     polygon_base_url: str = "https://api.polygon.io"
@@ -63,6 +69,22 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
+
+
+    @model_validator(mode="after")
+    def _reject_insecure_production_config(self) -> "Settings":
+        """Una configuracion insegura en produccion debe fallar al arrancar.
+
+        Sin credenciales SMTP no se negocia TLS, asi que el correo saldria en
+        claro. En desarrollo es lo correcto —Mailpit no pide autenticacion y no
+        sale nada a internet—, en produccion es un fallo grave.
+        """
+        if not self.debug and not (self.smtp_user and self.smtp_password):
+            raise ValueError(
+                "SMTP_USER y SMTP_PASSWORD son obligatorios con DEBUG=false: "
+                "sin credenciales el correo viajaria sin cifrar."
+            )
+        return self
 
 
 settings = Settings()

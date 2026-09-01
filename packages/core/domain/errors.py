@@ -122,3 +122,14 @@ class TokenExpiredError(AppError):
 
     code = "token_expired"
     default_message = "The token has expired"
+
+
+class EmailDeliveryError(AppError):
+    """No se pudo entregar un correo.
+
+    Lo lanza el adapter de correo. Quien llama decide si es fatal: en el signup
+    NO lo es, porque el usuario ya quedo creado.
+    """
+
+    code = "email_delivery_failed"
+    default_message = "The email could not be delivered"
