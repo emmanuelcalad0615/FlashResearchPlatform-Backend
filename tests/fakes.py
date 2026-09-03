@@ -22,10 +22,13 @@ from packages.core.domain.entities import (
     RefreshToken,
     User,
 )
+from packages.core.domain.errors import EmailDeliveryError
+from packages.core.domain.ports import EmailSender
 from packages.core.domain.repositories import (
     EmailVerificationRepository,
     ProfileRepository,
     RefreshTokenRepository,
+    UnitOfWork,
     UserRepository,
 )
 
@@ -180,3 +183,60 @@ class InMemoryEmailVerificationRepository(EmailVerificationRepository):
     async def mark_used(self, token_id: UUID) -> None:
         viejo = self.por_id[token_id]
         self.por_id[token_id] = replace(viejo, used_at=_ahora())
+
+
+class InMemoryEmailSender(EmailSender):
+    """Guarda lo enviado en listas separadas para poder afirmarlo en los tests.
+
+    Estan separadas a proposito: la rama "ya existe y verificado" NO debe mandar
+    el correo de verificacion, y mezclarlas escondería ese error.
+    """
+
+    def __init__(self) -> None:
+        self.verificaciones: list[tuple[str, str]] = []
+        self.avisos_ya_registrado: list[str] = []
+
+    async def send_verification(self, *, to: str, link: str) -> None:
+        self.verificaciones.append((to, link))
+
+    async def send_already_registered(self, *, to: str) -> None:
+        self.avisos_ya_registrado.append(to)
+
+
+class FailingEmailSender(EmailSender):
+    """Simula un proveedor de correo caido.
+
+    Existe para probar la decision de que un fallo de entrega NO tumbe el
+    signup: el usuario ya quedo creado, y devolverle un error lo dejaria
+    creyendo que no se registro y sin poder reintentar.
+
+    Sin este doble esa decision viviria solo en el documento, y es justo el
+    tipo de comportamiento que alguien rompe sin querer anadiendo un raise
+    "para no ocultar errores".
+    """
+
+    async def send_verification(self, *, to: str, link: str) -> None:
+        raise EmailDeliveryError("Proveedor de correo caido (simulado)")
+
+    async def send_already_registered(self, *, to: str) -> None:
+        raise EmailDeliveryError("Proveedor de correo caido (simulado)")
+
+
+class InMemoryUnitOfWork(UnitOfWork):
+    """Cuenta los commit y rollback.
+
+    Un diccionario no tiene transacciones, asi que esto NO puede demostrar
+    atomicidad: para eso hace falta el test de integracion contra Postgres
+    (DEUDA-02). Lo que si permite es afirmar QUE se confirmo, y sobre todo
+    CUANDO: el correo tiene que salir DESPUES del commit.
+    """
+
+    def __init__(self) -> None:
+        self.commits = 0
+        self.rollbacks = 0
+
+    async def commit(self) -> None:
+        self.commits += 1
+
+    async def rollback(self) -> None:
+        self.rollbacks += 1

@@ -35,8 +35,14 @@ class SqlAlchemyProfileRepository(ProfileRepository):
         #
         # Este detalle de Postgres vive en infraestructura a proposito: el caso
         # de uso llama a create() sin saber que existe RLS.
+        # set_config(clave, valor, is_local) y NO "SET LOCAL x = :uid": SET es
+        # una sentencia de configuracion y no admite parametros, asi que con
+        # asyncpg revienta con 'syntax error at or near "$1"'. set_config es una
+        # funcion normal, acepta el parametro, y el tercer argumento en true
+        # equivale a LOCAL: el valor muere al cerrar la transaccion.
         await self._session.execute(
-            text("SET LOCAL app.current_user_id = :uid"), {"uid": str(user_id)}
+            text("SELECT set_config('app.current_user_id', :uid, true)"),
+            {"uid": str(user_id)},
         )
 
         fila = ProfileORM(id=user_id, display_name=display_name)

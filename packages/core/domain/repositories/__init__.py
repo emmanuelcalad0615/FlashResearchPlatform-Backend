@@ -5,11 +5,13 @@ from packages.core.domain.repositories.profile_repository import ProfileReposito
 from packages.core.domain.repositories.refresh_token_repository import (
     RefreshTokenRepository,
 )
+from packages.core.domain.repositories.unit_of_work import UnitOfWork
 from packages.core.domain.repositories.user_repository import UserRepository
 
 __all__ = [
     "EmailVerificationRepository",
     "ProfileRepository",
     "RefreshTokenRepository",
+    "UnitOfWork",
     "UserRepository",
 ]
