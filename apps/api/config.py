@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     rate_limit_window_seconds: int = 60
     rate_limit_exempt_paths: Annotated[list[str], NoDecode] = ["/api/health"]
 
+    # Cuanto vive el enlace de verificacion de correo.
+    email_verification_hours: int = 24
+
     # Correo saliente
     # En desarrollo apunta a Mailpit (docker compose), que atrapa los correos y
     # los muestra en http://localhost:8025 sin reenviar nada a internet.
