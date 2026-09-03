@@ -17,19 +17,19 @@ UUID4_PATTERN = re.compile(
 
 
 def test_response_carries_a_generated_request_id():
-    response = client.get("/health")
+    response = client.get("/api/health")
     assert UUID4_PATTERN.fullmatch(response.headers[REQUEST_ID_HEADER])
 
 
 def test_safe_client_request_id_is_reused():
     # Permite correlacionar con el id que ya traiga el cliente o un proxy.
-    response = client.get("/health", headers={REQUEST_ID_HEADER: "trace-abc-123"})
+    response = client.get("/api/health", headers={REQUEST_ID_HEADER: "trace-abc-123"})
     assert response.headers[REQUEST_ID_HEADER] == "trace-abc-123"
 
 
 def test_each_request_gets_a_different_id():
-    first = client.get("/health").headers[REQUEST_ID_HEADER]
-    second = client.get("/health").headers[REQUEST_ID_HEADER]
+    first = client.get("/api/health").headers[REQUEST_ID_HEADER]
+    second = client.get("/api/health").headers[REQUEST_ID_HEADER]
     assert first != second
 
 
@@ -51,7 +51,7 @@ def test_access_log_is_json_and_carries_the_request_id():
     settings.log_json = True
     configure_logging(stream=buffer)
     try:
-        client.get("/health", headers={REQUEST_ID_HEADER: "trace-xyz"})
+        client.get("/api/health", headers={REQUEST_ID_HEADER: "trace-xyz"})
     finally:
         settings.log_json = original
         configure_logging()
@@ -61,7 +61,7 @@ def test_access_log_is_json_and_carries_the_request_id():
 
     assert access["request_id"] == "trace-xyz"
     assert access["method"] == "GET"
-    assert access["path"] == "/health"
+    assert access["path"] == "/api/health"
     assert access["status_code"] == 200
     assert access["level"] == "info"
     assert "timestamp" in access
