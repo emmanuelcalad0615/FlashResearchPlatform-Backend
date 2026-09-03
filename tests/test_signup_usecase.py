@@ -9,7 +9,7 @@ import pytest
 
 from packages.core.application.usecases.auth.signup import SignupUseCase
 from packages.core.domain.errors import DomainValidationError
-from packages.core.domain.services.tokens import hash_opaque_token
+from packages.core.domain.policies.tokens import hash_opaque_token
 from tests.fakes import (
     FailingEmailSender,
     InMemoryEmailSender,

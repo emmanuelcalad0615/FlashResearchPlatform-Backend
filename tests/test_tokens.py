@@ -2,7 +2,7 @@ import jwt
 import pytest
 
 from packages.core.domain.errors import InvalidTokenError, TokenExpiredError
-from packages.core.domain.services.tokens import (
+from packages.core.domain.policies.tokens import (
     TOKEN_TYPE_ACCESS,
     create_access_token,
     decode_access_token,

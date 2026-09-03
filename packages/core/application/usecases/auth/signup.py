@@ -10,6 +10,8 @@ from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 from packages.core.domain.errors import EmailDeliveryError
+from packages.core.domain.policies.passwords import hash_password, validate_password_policy
+from packages.core.domain.policies.tokens import generate_opaque_token, hash_opaque_token
 from packages.core.domain.ports import EmailSender
 from packages.core.domain.repositories import (
     EmailVerificationRepository,
@@ -17,8 +19,6 @@ from packages.core.domain.repositories import (
     UnitOfWork,
     UserRepository,
 )
-from packages.core.domain.services.passwords import hash_password, validate_password_policy
-from packages.core.domain.services.tokens import generate_opaque_token, hash_opaque_token
 
 logger = logging.getLogger(__name__)
 
