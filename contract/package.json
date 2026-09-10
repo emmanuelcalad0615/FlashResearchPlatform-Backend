@@ -1,0 +1,14 @@
+{
+  "name": "@emmanuelcalad0615/flash-api-contract",
+  "version": "0.1.0",
+  "description": "Contrato OpenAPI versionado de Flash Research API",
+  "files": ["openapi.json"],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emmanuelcalad0615/FlashResearchPlatform-Backend.git"
+  },
+  "license": "UNLICENSED"
+}

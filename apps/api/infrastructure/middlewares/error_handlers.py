@@ -16,6 +16,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from apps.api.infrastructure.logging import REQUEST_ID_HEADER, get_logger, get_request_id
@@ -84,6 +85,68 @@ CODE_BY_STATUS: dict[int, str] = {
 
 INTERNAL_ERROR_CODE = "internal_error"
 INTERNAL_ERROR_MESSAGE = "An unexpected error occurred"
+
+
+# ---------------------------------------------------------------------------
+# El envelope en el CONTRATO
+#
+# Los modelos de abajo no se usan en runtime: build_error_response() sigue
+# armando el dict a mano. Existen para que la forma del error aparezca en el
+# openapi.json y el frontend genere sus tipos de ahi, en vez de escribirlos a
+# mano y descubrir la diferencia en produccion.
+#
+# Sin esto FastAPI documenta un 422 con SU formato ({"detail": [...]}) en toda
+# ruta con parametros, mientras validation_error_handler devuelve el nuestro:
+# el contrato mentiria. El test test_documented_error_shape_matches_runtime
+# ata las dos mitades.
+# ---------------------------------------------------------------------------
+
+
+class ErrorDetail(BaseModel):
+    """El cuerpo de `error` que arma build_error_response()."""
+
+    code: str = Field(
+        description=(
+            "Codigo estable, snake_case, legible por maquina. Es EL contrato con el "
+            "frontend. Valores actuales: not_found, conflict, unauthorized, forbidden, "
+            "validation_error, rate_limited, internal_error, bad_gateway, "
+            "service_unavailable, bad_request, method_not_allowed, not_acceptable, "
+            "unsupported_media_type, http_error."
+        ),
+        examples=["not_found"],
+    )
+    message: str = Field(
+        description="Texto para humanos. Puede cambiar sin romper a nadie.",
+        examples=["Resource not found"],
+    )
+    details: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Contexto estructurado del error. {} cuando no hay nada que anadir.",
+    )
+    request_id: str | None = Field(
+        default=None,
+        description=(
+            "Id de la peticion, para cruzar con los logs. Ausente cuando la peticion "
+            "no llego a tener uno."
+        ),
+    )
+
+
+class ErrorResponse(BaseModel):
+    """El unico formato de error de la API."""
+
+    error: ErrorDetail
+
+
+# Los tres estados que puede devolver CUALQUIER ruta, haga lo que haga: 422 lo
+# emite la validacion de Pydantic, 429 el middleware de rate limit, y 500 la red
+# de seguridad de unhandled_exception_handler. Los especificos de cada ruta
+# (404, 409, 401...) los declara su router, no esto.
+ERROR_RESPONSES: dict[int | str, dict[str, Any]] = {
+    422: {"model": ErrorResponse, "description": "Request validation failed"},
+    429: {"model": ErrorResponse, "description": "Rate limit exceeded"},
+    500: {"model": ErrorResponse, "description": "Unexpected server error"},
+}
 
 
 def status_for(exc: AppError) -> int:
