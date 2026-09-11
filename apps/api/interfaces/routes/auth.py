@@ -2,15 +2,17 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Header, Response, status
+from fastapi import APIRouter, Cookie, Header, Response, status
 
 from apps.api.dependencies import (
     CurrentUserDep,
     GetMeUseCaseDep,
     LoginUseCaseDep,
+    RefreshUseCaseDep,
     SignupUseCaseDep,
     VerifyEmailUseCaseDep,
 )
+from apps.api.infrastructure.cookies import REFRESH_COOKIE
 from apps.api.interfaces.controllers import auth as controller
 from apps.api.schemas.auth import (
     LoginRequest,
@@ -69,6 +71,27 @@ async def login(
     user_agent: Annotated[str | None, Header()] = None,
 ) -> MessageResponse:
     return await controller.login(body, caso, response, user_agent)
+
+
+@router.post(
+    "/refresh",
+    status_code=status.HTTP_200_OK,
+    response_model=MessageResponse,
+    summary="Renueva la sesion con el refresh token",
+)
+async def refresh(
+    caso: RefreshUseCaseDep,
+    response: Response,
+    # La ruta TIENE que ser exactamente /api/auth/refresh: es el Path con el
+    # que se emitio la cookie, y el navegador no la manda a ninguna otra.
+    # Cambiar este prefijo sin cambiar REFRESH_COOKIE_PATH deja la renovacion
+    # muerta sin que falle ningun test de unidad.
+    refresh_token: Annotated[str | None, Cookie(alias=REFRESH_COOKIE)] = None,
+    user_agent: Annotated[str | None, Header()] = None,
+) -> MessageResponse:
+    # POST y no GET: cambia el estado del servidor —gasta un token y emite
+    # otro—, asi que no puede ser cacheable ni repetible sin consecuencias.
+    return await controller.refresh(caso, response, refresh_token, user_agent)
 
 
 @router.get(

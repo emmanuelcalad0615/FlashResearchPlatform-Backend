@@ -23,9 +23,11 @@ from apps.api.schemas.auth import (
 )
 from packages.core.application.usecases.auth.login import LoginUseCase
 from packages.core.application.usecases.auth.me import GetMeUseCase
+from packages.core.application.usecases.auth.refresh import RefreshUseCase
 from packages.core.application.usecases.auth.signup import SignupUseCase
 from packages.core.application.usecases.auth.verify_email import VerifyEmailUseCase
 from packages.core.domain.entities import User
+from packages.core.domain.errors import UnauthorizedError
 
 # Identico en las tres ramas del signup —email nuevo, pendiente o ya
 # registrado— para no delatar quien tiene cuenta. Quien distingue los casos es
@@ -33,6 +35,7 @@ from packages.core.domain.entities import User
 _MENSAJE_SIGNUP = "Revisa tu correo para activar tu cuenta"
 _MENSAJE_VERIFICADO = "Cuenta verificada. Ya puedes iniciar sesion"
 _MENSAJE_LOGIN = "Sesion iniciada"
+_MENSAJE_REFRESH = "Sesion renovada"
 
 
 async def signup(body: SignupRequest, caso: SignupUseCase) -> MessageResponse:
@@ -69,6 +72,38 @@ async def login(
     )
 
     return MessageResponse(message=_MENSAJE_LOGIN)
+
+
+async def refresh(
+    caso: RefreshUseCase,
+    response: Response,
+    refresh_token: str | None,
+    user_agent: str | None,
+) -> MessageResponse:
+    """Canjea el refresh token por un par nuevo y reemplaza las cookies.
+
+    El token NO llega en el cuerpo: viene en la cookie, que el navegador manda
+    solo a esta ruta por su Path. El frontend no lo lee ni lo escribe nunca,
+    asi que pedir un refresh es una peticion sin cuerpo.
+    """
+    if refresh_token is None:
+        # Sin cookie no hay nada que canjear. Es ausencia de sesion, no un
+        # token malo: mismo 401 que una ruta protegida sin credenciales.
+        raise UnauthorizedError("No active session")
+
+    resultado = await caso.execute(refresh_token, user_agent=user_agent)
+
+    # Las dos cookies se reemplazan, no solo la de acceso: la rotacion dejo el
+    # refresh anterior gastado, asi que si no se sustituyera, la siguiente
+    # renovacion mandaria un token usado y dispararia la deteccion de robo
+    # contra el propio usuario.
+    set_session_cookies(
+        response,
+        access_token=resultado.access_token,
+        refresh_token=resultado.refresh_token,
+    )
+
+    return MessageResponse(message=_MENSAJE_REFRESH)
 
 
 async def me(usuario: User, caso: GetMeUseCase) -> MeResponse:
