@@ -19,6 +19,7 @@ Dos formas de token, cada una por una razon:
 import hashlib
 import secrets
 import uuid
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
 import jwt
@@ -31,12 +32,25 @@ from packages.core.domain.errors import InvalidTokenError, TokenExpiredError
 TOKEN_TYPE_ACCESS = "access"
 
 
+@dataclass(frozen=True)
+class AccessTokenClaims:
+    """Lo que se saca de un access token valido.
+
+    Un objeto y no una tupla: quien lo recibe escribe `claims.user_id` en vez
+    de `claims[0]`, y anadir un claim manana no rompe a quien ya desempaquetaba.
+    """
+
+    user_id: str
+    family_id: str | None
+
+
 def create_access_token(
     user_id: str,
     *,
     secret: str,
     algorithm: str,
     expires_minutes: int,
+    family_id: str | None = None,
 ) -> str:
     """Firma un access token para `user_id`.
 
@@ -56,11 +70,24 @@ def create_access_token(
         "type": TOKEN_TYPE_ACCESS,
     }
 
+    if family_id is not None:
+        # La cadena de rotacion a la que pertenece esta sesion. Sirve para que
+        # el cierre de sesion sepa QUE familia revocar sin necesitar el refresh
+        # token, que el navegador solo manda a /api/auth/refresh.
+        #
+        # Va aqui aunque un JWT sea legible: no es una credencial. Con el
+        # family_id no se puede emitir nada —la base busca por hash del token,
+        # no por familia— y lo unico que habilita es cerrar la sesion, que
+        # quien tenga este access token ya podia hacer de todos modos.
+        payload["fid"] = family_id
+
     return jwt.encode(payload, secret, algorithm=algorithm)
 
 
-def decode_access_token(token: str, *, secret: str, algorithm: str) -> str:
-    """Devuelve el user_id (`sub`) si el token es valido.
+def decode_access_token(
+    token: str, *, secret: str, algorithm: str
+) -> AccessTokenClaims:
+    """Devuelve los claims utiles si el token es valido.
 
     Lanza TokenExpiredError si caduco, InvalidTokenError en cualquier otro caso.
     Son errores distintos a proposito: ante un token expirado el cliente pide un
@@ -91,7 +118,11 @@ def decode_access_token(token: str, *, secret: str, algorithm: str) -> str:
     if not user_id:
         raise InvalidTokenError("The token has no subject")
 
-    return user_id
+    # `fid` es opcional a proposito. Los access tokens emitidos antes de que
+    # existiera este claim siguen siendo validos hasta que caduquen: sin esto,
+    # desplegar el cambio echaria a la calle a todo el que tuviera sesion
+    # abierta. Quince minutos despues ya no queda ninguno sin fid.
+    return AccessTokenClaims(user_id=user_id, family_id=payload.get("fid"))
 
 
 # 32 bytes = 256 bits de entropia. Adivinar uno por fuerza bruta es inviable.

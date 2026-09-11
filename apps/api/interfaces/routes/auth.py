@@ -5,9 +5,12 @@ from typing import Annotated
 from fastapi import APIRouter, Cookie, Header, Response, status
 
 from apps.api.dependencies import (
+    AccessClaimsDep,
     CurrentUserDep,
     GetMeUseCaseDep,
     LoginUseCaseDep,
+    LogoutAllUseCaseDep,
+    LogoutUseCaseDep,
     RefreshUseCaseDep,
     SignupUseCaseDep,
     VerifyEmailUseCaseDep,
@@ -108,3 +111,36 @@ async def me(
     caso: GetMeUseCaseDep,
 ) -> MeResponse:
     return await controller.me(usuario, caso)
+
+
+@router.post(
+    "/logout",
+    status_code=status.HTTP_200_OK,
+    response_model=MessageResponse,
+    summary="Cierra la sesion actual",
+)
+async def logout(
+    caso: LogoutUseCaseDep,
+    response: Response,
+    # Ruta protegida: sin access token valido no se ejecuta. El claim `fid`
+    # sale de ese mismo token, asi que la autenticacion y el dato que hace
+    # falta llegan juntos.
+    claims: AccessClaimsDep,
+) -> MessageResponse:
+    return await controller.logout(caso, response, claims.family_id)
+
+
+@router.post(
+    "/logout-all",
+    status_code=status.HTTP_200_OK,
+    response_model=MessageResponse,
+    summary="Cierra todas las sesiones del usuario",
+)
+async def logout_all(
+    caso: LogoutAllUseCaseDep,
+    response: Response,
+    # CurrentUserDep y no AccessClaimsDep: aqui hace falta el id del usuario, y
+    # comprobar de paso que sigue existiendo.
+    usuario: CurrentUserDep,
+) -> MessageResponse:
+    return await controller.logout_all(caso, response, usuario)

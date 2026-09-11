@@ -19,13 +19,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from apps.api.config import settings
 from apps.api.infrastructure.cookies import ACCESS_COOKIE
 from packages.core.application.usecases.auth.login import LoginUseCase
+from packages.core.application.usecases.auth.logout import LogoutUseCase
+from packages.core.application.usecases.auth.logout_all import LogoutAllUseCase
 from packages.core.application.usecases.auth.me import GetMeUseCase
 from packages.core.application.usecases.auth.refresh import RefreshUseCase
 from packages.core.application.usecases.auth.signup import SignupUseCase
 from packages.core.application.usecases.auth.verify_email import VerifyEmailUseCase
 from packages.core.domain.entities import User
 from packages.core.domain.errors import InvalidTokenError, UnauthorizedError
-from packages.core.domain.policies.tokens import decode_access_token
+from packages.core.domain.policies.tokens import (
+    AccessTokenClaims,
+    decode_access_token,
+)
 from packages.core.infrastructure.db.repositories import (
     SqlAlchemyEmailVerificationRepository,
     SqlAlchemyProfileRepository,
@@ -129,31 +134,46 @@ SignupUseCaseDep = Annotated[SignupUseCase, Depends(get_signup_use_case)]
 VerifyEmailUseCaseDep = Annotated[VerifyEmailUseCase, Depends(get_verify_email_use_case)]
 
 
-async def get_current_user(request: Request, session: SessionDep) -> User:
-    """El usuario dueno de la peticion, a partir de la cookie de sesion.
+async def get_access_claims(request: Request) -> AccessTokenClaims:
+    """Los claims del access token de la peticion, ya verificados.
 
-    Es la unica puerta de entrada a una ruta protegida: quien la pide como
-    dependencia recibe un User real o no llega a ejecutarse nunca.
+    Separada de get_current_user porque hay rutas que necesitan un dato del
+    token que no esta en el usuario: el cierre de sesion usa `fid` para saber
+    que familia revocar. Sin esta dependencia habria que descifrar el token dos
+    veces o pasear el objeto a mano.
 
-    No atrapa los errores del token a proposito. `decode_access_token` distingue
-    expirado (410) de invalido (400), y esa diferencia es justo la que necesita
-    el cliente para decidir entre pedir un refresh o mandar al login. Envolverlos
-    en un 401 unico la borraria.
+    No consulta la base. Quien necesite al usuario pide get_current_user, que
+    se construye sobre esta.
     """
     token = request.cookies.get(ACCESS_COOKIE)
     if token is None:
-        # Sin cookie no hay nada que verificar: no es un token malo, es la
-        # ausencia de sesion. 401 y no 400.
         raise UnauthorizedError("No active session")
 
-    user_id = decode_access_token(
+    return decode_access_token(
         token,
         secret=settings.jwt_secret,
         algorithm=settings.jwt_algorithm,
     )
 
+
+AccessClaimsDep = Annotated[AccessTokenClaims, Depends(get_access_claims)]
+
+
+async def get_current_user(claims: AccessClaimsDep, session: SessionDep) -> User:
+    """El usuario dueno de la peticion, a partir de la cookie de sesion.
+
+    Es la unica puerta de entrada a una ruta protegida: quien la pide como
+    dependencia recibe un User real o no llega a ejecutarse nunca.
+
+    La verificacion del token la hace get_access_claims; aqui solo se traduce
+    el sujeto a un usuario real. Los errores de token suben desde alli sin
+    atraparse: `decode_access_token` distingue expirado (410) de invalido
+    (400), y esa diferencia es justo la que necesita el cliente para decidir
+    entre pedir un refresh o mandar al login. Envolverlos en un 401 unico la
+    borraria.
+    """
     try:
-        user_uuid = UUID(user_id)
+        user_uuid = UUID(claims.user_id)
     except ValueError as exc:
         # El `sub` lo escribimos nosotros, asi que llegar aqui significa que el
         # token venia manipulado o de otra version del sistema. Firma valida no
@@ -231,3 +251,24 @@ def get_me_use_case(session: AuthSessionDep) -> GetMeUseCase:
 
 
 GetMeUseCaseDep = Annotated[GetMeUseCase, Depends(get_me_use_case)]
+
+
+def get_logout_use_case(session: SessionDep) -> LogoutUseCase:
+    # SessionDep y no AuthSessionDep, igual que el refresh: solo se toca
+    # refresh_tokens, que no lleva RLS. Quien autentica la ruta es la
+    # dependencia de claims, no esta.
+    return LogoutUseCase(
+        tokens=SqlAlchemyRefreshTokenRepository(session),
+        uow=SqlAlchemyUnitOfWork(session),
+    )
+
+
+def get_logout_all_use_case(session: SessionDep) -> LogoutAllUseCase:
+    return LogoutAllUseCase(
+        tokens=SqlAlchemyRefreshTokenRepository(session),
+        uow=SqlAlchemyUnitOfWork(session),
+    )
+
+
+LogoutUseCaseDep = Annotated[LogoutUseCase, Depends(get_logout_use_case)]
+LogoutAllUseCaseDep = Annotated[LogoutAllUseCase, Depends(get_logout_all_use_case)]

@@ -28,7 +28,9 @@ def _token(**kwargs) -> str:
 
 
 def test_roundtrip_returns_the_user_id():
-    assert decode_access_token(_token(), secret=SECRET, algorithm=ALGORITHM) == USER_ID
+    claims = decode_access_token(_token(), secret=SECRET, algorithm=ALGORITHM)
+
+    assert claims.user_id == USER_ID
 
 
 def test_two_tokens_for_the_same_user_are_different():
@@ -145,3 +147,52 @@ def test_hash_does_not_reveal_the_token():
 
     assert token not in resultado
     assert len(resultado) == 64  # SHA-256 en hexadecimal
+
+
+# ---------------------------------------------------------------------------
+# El claim `fid`: la familia de la sesion
+# ---------------------------------------------------------------------------
+
+FAMILY_ID = "3f2b1a44-0000-4000-8000-000000000001"
+
+
+def test_el_family_id_va_y_vuelve() -> None:
+    token = _token(family_id=FAMILY_ID)
+
+    claims = decode_access_token(token, secret=SECRET, algorithm=ALGORITHM)
+
+    assert claims.family_id == FAMILY_ID
+
+
+def test_sin_family_id_el_token_sigue_siendo_valido() -> None:
+    """Compatibilidad hacia atras, y no es teorica.
+
+    Los access tokens emitidos antes de que existiera este claim viven hasta
+    quince minutos. Si decode los rechazara, desplegar el cambio echaria a la
+    calle a todo el que tuviera sesion abierta en ese momento.
+    """
+    claims = decode_access_token(_token(), secret=SECRET, algorithm=ALGORITHM)
+
+    assert claims.user_id == USER_ID
+    assert claims.family_id is None
+
+
+def test_el_family_id_no_es_secreto_pero_tampoco_una_credencial() -> None:
+    """Deja escrito que el claim es legible por cualquiera.
+
+    Un JWT es Base64, no cifrado. Se acepta a proposito: con el family_id no se
+    puede emitir nada, porque la base busca los refresh tokens por hash del
+    token y no por familia.
+    """
+    token = _token(family_id=FAMILY_ID)
+
+    sin_verificar = jwt.decode(token, options={"verify_signature": False})
+
+    assert sin_verificar["fid"] == FAMILY_ID
+
+
+def test_el_family_id_no_viaja_en_el_refresh_token() -> None:
+    """Un token opaco es opaco: no lleva nada dentro."""
+    opaco = generate_opaque_token()
+
+    assert FAMILY_ID not in opaco

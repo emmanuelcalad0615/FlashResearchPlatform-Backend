@@ -113,11 +113,18 @@ class LoginUseCase:
     async def _abrir_sesion(self, user_id, user_agent: str | None) -> LoginResult:
         ahora = datetime.now(UTC)
 
+        # La familia se decide aqui, antes de emitir nada: los dos tokens de
+        # una sesion tienen que apuntar a la misma cadena.
+        family_id = uuid4()
+
         access = create_access_token(
             str(user_id),
             secret=self._jwt_secret,
             algorithm=self._jwt_algorithm,
             expires_minutes=self._access_token_minutes,
+            # Para que el cierre de sesion sepa que familia revocar sin tener
+            # el refresh token a mano.
+            family_id=str(family_id),
         )
 
         refresh = generate_opaque_token()
@@ -129,7 +136,7 @@ class LoginUseCase:
             # tres cadenas independientes, y cerrar sesion en uno no toca los
             # otros. Es tambien lo que permite revocar solo la comprometida
             # cuando se detecta una reutilizacion.
-            family_id=uuid4(),
+            family_id=family_id,
             expires_at=ahora + timedelta(days=self._refresh_token_days),
             # Informativo: sirve para mostrar "sesiones abiertas" y cerrarlas
             # por dispositivo. NUNCA para autenticar: lo controla el cliente.

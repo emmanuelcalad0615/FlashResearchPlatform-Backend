@@ -64,10 +64,10 @@ async def test_valid_credentials_return_both_tokens(ctx):
 async def test_the_access_token_identifies_the_user(ctx):
     resultado = await ctx.caso.execute(EMAIL, PASSWORD)
 
-    sub = decode_access_token(
+    claims = decode_access_token(
         resultado.access_token, secret=SECRET, algorithm="HS256"
     )
-    assert sub == str(ctx.user_id)
+    assert claims.user_id == str(ctx.user_id)
 
 
 async def test_only_the_refresh_hash_is_stored(ctx):

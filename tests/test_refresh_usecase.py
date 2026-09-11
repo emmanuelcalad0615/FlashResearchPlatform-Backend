@@ -70,9 +70,10 @@ async def test_devuelve_un_par_nuevo(dobles) -> None:
     resultado = await dobles.caso().execute(viejo)
 
     assert resultado.refresh_token != viejo
-    assert decode_access_token(
+    claims = decode_access_token(
         resultado.access_token, secret=SECRET, algorithm=ALGORITMO
-    ) == str(dobles.user_id)
+    )
+    assert claims.user_id == str(dobles.user_id)
 
 
 async def test_gasta_el_token_presentado(dobles) -> None:

@@ -141,6 +141,9 @@ class RefreshUseCase:
             secret=self._jwt_secret,
             algorithm=self._jwt_algorithm,
             expires_minutes=self._access_token_minutes,
+            # La misma familia que hereda el refresh: los dos tokens del par
+            # nuevo siguen apuntando a la cadena original.
+            family_id=str(family_id),
         )
 
         refresh = generate_opaque_token()

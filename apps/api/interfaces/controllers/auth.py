@@ -11,9 +11,11 @@ centralizado de la HU-A08, que ya los tiene mapeados:
     TokenExpiredError      -> 410
 """
 
+from uuid import UUID
+
 from fastapi import Response
 
-from apps.api.infrastructure.cookies import set_session_cookies
+from apps.api.infrastructure.cookies import clear_session_cookies, set_session_cookies
 from apps.api.schemas.auth import (
     LoginRequest,
     MeResponse,
@@ -22,6 +24,8 @@ from apps.api.schemas.auth import (
     VerifyEmailRequest,
 )
 from packages.core.application.usecases.auth.login import LoginUseCase
+from packages.core.application.usecases.auth.logout import LogoutUseCase
+from packages.core.application.usecases.auth.logout_all import LogoutAllUseCase
 from packages.core.application.usecases.auth.me import GetMeUseCase
 from packages.core.application.usecases.auth.refresh import RefreshUseCase
 from packages.core.application.usecases.auth.signup import SignupUseCase
@@ -36,6 +40,8 @@ _MENSAJE_SIGNUP = "Revisa tu correo para activar tu cuenta"
 _MENSAJE_VERIFICADO = "Cuenta verificada. Ya puedes iniciar sesion"
 _MENSAJE_LOGIN = "Sesion iniciada"
 _MENSAJE_REFRESH = "Sesion renovada"
+_MENSAJE_LOGOUT = "Sesion cerrada"
+_MENSAJE_LOGOUT_ALL = "Todas las sesiones fueron cerradas"
 
 
 async def signup(body: SignupRequest, caso: SignupUseCase) -> MessageResponse:
@@ -121,3 +127,37 @@ async def me(usuario: User, caso: GetMeUseCase) -> MeResponse:
         email_verified=usuario.email_verified,
         display_name=perfil.display_name if perfil else None,
     )
+
+
+async def logout(
+    caso: LogoutUseCase,
+    response: Response,
+    family_id: str | None,
+) -> MessageResponse:
+    """Cierra esta sesion: revoca su familia y borra las cookies.
+
+    El family_id sale del claim `fid` del access token, que esta firmado. No
+    llega del cuerpo ni de la URL a proposito: si el cliente pudiera elegirlo,
+    cualquiera cerraria la sesion de otro escribiendo un UUID ajeno.
+
+    Las cookies se borran pase lo que pase, incluso cuando no hay familia que
+    revocar. Cerrar sesion no puede terminar con el usuario todavia dentro.
+    """
+    await caso.execute(UUID(family_id) if family_id else None)
+    clear_session_cookies(response)
+    return MessageResponse(message=_MENSAJE_LOGOUT)
+
+
+async def logout_all(
+    caso: LogoutAllUseCase,
+    response: Response,
+    usuario: User,
+) -> MessageResponse:
+    """Cierra TODAS las sesiones del usuario, incluida esta.
+
+    Incluirla es deliberado: quien pide esto sospecha de un intruso y no sabe
+    cual de las sesiones abiertas es la suya.
+    """
+    await caso.execute(usuario.id)
+    clear_session_cookies(response)
+    return MessageResponse(message=_MENSAJE_LOGOUT_ALL)

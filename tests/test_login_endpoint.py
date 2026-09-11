@@ -89,10 +89,10 @@ def test_both_cookies_are_set(client):
 def test_the_access_cookie_carries_a_usable_token(client, dobles):
     r = _login(client)
 
-    sub = decode_access_token(
+    claims = decode_access_token(
         r.cookies[ACCESS_COOKIE], secret=SECRET, algorithm="HS256"
     )
-    assert sub == str(dobles.user_id)
+    assert claims.user_id == str(dobles.user_id)
 
 
 # ---- Seguridad de la respuesta ---------------------------------------------
