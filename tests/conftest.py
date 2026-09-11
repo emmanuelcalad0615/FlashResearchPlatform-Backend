@@ -26,6 +26,26 @@ load_dotenv()
 
 TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "")
 
+# GitHub Actions define CI=true. En local, que falte la base de pruebas es
+# aceptable y los tests de integracion se omiten. En CI NO: una suite donde
+# todo se omitio se ve identica a una donde todo paso.
+_EN_CI = os.environ.get("CI", "").lower() == "true"
+
+
+def pytest_configure(config) -> None:
+    """Aborta si en CI falta la base de pruebas.
+
+    Sin esto, borrar TEST_DATABASE_URL del pipeline dejaria 18 tests omitidos
+    en silencio y el CI seguiria en verde.
+    """
+    if _EN_CI and not TEST_DATABASE_URL:
+        pytest.exit(
+            "TEST_DATABASE_URL es obligatoria en CI: sin ella los tests de "
+            "integracion se omitirian y el pipeline pasaria sin probarlos.",
+            returncode=1,
+        )
+
+
 requiere_bd = pytest.mark.skipif(
     not TEST_DATABASE_URL,
     reason=(
@@ -175,4 +195,3 @@ async def rls_session() -> AsyncSession:
             yield sesion
     finally:
         await motor.dispose()
-

@@ -18,9 +18,11 @@ from unittest.mock import MagicMock
 
 from apps.api.dependencies import (
     get_email_sender,
+    get_login_use_case,
     get_signup_use_case,
     get_verify_email_use_case,
 )
+from packages.core.application.usecases.auth.login import LoginUseCase
 from packages.core.application.usecases.auth.signup import SignupUseCase
 from packages.core.application.usecases.auth.verify_email import VerifyEmailUseCase
 
@@ -36,6 +38,12 @@ def test_the_signup_use_case_builds():
     caso = get_signup_use_case(MagicMock(), get_email_sender())
 
     assert isinstance(caso, SignupUseCase)
+
+
+def test_the_login_use_case_builds():
+    caso = get_login_use_case(MagicMock())
+
+    assert isinstance(caso, LoginUseCase)
 
 
 def test_the_verify_email_use_case_builds():
@@ -54,3 +62,4 @@ def test_the_app_registers_the_auth_routes():
 
     assert "/api/auth/signup" in rutas
     assert "/api/auth/verify-email" in rutas
+    assert "/api/auth/login" in rutas

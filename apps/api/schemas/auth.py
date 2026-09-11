@@ -26,6 +26,15 @@ class SignupRequest(BaseModel):
     password: str = Field(min_length=1, max_length=_MAX_PASSWORD_BYTES)
 
 
+class LoginRequest(BaseModel):
+    # Sin EmailStr a proposito: al iniciar sesion no se valida el formato. Si
+    # se rechazara aqui un email malformado, la respuesta seria un 422 distinto
+    # del 401 generico, y eso delataria informacion. Cualquier cosa que no
+    # exista en la base sale como invalid_credentials.
+    email: str = Field(min_length=1, max_length=320)
+    password: str = Field(min_length=1, max_length=_MAX_PASSWORD_BYTES)
+
+
 class VerifyEmailRequest(BaseModel):
     # 256 sobra: el token son 43 caracteres. Cualquier cosa mas larga es basura
     # o un intento de sobrecargar la busqueda.
@@ -49,3 +58,4 @@ class MessageResponse(BaseModel):
     """
 
     message: str
+

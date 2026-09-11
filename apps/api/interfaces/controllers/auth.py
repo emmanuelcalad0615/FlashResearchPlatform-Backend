@@ -11,11 +11,16 @@ centralizado de la HU-A08, que ya los tiene mapeados:
     TokenExpiredError      -> 410
 """
 
+from fastapi import Response
+
+from apps.api.infrastructure.cookies import set_session_cookies
 from apps.api.schemas.auth import (
+    LoginRequest,
     MessageResponse,
     SignupRequest,
     VerifyEmailRequest,
 )
+from packages.core.application.usecases.auth.login import LoginUseCase
 from packages.core.application.usecases.auth.signup import SignupUseCase
 from packages.core.application.usecases.auth.verify_email import VerifyEmailUseCase
 
@@ -24,6 +29,7 @@ from packages.core.application.usecases.auth.verify_email import VerifyEmailUseC
 # el dueno del buzon, porque cada rama manda un correo distinto.
 _MENSAJE_SIGNUP = "Revisa tu correo para activar tu cuenta"
 _MENSAJE_VERIFICADO = "Cuenta verificada. Ya puedes iniciar sesion"
+_MENSAJE_LOGIN = "Sesion iniciada"
 
 
 async def signup(body: SignupRequest, caso: SignupUseCase) -> MessageResponse:
@@ -36,3 +42,28 @@ async def verify_email(
 ) -> MessageResponse:
     await caso.execute(body.token)
     return MessageResponse(message=_MENSAJE_VERIFICADO)
+
+
+async def login(
+    body: LoginRequest,
+    caso: LoginUseCase,
+    response: Response,
+    user_agent: str | None,
+) -> MessageResponse:
+    """Abre sesion y deja los tokens en cookies.
+
+    Los tokens NO viajan en el cuerpo, a proposito. Si fueran parte del JSON, el
+    JavaScript del frontend tendria que leerlos para guardarlos, y entonces un
+    XSS podria leerlos tambien. En una cookie HttpOnly el navegador los gestiona
+    y ningun script los alcanza.
+    """
+    resultado = await caso.execute(body.email, body.password, user_agent=user_agent)
+
+    set_session_cookies(
+        response,
+        access_token=resultado.access_token,
+        refresh_token=resultado.refresh_token,
+    )
+
+    return MessageResponse(message=_MENSAJE_LOGIN)
+

@@ -15,11 +15,13 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from apps.api.config import settings
+from packages.core.application.usecases.auth.login import LoginUseCase
 from packages.core.application.usecases.auth.signup import SignupUseCase
 from packages.core.application.usecases.auth.verify_email import VerifyEmailUseCase
 from packages.core.infrastructure.db.repositories import (
     SqlAlchemyEmailVerificationRepository,
     SqlAlchemyProfileRepository,
+    SqlAlchemyRefreshTokenRepository,
     SqlAlchemyUserRepository,
 )
 from packages.core.infrastructure.db.session import SessionLocal
@@ -79,6 +81,18 @@ def get_signup_use_case(
     )
 
 
+def get_login_use_case(session: SessionDep) -> LoginUseCase:
+    return LoginUseCase(
+        users=SqlAlchemyUserRepository(session),
+        tokens=SqlAlchemyRefreshTokenRepository(session),
+        uow=SqlAlchemyUnitOfWork(session),
+        jwt_secret=settings.jwt_secret,
+        jwt_algorithm=settings.jwt_algorithm,
+        access_token_minutes=settings.access_token_minutes,
+        refresh_token_days=settings.refresh_token_days,
+    )
+
+
 def get_verify_email_use_case(session: SessionDep) -> VerifyEmailUseCase:
     return VerifyEmailUseCase(
         users=SqlAlchemyUserRepository(session),
@@ -87,5 +101,7 @@ def get_verify_email_use_case(session: SessionDep) -> VerifyEmailUseCase:
     )
 
 
+LoginUseCaseDep = Annotated[LoginUseCase, Depends(get_login_use_case)]
 SignupUseCaseDep = Annotated[SignupUseCase, Depends(get_signup_use_case)]
 VerifyEmailUseCaseDep = Annotated[VerifyEmailUseCase, Depends(get_verify_email_use_case)]
+

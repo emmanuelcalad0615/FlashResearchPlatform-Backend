@@ -1,10 +1,17 @@
 """Registro de las rutas de autenticacion en FastAPI."""
 
-from fastapi import APIRouter, status
+from typing import Annotated
 
-from apps.api.dependencies import SignupUseCaseDep, VerifyEmailUseCaseDep
+from fastapi import APIRouter, Header, Response, status
+
+from apps.api.dependencies import (
+    LoginUseCaseDep,
+    SignupUseCaseDep,
+    VerifyEmailUseCaseDep,
+)
 from apps.api.interfaces.controllers import auth as controller
 from apps.api.schemas.auth import (
+    LoginRequest,
     MessageResponse,
     SignupRequest,
     VerifyEmailRequest,
@@ -42,3 +49,21 @@ async def verify_email(
     # enlaces para escanearlos, y con GET la cuenta quedaria verificada sin que
     # el usuario hiciera nada.
     return await controller.verify_email(body, caso)
+
+
+@router.post(
+    "/login",
+    status_code=status.HTTP_200_OK,
+    response_model=MessageResponse,
+    summary="Inicia sesion y emite las cookies de sesion",
+)
+async def login(
+    body: LoginRequest,
+    caso: LoginUseCaseDep,
+    response: Response,
+    # Informativo: sirve para mostrar "sesiones abiertas" y cerrarlas por
+    # dispositivo. NUNCA para autenticar, porque lo controla el cliente.
+    user_agent: Annotated[str | None, Header()] = None,
+) -> MessageResponse:
+    return await controller.login(body, caso, response, user_agent)
+

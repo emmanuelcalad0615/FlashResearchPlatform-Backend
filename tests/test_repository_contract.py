@@ -44,6 +44,20 @@ IMPLEMENTACIONES = [
     ),
 ]
 
+# Para los tests que necesitan DOS fixtures a la vez hay que declarar el par
+# completo. Meter los pytest.param dentro de una tupla —[(i, i) for i in ...]—
+# DESCARTA sus marcas en silencio, y la variante de SQLAlchemy dejaria de estar
+# deseleccionada: intentaria conectarse a Postgres en la suite rapida.
+PARES = [
+    pytest.param("in_memory", "in_memory", id="in_memory"),
+    pytest.param(
+        "sqlalchemy",
+        "sqlalchemy",
+        id="sqlalchemy",
+        marks=[pytest.mark.integration, requiere_bd],
+    ),
+]
+
 
 @pytest.fixture
 def usuarios(request):
@@ -124,8 +138,7 @@ async def test_password_hash_can_be_replaced(usuarios):
 # ---- Refresh tokens --------------------------------------------------------
 
 
-@pytest.mark.parametrize("usuarios,tokens", [(i, i) for i in IMPLEMENTACIONES],
-                         indirect=True)
+@pytest.mark.parametrize("usuarios,tokens", PARES, indirect=True)
 async def test_lookup_returns_a_used_token(usuarios, tokens):
     """SEGURIDAD: si una implementacion escondiera los usados, la deteccion de
     reutilizacion nunca se disparia y el robo pasaria desapercibido."""
@@ -144,8 +157,7 @@ async def test_lookup_returns_a_used_token(usuarios, tokens):
     assert encontrado.is_used is True
 
 
-@pytest.mark.parametrize("usuarios,tokens", [(i, i) for i in IMPLEMENTACIONES],
-                         indirect=True)
+@pytest.mark.parametrize("usuarios,tokens", PARES, indirect=True)
 async def test_revoking_a_family_hits_every_token_in_it(usuarios, tokens):
     user_id = uuid.uuid4()
     await usuarios.create(user_id, _email(), "hash")
@@ -169,8 +181,7 @@ async def test_revoking_a_family_hits_every_token_in_it(usuarios, tokens):
     assert (await tokens.get_by_hash(hash_ajeno)).is_revoked is False
 
 
-@pytest.mark.parametrize("usuarios,tokens", [(i, i) for i in IMPLEMENTACIONES],
-                         indirect=True)
+@pytest.mark.parametrize("usuarios,tokens", PARES, indirect=True)
 async def test_revoking_twice_keeps_the_original_date(usuarios, tokens):
     """La primera fecha es la pista para investigar por que se cerro una
     sesion. Pisarla la borraria."""
@@ -191,8 +202,7 @@ async def test_revoking_twice_keeps_the_original_date(usuarios, tokens):
     assert (await tokens.get_by_hash(hash_token)).revoked_at == primera
 
 
-@pytest.mark.parametrize("usuarios,tokens", [(i, i) for i in IMPLEMENTACIONES],
-                         indirect=True)
+@pytest.mark.parametrize("usuarios,tokens", PARES, indirect=True)
 async def test_revoke_all_closes_every_session(usuarios, tokens):
     user_id = uuid.uuid4()
     await usuarios.create(user_id, _email(), "hash")

@@ -3,6 +3,8 @@ from typing import Annotated
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
+_MIN_JWT_SECRET_LENGTH = 32
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
@@ -37,6 +39,21 @@ class Settings(BaseSettings):
     rate_limit_requests: int = 60
     rate_limit_window_seconds: int = 60
     rate_limit_exempt_paths: Annotated[list[str], NoDecode] = ["/api/health"]
+
+    # Auth
+    # jwt_secret es la LLAVE MAESTRA: quien la tenga puede fabricar un token
+    # valido con cualquier identidad. Minimo 32 bytes aleatorios, DISTINTA en
+    # cada entorno, nunca en git.
+    #   generar con: python -c "import secrets; print(secrets.token_urlsafe(48))"
+    jwt_secret: str = ""
+    jwt_algorithm: str = "HS256"
+    # Ventana que tiene un access token robado. En produccion, 15.
+    access_token_minutes: int = 60
+    # En produccion, 7.
+    refresh_token_days: int = 30
+    # Obliga a que la cookie viaje solo por HTTPS. Obligatorio en produccion.
+    cookie_secure: bool = False
+    cookie_samesite: str = "lax"
 
     # Cuanto vive el enlace de verificacion de correo.
     email_verification_hours: int = 24
@@ -87,6 +104,29 @@ class Settings(BaseSettings):
                 "SMTP_USER y SMTP_PASSWORD son obligatorios con DEBUG=false: "
                 "sin credenciales el correo viajaria sin cifrar."
             )
+
+        # En CUALQUIER entorno: sin secreto no se puede firmar nada.
+        if not self.jwt_secret:
+            raise ValueError(
+                "JWT_SECRET es obligatoria. Generar con: "
+                'python -c "import secrets; print(secrets.token_urlsafe(48))"'
+            )
+
+        # pyjwt ya avisa de esto por su cuenta: por debajo de 32 bytes, la clave
+        # HMAC queda por debajo de lo recomendado por el RFC 7518 y es
+        # atacable por fuerza bruta.
+        if len(self.jwt_secret) < _MIN_JWT_SECRET_LENGTH:
+            raise ValueError(
+                f"JWT_SECRET debe tener al menos {_MIN_JWT_SECRET_LENGTH} "
+                f"caracteres; tiene {len(self.jwt_secret)}."
+            )
+
+        if not self.debug and not self.cookie_secure:
+            raise ValueError(
+                "COOKIE_SECURE debe ser true con DEBUG=false: sin ella la "
+                "cookie de sesion viajaria sin cifrar."
+            )
+
         return self
 
 

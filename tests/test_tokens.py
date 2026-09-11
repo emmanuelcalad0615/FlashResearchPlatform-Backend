@@ -118,16 +118,24 @@ def test_opaque_token_is_long_enough():
 
 
 def test_the_same_token_always_hashes_the_same():
-    """Sin esto no se podria buscar el token en la base."""
+    """Sin esto no se podria buscar el token en la base.
+
+    Las dos llamadas van a variables con nombre para dejar claro que son
+    invocaciones distintas y no una expresion repetida por error.
+    """
     token = generate_opaque_token()
 
-    assert hash_opaque_token(token) == hash_opaque_token(token)
+    primero = hash_opaque_token(token)
+    segundo = hash_opaque_token(token)
+
+    assert primero == segundo
 
 
 def test_different_tokens_hash_differently():
-    assert hash_opaque_token(generate_opaque_token()) != hash_opaque_token(
-        generate_opaque_token()
-    )
+    primero = hash_opaque_token(generate_opaque_token())
+    segundo = hash_opaque_token(generate_opaque_token())
+
+    assert primero != segundo
 
 
 def test_hash_does_not_reveal_the_token():
