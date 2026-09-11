@@ -1,9 +1,74 @@
+from dataclasses import dataclass
 from typing import Annotated
 
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 _MIN_JWT_SECRET_LENGTH = 32
+
+
+@dataclass(frozen=True)
+class RateLimitRule:
+    """Un limite propio para las rutas que cuelgan de `prefix`.
+
+    Cada regla lleva su PROPIO contador en Redis. Si compartieran uno, los
+    cinco intentos de login se restarian del cupo general y navegar por el
+    dashboard gastaria el cupo de login: ninguno de los dos limites
+    significaria lo que dice.
+
+    Vive en config y no junto al middleware por un ciclo de importacion: el
+    middleware depende del logging, que depende de Settings. La regla es la
+    FORMA de un ajuste de configuracion, asi que este es su sitio.
+    """
+
+    prefix: str
+    limit: int
+    window_seconds: int
+
+    @property
+    def scope(self) -> str:
+        """Identificador de la regla dentro de la clave de Redis.
+
+        Se deriva del prefijo y no del limite, asi que ajustar un limite en
+        produccion NO reinicia los contadores en curso: quien ya estaba contado
+        sigue donde estaba en vez de empezar de cero.
+        """
+        return self.prefix.strip("/").replace("/", ".")
+
+    @classmethod
+    def parse(cls, texto: str) -> "RateLimitRule":
+        """Lee una regla escrita como "prefijo:peticiones:segundos".
+
+        Lanza ValueError si algo no cuadra. Quien la llama es una guarda de
+        arranque: mas vale que la API se niegue a levantar que enterarse de que
+        un limite no se aplicaba el dia que alguien lo necesite.
+        """
+        partes = texto.split(":")
+        if len(partes) != 3:
+            raise ValueError(
+                f"Rate limit rule must be 'prefix:requests:seconds', got {texto!r}"
+            )
+
+        prefix, limite, ventana = (parte.strip() for parte in partes)
+
+        if not prefix.startswith("/"):
+            raise ValueError(f"Rate limit prefix must start with '/', got {prefix!r}")
+
+        try:
+            limite_n, ventana_n = int(limite), int(ventana)
+        except ValueError as exc:
+            raise ValueError(
+                f"Rate limit requests and seconds must be integers, got {texto!r}"
+            ) from exc
+
+        if limite_n < 1 or ventana_n < 1:
+            # Un limite de 0 bloquearia la ruta entera, y es mas probable que
+            # sea una errata que una intencion.
+            raise ValueError(
+                f"Rate limit requests and seconds must be positive, got {texto!r}"
+            )
+
+        return cls(prefix=prefix, limit=limite_n, window_seconds=ventana_n)
 
 
 class Settings(BaseSettings):
@@ -39,6 +104,25 @@ class Settings(BaseSettings):
     rate_limit_requests: int = 60
     rate_limit_window_seconds: int = 60
     rate_limit_exempt_paths: Annotated[list[str], NoDecode] = ["/api/health"]
+
+    # Limites por ruta. Formato: "prefijo:peticiones:segundos", separados por
+    # comas. La PRIMERA regla que casa gana, asi que el orden importa: un
+    # prefijo generico escrito antes taparia a uno mas especifico.
+    #
+    # En configuracion y no en el codigo para poder ajustarlos en produccion
+    # sin desplegar, que es justo lo que hace falta el dia que se descubre que
+    # un limite era demasiado estrecho.
+    #
+    #   login   5/min   frena la fuerza bruta sin estorbar a quien se equivoca
+    #                   de contrasena un par de veces
+    #   signup  10/hora hace inviable crear cuentas en masa. NO son 3/hora a
+    #                   proposito: el limite es por IP, y una oficina detras de
+    #                   un NAT comparte una sola. Tres registros por hora para
+    #                   un edificio entero bloquearia a usuarios legitimos.
+    rate_limit_rules: Annotated[list[str], NoDecode] = [
+        "/api/auth/login:5:60",
+        "/api/auth/signup:10:3600",
+    ]
 
     # Auth
     # jwt_secret es la LLAVE MAESTRA: quien la tenga puede fabricar un token
@@ -82,7 +166,9 @@ class Settings(BaseSettings):
     polygon_api_key: str = ""
     polygon_base_url: str = "https://api.polygon.io"
 
-    @field_validator("cors_origins", "rate_limit_exempt_paths", mode="before")
+    @field_validator(
+        "cors_origins", "rate_limit_exempt_paths", "rate_limit_rules", mode="before"
+    )
     @classmethod
     def _split_csv(cls, value: object) -> object:
         """Acepta 'a,b' ademas de una lista."""
@@ -90,6 +176,27 @@ class Settings(BaseSettings):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
 
+
+    @property
+    def parsed_rate_limit_rules(self) -> tuple[RateLimitRule, ...]:
+        """Las reglas ya convertidas, en el orden en que se escribieron.
+
+        El orden se conserva porque la primera que casa gana.
+        """
+        return tuple(RateLimitRule.parse(texto) for texto in self.rate_limit_rules)
+
+    @model_validator(mode="after")
+    def _reject_malformed_rate_limit_rules(self) -> "Settings":
+        """Una regla mal escrita debe impedir el arranque.
+
+        Sin esta guarda, una errata en la variable de entorno descartaria la
+        regla en silencio y la ruta se quedaria con el limite general. El
+        sintoma seria no tener sintoma: la proteccion simplemente no estaria.
+        """
+        # Se descarta el resultado: lo que importa es que parse() reviente aqui
+        # y no en la primera peticion.
+        _ = self.parsed_rate_limit_rules
+        return self
 
     @model_validator(mode="after")
     def _reject_insecure_production_config(self) -> "Settings":

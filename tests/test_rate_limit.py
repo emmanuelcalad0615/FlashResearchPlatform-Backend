@@ -135,12 +135,12 @@ async def test_window_expiry_is_set_only_once():
         None, limit=LIMIT, window_seconds=WINDOW, redis_factory=lambda: fake
     )
 
-    count, ttl = await limiter._register_hit("k")
+    count, ttl = await limiter._register_hit("k", WINDOW)
     assert (count, ttl) == (1, WINDOW)
 
     # Simula que la ventana ya avanzo y quedan 5 segundos.
     await fake.expire("k", 5)
 
-    count, ttl = await limiter._register_hit("k")
+    count, ttl = await limiter._register_hit("k", WINDOW)
     assert count == 2
     assert ttl == 5, "el EXPIRE reinicio la ventana: falta nx=True"

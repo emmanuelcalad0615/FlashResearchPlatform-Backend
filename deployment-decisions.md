@@ -426,7 +426,8 @@ consecuencias de seguridad.
 | `SMTP_USER` / `SMTP_PASSWORD` | vacías | credenciales del proveedor | |
 | `SMTP_FROM` | `no-reply@flashresearch.local` | dirección de un dominio verificado | Sin SPF/DKIM los correos van a spam |
 | `FRONTEND_BASE_URL` | `http://localhost:5173` | `https://flashresearch.com` | Se usa para armar el enlace del correo de verificación |
-| `RATE_LIMIT_REQUESTS` | `60` | a revisar con tráfico real | 60/min es una estimación, no una medición |
+| `RATE_LIMIT_REQUESTS` | `60` | a revisar con tráfico real | 60/min es una estimación, no una medición. Es el límite **general**, el que se aplica a las rutas sin regla propia |
+| `RATE_LIMIT_RULES` | `/api/auth/login:5:60,/api/auth/signup:10:3600` | los mismos, a revisar con tráfico real | Límites por ruta, formato `prefijo:peticiones:segundos`. **Gana la primera regla que casa**, así que el orden importa: un prefijo genérico escrito antes tapa a uno más específico, en silencio |
 | `DATABASE_URL` | contenedor local | servidor real, contraseña fuerte, y con el rol `flash_app` cuando exista | |
 
 ### Guardas de arranque (a implementar en la HU-A07)
@@ -437,5 +438,28 @@ La aplicación debe **negarse a arrancar** si:
 - `JWT_SECRET` vacío, en cualquier entorno.
 - `len(JWT_SECRET) < 32`.
 - El adapter de correo que escribe en el log estuviera activo con `DEBUG=false`.
+- Una regla de `RATE_LIMIT_RULES` está mal escrita. Sin esta guarda la errata se
+  descartaría en silencio y la ruta se quedaría con el límite general: el síntoma sería
+  no tener síntoma.
 
 Una configuración insegura debe fallar ruidosamente, no pasar desapercibida.
+
+### Hallazgo pendiente — el rate limit cuenta por IP
+
+Los límites se llevan por IP del socket, no por cuenta. Contar por cuenta permitiría
+**bloquear a un usuario a propósito** fallando su login cinco veces, así que la decisión
+es correcta, pero arrastra dos consecuencias que hay que resolver antes de producción:
+
+1. **Detrás del reverse proxy (DD-001), todas las peticiones llegarán con la IP del
+   proxy.** El límite pasaría a ser global: el primer usuario que se equivoque cinco
+   veces dejaría sin login a todos los demás. Hay que leer `X-Forwarded-For`, pero
+   **solo tras declarar explícitamente en qué proxies se confía** — esa cabecera la
+   falsifica cualquiera, y leerla sin más convierte el límite en decorativo.
+
+2. **Una oficina detrás de un NAT comparte una sola IP.** Por eso el signup quedó en
+   10/hora y no en 3: tres registros por hora para un edificio entero bloquearía a
+   usuarios legítimos.
+
+Y la contrapartida ya aceptada: el rate limiter **falla abierto** si Redis no responde.
+Se prefiere un rato sin límite a un apagón total, pero significa que una caída de Redis
+deja la protección contra fuerza bruta en nada.

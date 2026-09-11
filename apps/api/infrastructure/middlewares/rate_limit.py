@@ -17,6 +17,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
+from apps.api.config import RateLimitRule
 from apps.api.infrastructure.logging import get_logger
 from apps.api.infrastructure.middlewares.error_handlers import build_error_response
 from packages.core.domain.errors import RateLimitError
@@ -31,6 +32,11 @@ RETRY_AFTER_HEADER = "Retry-After"
 KEY_PREFIX = "ratelimit"
 
 UNKNOWN_CLIENT = "unknown"
+
+# Nombre del contador del limite general, el que se aplica cuando ninguna regla
+# casa. Va en la clave igual que el de las reglas, para que todos los
+# contadores tengan la misma forma.
+DEFAULT_SCOPE = "default"
 
 
 def client_identity(request: Request) -> str:
@@ -54,12 +60,15 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         limit: int,
         window_seconds: int,
         exempt_paths: frozenset[str] = frozenset(),
+        rules: tuple[RateLimitRule, ...] = (),
         redis_factory: Callable[[], Redis] = get_redis,
     ) -> None:
         super().__init__(app)
         self.limit = limit
         self.window_seconds = window_seconds
         self.exempt_paths = exempt_paths
+        # El orden se respeta: la primera regla que casa gana.
+        self.rules = rules
         # Inyectable para poder testear contra un Redis falso, sin red.
         self._redis_factory = redis_factory
 
@@ -70,10 +79,13 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         identity = client_identity(request)
-        key = f"{KEY_PREFIX}:{identity}"
+        limit, window_seconds, scope = self._rule_for(request.url.path)
+        # El scope separa los contadores: el cupo de login no se gasta
+        # navegando por el dashboard, ni al reves.
+        key = f"{KEY_PREFIX}:{scope}:{identity}"
 
         try:
-            count, ttl = await self._register_hit(key)
+            count, ttl = await self._register_hit(key, window_seconds)
         except RedisError as exc:
             # FAIL OPEN a proposito: el rate limiter es una proteccion, no una
             # funcion esencial. Que Redis se caiga no debe tumbar la API entera;
@@ -85,23 +97,24 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             )
             return await call_next(request)
 
-        if count > self.limit:
+        if count > limit:
             retry_after = max(ttl, 1)
             logger.warning(
                 "rate_limit_exceeded",
                 client=identity,
                 path=request.url.path,
+                scope=scope,
                 count=count,
-                limit=self.limit,
+                limit=limit,
             )
             return build_error_response(
                 request,
                 429,
                 RateLimitError.code,
                 RateLimitError.default_message,
-                details={"limit": self.limit, "window_seconds": self.window_seconds},
+                details={"limit": limit, "window_seconds": window_seconds},
                 headers={
-                    LIMIT_HEADER: str(self.limit),
+                    LIMIT_HEADER: str(limit),
                     REMAINING_HEADER: "0",
                     # Sin esto el cliente reintenta a ciegas y empeora la
                     # congestion; con esto espera exactamente lo necesario.
@@ -110,11 +123,27 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             )
 
         response = await call_next(request)
-        response.headers[LIMIT_HEADER] = str(self.limit)
-        response.headers[REMAINING_HEADER] = str(max(self.limit - count, 0))
+        response.headers[LIMIT_HEADER] = str(limit)
+        response.headers[REMAINING_HEADER] = str(max(limit - count, 0))
         return response
 
-    async def _register_hit(self, key: str) -> tuple[int, int]:
+    def _rule_for(self, path: str) -> tuple[int, int, str]:
+        """El limite que le toca a esta ruta: (peticiones, segundos, scope).
+
+        Gana la PRIMERA regla cuyo prefijo case, no la mas larga ni la mas
+        especifica. Es una decision consciente: hace el resultado predecible
+        leyendo la configuracion de arriba abajo, a cambio de que el orden
+        importe. Un prefijo generico escrito antes tapa a uno mas concreto.
+
+        Sin ninguna coincidencia se aplica el limite general.
+        """
+        for rule in self.rules:
+            if path.startswith(rule.prefix):
+                return rule.limit, rule.window_seconds, rule.scope
+
+        return self.limit, self.window_seconds, DEFAULT_SCOPE
+
+    async def _register_hit(self, key: str, window_seconds: int) -> tuple[int, int]:
         """Suma una peticion al contador. Devuelve (total, segundos restantes).
 
         INCR es atomico: con peticiones concurrentes la cuenta sigue siendo
@@ -127,7 +156,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         client = self._redis_factory()
         pipe = client.pipeline()
         pipe.incr(key)
-        pipe.expire(key, self.window_seconds, nx=True)
+        pipe.expire(key, window_seconds, nx=True)
         pipe.ttl(key)
         count, _, ttl = await pipe.execute()
         return int(count), int(ttl)

@@ -29,6 +29,7 @@ if settings.rate_limit_enabled:
         limit=settings.rate_limit_requests,
         window_seconds=settings.rate_limit_window_seconds,
         exempt_paths=frozenset(settings.rate_limit_exempt_paths),
+        rules=settings.parsed_rate_limit_rules,
     )
 
 app.add_middleware(RequestIDMiddleware)
