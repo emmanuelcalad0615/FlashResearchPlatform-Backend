@@ -16,6 +16,91 @@
 | ID | Decisión | Estado | Fecha |
 |---|---|---|---|
 | DD-001 | Un solo origen en producción, con reverse proxy | **Aceptada** | 2026-08-27 |
+| DD-002 | Las políticas RLS toleran `app.current_user_id` en blanco | **Aceptada** | 2026-09-11 |
+
+---
+
+## DD-002 — Las políticas RLS toleran `app.current_user_id` en blanco
+
+**Estado:** Aceptada
+**Fecha:** 2026-09-11
+**Afecta a:** las políticas de `profiles` · migración `0005`
+
+### Contexto
+
+Las políticas de RLS escritas en `0001` y `0004` comparan así:
+
+```sql
+USING (id = current_setting('app.current_user_id', true)::uuid)
+```
+
+El `true` del segundo argumento cubre el caso de la variable **nunca declarada**:
+`current_setting` devuelve `NULL`, el cast da `NULL`, la comparación no encuentra filas y
+la consulta responde vacío. Correcto.
+
+Lo que no estaba cubierto es la variable declarada **vacía**. Postgres distingue los dos
+estados, y no es evidente:
+
+| situación | `current_setting(..., true)` |
+|---|---|
+| nunca declarada | `NULL` |
+| `RESET app.current_user_id` | `''` |
+| `set_config(..., NULL, true)` | `''` |
+
+Y `''::uuid` no es `NULL`, es un error:
+
+```
+invalid input syntax for type uuid: ""
+```
+
+Consecuencia: cualquier consulta a `profiles` sobre una conexión donde la variable quedara
+en blanco devolvía un **error de Postgres** —un 500— en lugar de "no hay filas", que es la
+respuesta correcta cuando nadie se ha identificado.
+
+Se descubrió escribiendo los tests de `GET /api/auth/me`: para simular una conexión limpia
+en cada petición hay que limpiar la variable, y **la única forma de limpiarla produce justo
+el valor que rompía el cast**.
+
+### Decisión
+
+Las cuatro políticas de `profiles` —SELECT, UPDATE, INSERT, DELETE— pasan a:
+
+```sql
+USING (id = NULLIF(current_setting('app.current_user_id', true), '')::uuid)
+```
+
+`NULLIF` convierte la cadena vacía en `NULL` y unifica los dos caminos: nadie declarado y
+declarado en blanco se tratan igual.
+
+### Por qué
+
+**Una política de seguridad no debería poder tumbar la petición.** Su trabajo es decidir
+qué filas se ven; si además puede lanzar un error de tipo, se convierte en una fuente de
+500 que aparece justo en el escenario en que algo ya iba mal.
+
+**El fallo era silencioso de encontrar y ruidoso de sufrir.** No hay forma de deducirlo
+leyendo el código Python: hay que conocer la diferencia entre `NULL` y `''` en los
+parámetros de configuración de Postgres.
+
+**Es gratis.** `NULLIF` no cambia el comportamiento de ningún caso que ya funcionara.
+
+### Consecuencias
+
+- Una conexión sin usuario declarado responde "sin filas" en vez de reventar.
+- El `downgrade` de `0005` devuelve las políticas exactamente como estaban, con el error
+  incluido: revertir deja la base como estaba, no "como debería haber estado".
+- Cuando se creen políticas RLS para otras tablas, **deben usar la misma forma**. Queda
+  como patrón del proyecto.
+
+### Alternativas consideradas
+
+**Validar en la aplicación que la variable nunca quede vacía.** Rechazada: depende de que
+todo el código presente y futuro se acuerde, que es exactamente lo que la RLS existe para
+no tener que suponer.
+
+**`COALESCE(current_setting(...), '00000000-0000-0000-0000-000000000000')::uuid`.**
+Rechazada: un UUID centinela es un valor real que alguien podría llegar a tener. `NULL`
+no coincide con nada por definición.
 
 ---
 

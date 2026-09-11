@@ -5,6 +5,8 @@ from typing import Annotated
 from fastapi import APIRouter, Header, Response, status
 
 from apps.api.dependencies import (
+    CurrentUserDep,
+    GetMeUseCaseDep,
     LoginUseCaseDep,
     SignupUseCaseDep,
     VerifyEmailUseCaseDep,
@@ -12,6 +14,7 @@ from apps.api.dependencies import (
 from apps.api.interfaces.controllers import auth as controller
 from apps.api.schemas.auth import (
     LoginRequest,
+    MeResponse,
     MessageResponse,
     SignupRequest,
     VerifyEmailRequest,
@@ -67,3 +70,18 @@ async def login(
 ) -> MessageResponse:
     return await controller.login(body, caso, response, user_agent)
 
+
+@router.get(
+    "/me",
+    status_code=status.HTTP_200_OK,
+    response_model=MeResponse,
+    summary="Devuelve el usuario de la sesion actual",
+)
+async def me(
+    # Pedir CurrentUserDep es lo que convierte esta ruta en protegida: si la
+    # cookie falta o no vale, la dependencia lanza y el endpoint no llega a
+    # ejecutarse. No hay ningun `if` de autorizacion que se pueda olvidar.
+    usuario: CurrentUserDep,
+    caso: GetMeUseCaseDep,
+) -> MeResponse:
+    return await controller.me(usuario, caso)

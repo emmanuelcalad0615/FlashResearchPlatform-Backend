@@ -10,6 +10,8 @@ minima de la contrasena, lista negra— viven en packages/core/domain/policies y
 NO se repiten aqui: dos fuentes de verdad acabarian divergiendo.
 """
 
+from uuid import UUID
+
 from pydantic import BaseModel, EmailStr, Field
 
 # Tope muy holgado, a proposito. No es la politica de contrasenas: es una
@@ -59,3 +61,20 @@ class MessageResponse(BaseModel):
 
     message: str
 
+
+class MeResponse(BaseModel):
+    """Identidad del usuario de la sesion actual.
+
+    Es lo que el frontend pregunta al cargar cada pagina. No puede deducirlo
+    solo: la cookie de sesion es HttpOnly, asi que su JavaScript no la ve.
+
+    Declarada como response_model, recorta la salida a estos cuatro campos. El
+    password_hash del User no puede escaparse aunque alguien lo devolviera por
+    error.
+    """
+
+    id: UUID
+    email: EmailStr
+    email_verified: bool
+    # None mientras el usuario no elija nombre: el registro crea el perfil vacio.
+    display_name: str | None

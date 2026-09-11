@@ -16,13 +16,16 @@ from fastapi import Response
 from apps.api.infrastructure.cookies import set_session_cookies
 from apps.api.schemas.auth import (
     LoginRequest,
+    MeResponse,
     MessageResponse,
     SignupRequest,
     VerifyEmailRequest,
 )
 from packages.core.application.usecases.auth.login import LoginUseCase
+from packages.core.application.usecases.auth.me import GetMeUseCase
 from packages.core.application.usecases.auth.signup import SignupUseCase
 from packages.core.application.usecases.auth.verify_email import VerifyEmailUseCase
+from packages.core.domain.entities import User
 
 # Identico en las tres ramas del signup —email nuevo, pendiente o ya
 # registrado— para no delatar quien tiene cuenta. Quien distingue los casos es
@@ -67,3 +70,19 @@ async def login(
 
     return MessageResponse(message=_MENSAJE_LOGIN)
 
+
+async def me(usuario: User, caso: GetMeUseCase) -> MeResponse:
+    """Los datos del usuario que manda la peticion.
+
+    El User no llega en el cuerpo: lo puso la dependencia que valido la cookie.
+    Si la peticion llega hasta aqui, la sesion ya esta demostrada; no hay ningun
+    caso en el que este controller tenga que responder 401 por su cuenta.
+    """
+    perfil = await caso.execute(usuario.id)
+
+    return MeResponse(
+        id=usuario.id,
+        email=usuario.email,
+        email_verified=usuario.email_verified,
+        display_name=perfil.display_name if perfil else None,
+    )

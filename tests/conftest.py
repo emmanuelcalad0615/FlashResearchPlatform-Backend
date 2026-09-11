@@ -195,3 +195,47 @@ async def rls_session() -> AsyncSession:
             yield sesion
     finally:
         await motor.dispose()
+
+
+
+@pytest_asyncio.fixture
+async def rls_db_session() -> AsyncSession:
+    """Como db_session, pero conectada con el rol SUJETO a las politicas RLS.
+
+    Combina las dos fixtures de arriba:
+
+      - el motor de rls_session, que entra como flash_test_app y por tanto NO
+        se salta la RLS,
+      - el SAVEPOINT envolvente de db_session, para que el test no deje nada
+        escrito.
+
+    Es la unica forma de ejercitar una peticion HTTP COMPLETA bajo politicas
+    que se evaluan de verdad. Con db_session la peticion corre como `flash`,
+    superusuario, y cualquier prueba de RLS pasaria en falso.
+
+    Es tambien el ensayo de produccion: el dia que la API se conecte como
+    `flash_app` en vez de `flash`, sera exactamente este escenario. Si el
+    registro o el login se rompen bajo RLS, se descubre aqui y no en el
+    despliegue.
+    """
+    if not TEST_DATABASE_URL:
+        pytest.skip("falta TEST_DATABASE_URL")
+
+    _ensure_rls_role()
+
+    motor = create_async_engine(_async_url(_rls_url()), poolclass=NullPool)
+    try:
+        async with motor.connect() as conexion:
+            transaccion = await conexion.begin()
+            sesion = AsyncSession(
+                bind=conexion,
+                expire_on_commit=False,
+                join_transaction_mode="create_savepoint",
+            )
+
+            yield sesion
+
+            await sesion.close()
+            await transaccion.rollback()
+    finally:
+        await motor.dispose()
