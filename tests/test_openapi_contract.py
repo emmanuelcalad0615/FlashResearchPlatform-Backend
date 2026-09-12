@@ -12,8 +12,8 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from apps.api.core.contract import CONTRACT_VERSION
-from apps.api.core.error_handlers import ErrorResponse
+from apps.api.infrastructure.middlewares.contract import CONTRACT_VERSION
+from apps.api.infrastructure.middlewares.error_handlers import ErrorResponse
 from apps.api.main import app
 from scripts.export_openapi import CONTRACT_PATH, render_spec
 
@@ -101,15 +101,20 @@ def test_decimal_fields_are_strings():
 
 
 def test_every_operation_documents_its_success_shape():
-    """Toda operacion declara el TIPO de su respuesta 200, no un objeto vacio.
+    """Toda operacion declara el TIPO de su respuesta exitosa, no un objeto vacio.
 
     Una ruta sin response_model se documenta como {"schema": {}} y el frontend
     genera `unknown`: el contrato existe pero no dice nada util. Este test se
     escribio despues de encontrar exactamente eso en /health y / durante la
     implementacion, y evita que la proxima ruta nazca igual.
+
+    El codigo exitoso no siempre es 200 (un POST que crea recurso responde
+    201), asi que se busca el primer 2xx declarado en vez de asumirlo fijo.
     """
     for path, method, operation in operations():
-        schema = operation["responses"]["200"]["content"]["application/json"]["schema"]
+        success_codes = [code for code in operation["responses"] if code.startswith("2")]
+        assert success_codes, f"{method.upper()} {path} no declara una respuesta exitosa"
+        schema = operation["responses"][success_codes[0]]["content"]["application/json"]["schema"]
         assert schema, f"{method.upper()} {path} no declara response_model"
 
 
