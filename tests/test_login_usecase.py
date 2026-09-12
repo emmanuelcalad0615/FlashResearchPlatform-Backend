@@ -1,5 +1,6 @@
 """Tests del caso de uso de login. Sin base de datos."""
 
+import logging
 from uuid import uuid4
 
 import pytest
@@ -192,3 +193,58 @@ async def test_a_current_hash_is_left_alone(ctx):
     await ctx.caso.execute(EMAIL, PASSWORD)
 
     assert (await ctx.users.get_by_id(ctx.user_id)).password_hash == hash_original
+
+
+# ---------------------------------------------------------------------------
+# Eventos de seguridad en el log
+# ---------------------------------------------------------------------------
+
+
+async def test_registra_el_intento_con_email_desconocido(ctx, caplog) -> None:
+    with caplog.at_level(logging.WARNING), pytest.raises(InvalidCredentialsError):
+        await ctx.caso.execute("nadie@ejemplo.com", PASSWORD)
+
+    assert "login_failed" in caplog.text
+    assert "unknown_email" in caplog.text
+
+
+async def test_registra_la_contrasena_incorrecta_con_el_user_id(
+    ctx, caplog
+) -> None:
+    """En la RESPUESTA los dos fallos son identicos; en el LOG no.
+
+    Quien lee el log ya tiene acceso al sistema, asi que distinguir no filtra
+    nada, y la diferencia entre 'prueban correos al azar' y 'atacan esta cuenta
+    concreta' es justo lo que hace util el registro.
+    """
+    with caplog.at_level(logging.WARNING), pytest.raises(InvalidCredentialsError):
+        await ctx.caso.execute(EMAIL, "una-contrasena-que-no-es")
+
+    assert "wrong_password" in caplog.text
+    assert str(ctx.user_id) in caplog.text
+
+
+async def test_el_log_nunca_lleva_el_email_ni_la_contrasena(ctx, caplog) -> None:
+    """El dato personal se queda fuera.
+
+    Un email en el log acaba replicado en cada sistema por el que pasen los
+    logs —agregador, backups, alertas— y ahi ya no lo controla nadie. Con el
+    user_id se investiga igual.
+    """
+    with caplog.at_level(logging.WARNING), pytest.raises(InvalidCredentialsError):
+        await ctx.caso.execute(EMAIL, "una-contrasena-que-no-es")
+
+    assert EMAIL not in caplog.text
+    assert "una-contrasena-que-no-es" not in caplog.text
+
+
+async def test_un_login_correcto_no_ensucia_el_log(ctx, caplog) -> None:
+    """El aviso solo suena ante el fallo.
+
+    Sin esto, un logger que avisara siempre pasaria los tests de arriba y
+    convertiria cada inicio de sesion legitimo en una alerta.
+    """
+    with caplog.at_level(logging.WARNING):
+        await ctx.caso.execute(EMAIL, PASSWORD)
+
+    assert "login_failed" not in caplog.text

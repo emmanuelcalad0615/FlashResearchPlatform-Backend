@@ -52,3 +52,30 @@ class SqlAlchemyEmailVerificationRepository(EmailVerificationRepository):
             .where(EmailVerificationORM.id == token_id)
             .values(used_at=datetime.now(UTC))
         )
+
+    async def get_latest_for_user(self, user_id: UUID) -> EmailVerification | None:
+        fila = await self._session.scalar(
+            select(EmailVerificationORM)
+            .where(EmailVerificationORM.user_id == user_id)
+            .order_by(EmailVerificationORM.created_at.desc())
+            # Desempate por id SOLO para que el resultado sea estable entre
+            # ejecuciones. No ordena por antiguedad: gen_random_uuid() no es
+            # creciente. Ante un empate de created_at da igual cual salga, y el
+            # puerto lo dice: quien llama solo lee created_at, que es el mismo
+            # en los empatados.
+            .order_by(EmailVerificationORM.id.desc())
+            .limit(1)
+        )
+        return _to_entity(fila) if fila else None
+
+    async def invalidate_for_user(self, user_id: UUID) -> None:
+        await self._session.execute(
+            update(EmailVerificationORM)
+            .where(
+                EmailVerificationORM.user_id == user_id,
+                # Solo los vivos: pisar el used_at de uno ya consumido borraria
+                # cuando se uso de verdad, que es lo que sirve para investigar.
+                EmailVerificationORM.used_at.is_(None),
+            )
+            .values(used_at=datetime.now(UTC))
+        )

@@ -98,6 +98,67 @@ tests/                  # pytest
 docker-compose.yml      # Postgres+TimescaleDB + Redis
 ```
 
+## Autenticación
+
+Ocho rutas bajo `/api/auth`:
+
+| Método | Ruta | Protegida | Qué hace |
+|---|---|---|---|
+| `POST` | `/signup` | no | Crea la cuenta y envía el correo de verificación |
+| `POST` | `/verify-email` | no | Activa la cuenta con el token del correo |
+| `POST` | `/resend-verification` | no | Reenvía el enlace si se perdió |
+| `POST` | `/login` | no | Abre sesión y emite las cookies |
+| `POST` | `/refresh` | cookie de refresh | Renueva la sesión |
+| `GET` | `/me` | sí | Quién es el usuario de la sesión |
+| `POST` | `/logout` | sí | Cierra esta sesión |
+| `POST` | `/logout-all` | sí | Cierra todas las sesiones del usuario |
+
+### Cómo viajan los tokens
+
+**En cookies `HttpOnly`, nunca en el cuerpo.** El frontend no los lee ni los
+guarda: no hay nada que un XSS pueda robar, porque no existe API del navegador
+que exponga una cookie `HttpOnly`.
+
+| Cookie | Vida | Path | Para qué |
+|---|---|---|---|
+| `access_token` | 15 min en producción | `/` | Identifica al usuario en cada petición. JWT firmado, no se consulta la base para validarlo |
+| `refresh_token` | 7 días en producción | `/api/auth/refresh` | Se canjea por un par nuevo. Cadena opaca, validada siempre contra la base |
+
+El `Path` estrecho del refresh es deliberado: el navegador solo manda una cookie
+a las rutas que cuelgan de su `Path`, así que la credencial larga no aparece en
+las cientos de peticiones normales de un dashboard.
+
+### Rotación y detección de robo
+
+Cada refresh gasta el token presentado y emite otro **de la misma familia**. Un
+token ya usado que vuelve a aparecer significa que hay dos copias en
+circulación, así que se revoca la familia entera: el ladrón y la víctima quedan
+fuera, y la víctima vuelve a entrar con su contraseña.
+
+⚠️ **Límite conocido:** cerrar sesión revoca los refresh tokens, pero un access
+token ya emitido sigue valiendo hasta que caduca. Es el precio de un JWT sin
+estado, y la razón de que dure 15 minutos. Ver `HU-A16` para la revocación
+inmediata.
+
+### Probarlo a mano
+
+```bash
+# Con la API levantada y Mailpit en http://localhost:8025
+curl -i -c cookies.txt -X POST localhost:8000/api/auth/signup \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"ana@ejemplo.com","password":"una-frase-larga-y-segura"}'
+
+# El enlace de verificación llega a Mailpit. Copia el token y:
+curl -i -X POST localhost:8000/api/auth/verify-email \
+  -H 'Content-Type: application/json' -d '{"token":"EL_TOKEN"}'
+
+curl -i -c cookies.txt -X POST localhost:8000/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"ana@ejemplo.com","password":"una-frase-larga-y-segura"}'
+
+curl -i -b cookies.txt localhost:8000/api/auth/me
+```
+
 ## Notas de infraestructura
 
 - `docker compose down` conserva los datos (volúmenes persistentes).

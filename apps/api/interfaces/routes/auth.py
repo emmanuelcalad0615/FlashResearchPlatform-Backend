@@ -12,6 +12,7 @@ from apps.api.dependencies import (
     LogoutAllUseCaseDep,
     LogoutUseCaseDep,
     RefreshUseCaseDep,
+    ResendVerificationUseCaseDep,
     SignupUseCaseDep,
     VerifyEmailUseCaseDep,
 )
@@ -21,6 +22,7 @@ from apps.api.schemas.auth import (
     LoginRequest,
     MeResponse,
     MessageResponse,
+    ResendVerificationRequest,
     SignupRequest,
     VerifyEmailRequest,
 )
@@ -144,3 +146,19 @@ async def logout_all(
     usuario: CurrentUserDep,
 ) -> MessageResponse:
     return await controller.logout_all(caso, response, usuario)
+
+
+@router.post(
+    "/resend-verification",
+    status_code=status.HTTP_200_OK,
+    response_model=MessageResponse,
+    summary="Reenvia el correo de verificacion",
+)
+async def resend_verification(
+    body: ResendVerificationRequest,
+    caso: ResendVerificationUseCaseDep,
+) -> MessageResponse:
+    # Publica: quien la necesita no puede iniciar sesion todavia, porque su
+    # cuenta esta sin verificar. Exigir autenticacion la haria inalcanzable
+    # justo para quien la necesita.
+    return await controller.resend_verification(body, caso)

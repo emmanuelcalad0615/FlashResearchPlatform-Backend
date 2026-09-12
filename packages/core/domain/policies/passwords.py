@@ -6,6 +6,7 @@ Lo comparten la API y el worker.
 
 from argon2 import PasswordHasher
 from argon2.exceptions import Argon2Error, InvalidHashError
+from argon2.low_level import Type
 
 from packages.core.domain.errors import DomainValidationError
 
@@ -19,7 +20,13 @@ MAX_PASSWORD_LENGTH = 128
 # Argon2id con los parametros por defecto de la libreria, alineados con las
 # recomendaciones actuales de OWASP. Tardar ~70 ms es DELIBERADO: hace inviable
 # probar millones de contrasenas por segundo contra un volcado de la base.
-_hasher = PasswordHasher()
+#
+# type=Type.ID se escribe aunque YA sea el valor por defecto de argon2-cffi.
+# Es la eleccion del algoritmo, no un ajuste fino: Argon2i resiste peor los
+# ataques con hardware dedicado y Argon2d es vulnerable a ataques por canal
+# lateral. Depender de un valor por defecto significaria que un cambio en la
+# libreria cambiaria el algoritmo sin que nadie lo revisara.
+_hasher = PasswordHasher(type=Type.ID)
 
 # Muestra de las contrasenas mas filtradas que ademas superan la longitud
 # minima (las cortas ya las corta la regla de longitud). No pretende ser

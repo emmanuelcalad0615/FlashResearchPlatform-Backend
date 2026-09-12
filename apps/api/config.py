@@ -122,6 +122,7 @@ class Settings(BaseSettings):
     rate_limit_rules: Annotated[list[str], NoDecode] = [
         "/api/auth/login:5:60",
         "/api/auth/signup:10:3600",
+        "/api/auth/resend-verification:5:3600",
     ]
 
     # Auth
@@ -140,6 +141,12 @@ class Settings(BaseSettings):
     cookie_samesite: str = "lax"
 
     # Cuanto vive el enlace de verificacion de correo.
+    # Segundos que deben pasar entre dos reenvios del correo de verificacion
+    # PARA LA MISMA CUENTA. Protege el buzon del usuario, no el servidor: el
+    # rate limit del middleware cuenta por IP y no impide que alguien escriba
+    # la direccion de otra persona desde muchas IPs distintas.
+    resend_verification_cooldown_seconds: int = 60
+
     email_verification_hours: int = 24
 
     # Correo saliente

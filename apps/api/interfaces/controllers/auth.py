@@ -20,6 +20,7 @@ from apps.api.schemas.auth import (
     LoginRequest,
     MeResponse,
     MessageResponse,
+    ResendVerificationRequest,
     SignupRequest,
     VerifyEmailRequest,
 )
@@ -28,6 +29,9 @@ from packages.core.application.usecases.auth.logout import LogoutUseCase
 from packages.core.application.usecases.auth.logout_all import LogoutAllUseCase
 from packages.core.application.usecases.auth.me import GetMeUseCase
 from packages.core.application.usecases.auth.refresh import RefreshUseCase
+from packages.core.application.usecases.auth.resend_verification import (
+    ResendVerificationUseCase,
+)
 from packages.core.application.usecases.auth.signup import SignupUseCase
 from packages.core.application.usecases.auth.verify_email import VerifyEmailUseCase
 from packages.core.domain.entities import User
@@ -38,6 +42,10 @@ from packages.core.domain.errors import UnauthorizedError
 # el dueno del buzon, porque cada rama manda un correo distinto.
 _MENSAJE_SIGNUP = "Revisa tu correo para activar tu cuenta"
 _MENSAJE_VERIFICADO = "Cuenta verificada. Ya puedes iniciar sesion"
+# Identico en las cuatro ramas del reenvio: cuenta inexistente, ya
+# verificada, en enfriamiento o reenvio hecho. Distinguirlas convertiria
+# este endpoint en un comprobador de correos registrados.
+_MENSAJE_REENVIO = "Si la cuenta existe y esta pendiente, te enviamos el enlace"
 _MENSAJE_LOGIN = "Sesion iniciada"
 _MENSAJE_REFRESH = "Sesion renovada"
 _MENSAJE_LOGOUT = "Sesion cerrada"
@@ -161,3 +169,10 @@ async def logout_all(
     await caso.execute(usuario.id)
     clear_session_cookies(response)
     return MessageResponse(message=_MENSAJE_LOGOUT_ALL)
+
+
+async def resend_verification(
+    body: ResendVerificationRequest, caso: ResendVerificationUseCase
+) -> MessageResponse:
+    await caso.execute(body.email)
+    return MessageResponse(message=_MENSAJE_REENVIO)

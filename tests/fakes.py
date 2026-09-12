@@ -184,6 +184,18 @@ class InMemoryEmailVerificationRepository(EmailVerificationRepository):
         viejo = self.por_id[token_id]
         self.por_id[token_id] = replace(viejo, used_at=_ahora())
 
+    async def get_latest_for_user(self, user_id: UUID) -> EmailVerification | None:
+        propios = [v for v in self.por_id.values() if v.user_id == user_id]
+        return max(propios, key=lambda v: v.created_at) if propios else None
+
+    async def invalidate_for_user(self, user_id: UUID) -> None:
+        ahora = _ahora()
+        for token_id, token in self.por_id.items():
+            # No se pisa un used_at existente: la fecha original es la que
+            # sirve para investigar despues.
+            if token.user_id == user_id and token.used_at is None:
+                self.por_id[token_id] = replace(token, used_at=ahora)
+
 
 class InMemoryEmailSender(EmailSender):
     """Guarda lo enviado en listas separadas para poder afirmarlo en los tests.

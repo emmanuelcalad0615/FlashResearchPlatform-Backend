@@ -44,6 +44,15 @@ class _VerificacionesQueFalla(EmailVerificationRepository):
     async def mark_used(self, token_id) -> None:
         raise NotImplementedError
 
+    # El resto del puerto no participa en el registro. Se declaran porque la
+    # ABC obliga, y revientan a proposito: si alguna se llamara aqui, seria un
+    # cambio de comportamiento que este test tiene que delatar.
+    async def get_latest_for_user(self, user_id):
+        raise NotImplementedError
+
+    async def invalidate_for_user(self, user_id) -> None:
+        raise NotImplementedError
+
 
 def _caso(session, verifications):
     return SignupUseCase(

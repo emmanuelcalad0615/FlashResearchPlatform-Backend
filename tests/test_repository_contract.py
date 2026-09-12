@@ -17,12 +17,18 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from packages.core.domain.policies.tokens import hash_opaque_token
 from packages.core.infrastructure.db.repositories import (
+    SqlAlchemyEmailVerificationRepository,
     SqlAlchemyRefreshTokenRepository,
     SqlAlchemyUserRepository,
 )
 from tests.conftest import requiere_bd
-from tests.fakes import InMemoryRefreshTokenRepository, InMemoryUserRepository
+from tests.fakes import (
+    InMemoryEmailVerificationRepository,
+    InMemoryRefreshTokenRepository,
+    InMemoryUserRepository,
+)
 
 
 def _en(dias: int) -> datetime:
@@ -66,6 +72,15 @@ def usuarios(request):
     # getfixturevalue resuelve db_session SOLO en la variante de SQLAlchemy:
     # la del doble no debe exigir Postgres.
     return SqlAlchemyUserRepository(request.getfixturevalue("db_session"))
+
+
+@pytest.fixture
+def verificaciones(request):
+    if request.param == "in_memory":
+        return InMemoryEmailVerificationRepository()
+    return SqlAlchemyEmailVerificationRepository(
+        request.getfixturevalue("db_session")
+    )
 
 
 @pytest.fixture
@@ -217,3 +232,87 @@ async def test_revoke_all_closes_every_session(usuarios, tokens):
 
     for h in hashes:
         assert (await tokens.get_by_hash(h)).is_revoked
+
+
+# ---- Tokens de verificacion de correo --------------------------------------
+#
+# Los anadio el reenvio (/auth/resend-verification). Sin contrato, el doble
+# podria ordenar por created_at y el real por otra cosa, o uno pisar el used_at
+# de un token ya consumido y el otro no: el enfriamiento se comportaria distinto
+# en los tests y en produccion, que es exactamente el bug de la DEUDA-01.
+
+
+async def _verificacion(verificaciones, usuarios, *, user_id=None):
+    """Crea un token de verificacion. Devuelve (user_id, token, hash).
+
+    El hash se devuelve porque el puerto solo sabe buscar por el: es la unica
+    forma de releer un token concreto y comprobar como quedo.
+    """
+    if user_id is None:
+        user_id = uuid.uuid4()
+        await usuarios.create(user_id, _email(), "$argon2id$fake")
+    token_hash = hash_opaque_token(uuid.uuid4().hex)
+    token = await verificaciones.create(
+        user_id=user_id,
+        token_hash=token_hash,
+        expires_at=_en(1),
+    )
+    return user_id, token, token_hash
+
+
+@pytest.mark.parametrize("usuarios,verificaciones", PARES, indirect=True)
+async def test_latest_verification_is_the_most_recent(usuarios, verificaciones):
+    """Devuelve el de created_at mayor, que es de lo que depende el enfriamiento.
+
+    Si devolviera uno mas viejo, siempre parecerian pasados los sesenta
+    segundos y el limite no existiria.
+
+    Se compara la FECHA y no el id a proposito. Dentro de una transaccion
+    `now()` no avanza, asi que las tres filas empatan, y cual de las empatadas
+    salga no esta definido —ver el puerto—. Exigir un id concreto seria pedirle
+    al contrato algo que no promete: la primera version de este test fallaba
+    contra SQLAlchemy por eso.
+    """
+    user_id, primero, _ = await _verificacion(verificaciones, usuarios)
+    _, segundo, _ = await _verificacion(verificaciones, usuarios, user_id=user_id)
+    _, tercero, _ = await _verificacion(verificaciones, usuarios, user_id=user_id)
+
+    ultimo = await verificaciones.get_latest_for_user(user_id)
+
+    esperado = max(t.created_at for t in (primero, segundo, tercero))
+    assert ultimo.created_at == esperado
+
+
+@pytest.mark.parametrize("usuarios,verificaciones", PARES, indirect=True)
+async def test_latest_verification_is_none_without_tokens(usuarios, verificaciones):
+    user_id = uuid.uuid4()
+    await usuarios.create(user_id, _email(), "$argon2id$fake")
+
+    assert await verificaciones.get_latest_for_user(user_id) is None
+
+
+@pytest.mark.parametrize("usuarios,verificaciones", PARES, indirect=True)
+async def test_invalidating_marks_every_live_token(usuarios, verificaciones):
+    user_id, _, hash_primero = await _verificacion(verificaciones, usuarios)
+    _, _, hash_segundo = await _verificacion(
+        verificaciones, usuarios, user_id=user_id
+    )
+
+    await verificaciones.invalidate_for_user(user_id)
+
+    for token_hash in (hash_primero, hash_segundo):
+        actual = await verificaciones.get_by_hash(token_hash)
+        assert actual.is_used
+
+
+@pytest.mark.parametrize("usuarios,verificaciones", PARES, indirect=True)
+async def test_invalidating_does_not_touch_other_users(usuarios, verificaciones):
+    """Reenviar el enlace de Ana no puede invalidar el de Beto."""
+    ana_id, _, _ = await _verificacion(verificaciones, usuarios)
+    beto_id, de_beto, _ = await _verificacion(verificaciones, usuarios)
+
+    await verificaciones.invalidate_for_user(ana_id)
+
+    intacto = await verificaciones.get_latest_for_user(beto_id)
+    assert intacto.id == de_beto.id
+    assert not intacto.is_used

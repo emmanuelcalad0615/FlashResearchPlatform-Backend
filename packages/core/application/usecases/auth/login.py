@@ -4,6 +4,7 @@ Devuelve los dos tokens; como viajen —cookies, cabeceras— es decision de la
 capa HTTP, no del dominio.
 """
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
@@ -26,6 +27,8 @@ from packages.core.domain.repositories import (
     UnitOfWork,
     UserRepository,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -74,6 +77,7 @@ class LoginUseCase:
         usuario = await self._users.get_by_email(email)
 
         if usuario is None:
+            self._registrar_fallo("unknown_email", None)
             # Se verifica contra un hash falso para gastar los mismos ~70 ms.
             # Sin esto, un email inexistente respondería al instante y esa
             # diferencia, medible desde fuera, delataria que correos estan
@@ -83,13 +87,18 @@ class LoginUseCase:
 
         if not verify_password(password, usuario.password_hash):
             # MISMO error que arriba, a proposito: distinguir "no existe" de
-            # "contrasena incorrecta" regalaria la lista de usuarios.
+            # "contrasena incorrecta" regalaria la lista de usuarios. En el LOG
+            # si se distinguen: quien lo lee ya tiene acceso al sistema, y la
+            # diferencia entre "prueban correos al azar" y "atacan esta cuenta
+            # concreta" es justo lo que hace util el registro.
+            self._registrar_fallo("wrong_password", usuario.id)
             raise InvalidCredentialsError
 
         # DESPUES de comprobar la contrasena, nunca antes. Si fuera antes,
         # cualquiera podria averiguar que correos estan registrados sin
         # verificar, solo probando direcciones.
         if not usuario.email_verified:
+            self._registrar_fallo("email_not_verified", usuario.id)
             raise EmailNotVerifiedError
 
         await self._reforzar_hash_si_hace_falta(usuario, password)
@@ -97,6 +106,19 @@ class LoginUseCase:
         resultado = await self._abrir_sesion(usuario.id, user_agent)
         await self._uow.commit()
         return resultado
+
+    def _registrar_fallo(self, motivo: str, user_id) -> None:
+        """Deja rastro de un intento de inicio de sesion rechazado.
+
+        NUNCA el email ni la contrasena: el email es un dato personal y
+        acabaria replicado en cada sistema por el que pasen los logs. Con el
+        user_id se investiga igual, y cuando no hay usuario el propio None dice
+        que se probo una direccion que no existe.
+
+        Sin este registro, un ataque de fuerza bruta no deja mas rastro que los
+        429 del rate limiter, que no distinguen un ataque de un usuario torpe.
+        """
+        logger.warning("login_failed reason=%s user_id=%s", motivo, user_id)
 
     async def _reforzar_hash_si_hace_falta(self, usuario, password: str) -> None:
         """Rehash progresivo.

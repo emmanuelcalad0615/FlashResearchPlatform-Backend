@@ -23,6 +23,9 @@ from packages.core.application.usecases.auth.logout import LogoutUseCase
 from packages.core.application.usecases.auth.logout_all import LogoutAllUseCase
 from packages.core.application.usecases.auth.me import GetMeUseCase
 from packages.core.application.usecases.auth.refresh import RefreshUseCase
+from packages.core.application.usecases.auth.resend_verification import (
+    ResendVerificationUseCase,
+)
 from packages.core.application.usecases.auth.signup import SignupUseCase
 from packages.core.application.usecases.auth.verify_email import VerifyEmailUseCase
 from packages.core.domain.entities import User
@@ -120,6 +123,21 @@ def get_refresh_use_case(session: SessionDep) -> RefreshUseCase:
     )
 
 
+def get_resend_verification_use_case(
+    session: SessionDep,
+    emails: EmailSenderDep,
+) -> ResendVerificationUseCase:
+    return ResendVerificationUseCase(
+        users=SqlAlchemyUserRepository(session),
+        verifications=SqlAlchemyEmailVerificationRepository(session),
+        emails=emails,
+        uow=SqlAlchemyUnitOfWork(session),
+        verification_hours=settings.email_verification_hours,
+        cooldown_seconds=settings.resend_verification_cooldown_seconds,
+        build_link=emails.build_verification_link,
+    )
+
+
 def get_verify_email_use_case(session: SessionDep) -> VerifyEmailUseCase:
     return VerifyEmailUseCase(
         users=SqlAlchemyUserRepository(session),
@@ -132,6 +150,9 @@ LoginUseCaseDep = Annotated[LoginUseCase, Depends(get_login_use_case)]
 RefreshUseCaseDep = Annotated[RefreshUseCase, Depends(get_refresh_use_case)]
 SignupUseCaseDep = Annotated[SignupUseCase, Depends(get_signup_use_case)]
 VerifyEmailUseCaseDep = Annotated[VerifyEmailUseCase, Depends(get_verify_email_use_case)]
+ResendVerificationUseCaseDep = Annotated[
+    ResendVerificationUseCase, Depends(get_resend_verification_use_case)
+]
 
 
 async def get_access_claims(request: Request) -> AccessTokenClaims:
