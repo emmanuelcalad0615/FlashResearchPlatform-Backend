@@ -46,6 +46,13 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - run: uv sync
       - run: uv run ruff check .
+
+      # Antes de las migraciones: no necesita base de datos, y si el contrato
+      # esta desincronizado conviene decirlo con ese nombre y no como un test
+      # rojo entre otros veinte.
+      - name: Contrato OpenAPI sincronizado
+        run: uv run python scripts/export_openapi.py --check
+
       # Las migraciones tienen dos direcciones y solo se probaba una. Un
       # downgrade roto se descubriria el dia que haya que revertir un
       # despliegue, con el sistema caido.
@@ -111,12 +118,3 @@ jobs:
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      # Antes de las migraciones: no necesita base de datos, y si el contrato
-      # esta desincronizado conviene decirlo con ese nombre y no como un test
-      # rojo entre otros veinte.
-      - name: Contrato OpenAPI sincronizado
-        run: uv run python scripts/export_openapi.py --check
-
-      - run: uv run alembic upgrade head
-      - run: uv run pytest
