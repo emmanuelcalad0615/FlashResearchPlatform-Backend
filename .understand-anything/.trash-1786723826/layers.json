@@ -1,0 +1,101 @@
+[
+  {
+    "id": "layer:api",
+    "name": "Application Layer",
+    "description": "The two deployable Python processes (FastAPI API and the background worker) — app bootstrap, health-check routing, and pydantic-settings configuration that expose and configure the market-scanning service.",
+    "nodeIds": [
+      "file:apps/api/main.py",
+      "file:apps/api/routers/__init__.py",
+      "file:apps/api/routers/health.py",
+      "file:apps/__init__.py",
+      "file:apps/api/__init__.py",
+      "file:apps/api/core/__init__.py",
+      "file:apps/api/core/config.py",
+      "file:apps/worker/__init__.py",
+      "file:apps/worker/main.py"
+    ]
+  },
+  {
+    "id": "layer:provider",
+    "name": "Market Data Provider Layer",
+    "description": "The hexagonal port/adapter boundary for external market data — the abstract MarketDataProvider port and the concrete Polygon.io adapter that translates vendor JSON into canonical shapes, decoupling the rest of the system from any single data vendor.",
+    "nodeIds": [
+      "file:packages/core/providers/base.py",
+      "file:packages/core/providers/polygon.py",
+      "file:packages/core/providers/__init__.py"
+    ]
+  },
+  {
+    "id": "layer:types",
+    "name": "Schema / DTO Layer",
+    "description": "Canonical, provider-agnostic pydantic data shapes (InstrumentDTO, OHLCVBar, Quote) that form the common contract between the market data provider adapters and downstream consumers.",
+    "nodeIds": [
+      "file:packages/core/schemas/__init__.py",
+      "file:packages/core/schemas/instrument.py",
+      "file:packages/core/schemas/market.py"
+    ]
+  },
+  {
+    "id": "layer:data",
+    "name": "Data Layer",
+    "description": "Persistence for the market-scanning universe: SQLAlchemy ORM models, the shared async DB session factory, and the Alembic migration history (including the TimescaleDB-backed instruments and profiles tables) that define and evolve the schema.",
+    "nodeIds": [
+      "file:packages/core/models/__init__.py",
+      "file:packages/core/models/base.py",
+      "file:packages/core/models/instrument.py",
+      "file:packages/core/models/profile.py",
+      "file:packages/core/db/__init__.py",
+      "file:packages/core/db/session.py",
+      "file:packages/core/__init__.py",
+      "file:migrations/env.py",
+      "file:migrations/README",
+      "file:migrations/script.py.mako",
+      "file:migrations/versions/0001_initial_schema.py",
+      "file:migrations/versions/0002_add_instrument_type.py",
+      "table:migrations/versions/0001_initial_schema.py:profiles",
+      "table:migrations/versions/0001_initial_schema.py:instruments"
+    ]
+  },
+  {
+    "id": "layer:test",
+    "name": "Testing Layer",
+    "description": "Automated pytest coverage for the Polygon adapter and API health check, their JSON response fixtures, and the manual smoke-test script used to exercise the Polygon adapter against the live API.",
+    "nodeIds": [
+      "file:tests/test_polygon_adapter.py",
+      "file:tests/test_health.py",
+      "file:tests/__init__.py",
+      "config:tests/fixtures/polygon_aggs_adjusted.json",
+      "config:tests/fixtures/polygon_aggs_unadjusted.json",
+      "config:tests/fixtures/polygon_tickers.json",
+      "file:scripts/smoke_polygon.py"
+    ]
+  },
+  {
+    "id": "layer:infrastructure",
+    "name": "Infrastructure & Configuration",
+    "description": "Root-level project setup: local TimescaleDB/Redis containers (docker-compose), environment variable and Alembic templates, Python dependency manifest and interpreter pin, and the top-level README onboarding guide.",
+    "nodeIds": [
+      "config:.env.example",
+      "document:README.md",
+      "config:alembic.ini",
+      "service:docker-compose.yml",
+      "service:docker-compose.yml:db",
+      "service:docker-compose.yml:redis",
+      "config:pyproject.toml",
+      "file:.python-version"
+    ]
+  },
+  {
+    "id": "layer:ci-cd",
+    "name": "CI/CD Pipeline",
+    "description": "The GitHub Actions backend-ci workflow and its ordered job steps (dependency sync, lint, migration apply, test run) that gate every pull request against a TimescaleDB service container.",
+    "nodeIds": [
+      "pipeline:.github/workflows/ci.yml",
+      "step:.github/workflows/ci.yml:lint-test",
+      "step:.github/workflows/ci.yml:uv-sync",
+      "step:.github/workflows/ci.yml:ruff-check",
+      "step:.github/workflows/ci.yml:alembic-upgrade-head",
+      "step:.github/workflows/ci.yml:pytest"
+    ]
+  }
+]

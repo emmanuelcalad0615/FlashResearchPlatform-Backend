@@ -1,0 +1,488 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "louvain",
+  "totalFiles": 41,
+  "totalBatches": 7,
+  "exportsByPath": {
+    ".python-version": [],
+    "apps/__init__.py": [],
+    "apps/api/__init__.py": [],
+    "apps/api/core/__init__.py": [],
+    "apps/api/core/config.py": [
+      "Settings"
+    ],
+    "apps/api/main.py": [],
+    "apps/api/routers/__init__.py": [],
+    "apps/api/routers/health.py": [
+      "health_check",
+      "root"
+    ],
+    "apps/worker/__init__.py": [],
+    "apps/worker/main.py": [
+      "main"
+    ],
+    "migrations/env.py": [
+      "run_migrations_offline",
+      "run_migrations_online"
+    ],
+    "migrations/README": [],
+    "migrations/script.py.mako": [],
+    "migrations/versions/0001_initial_schema.py": [
+      "upgrade",
+      "downgrade"
+    ],
+    "migrations/versions/0002_add_instrument_type.py": [
+      "upgrade",
+      "downgrade"
+    ],
+    "packages/core/__init__.py": [],
+    "packages/core/db/__init__.py": [],
+    "packages/core/db/session.py": [
+      "_async_url"
+    ],
+    "packages/core/models/__init__.py": [],
+    "packages/core/models/base.py": [
+      "Base"
+    ],
+    "packages/core/models/instrument.py": [
+      "Instrument"
+    ],
+    "packages/core/models/profile.py": [
+      "Profile"
+    ],
+    "packages/core/providers/__init__.py": [],
+    "packages/core/providers/base.py": [
+      "MarketDataProvider"
+    ],
+    "packages/core/providers/polygon.py": [
+      "_map_exchange",
+      "_to_decimal",
+      "_epoch_ms_to_date",
+      "PolygonAdapter"
+    ],
+    "packages/core/schemas/__init__.py": [],
+    "packages/core/schemas/instrument.py": [
+      "InstrumentDTO"
+    ],
+    "packages/core/schemas/market.py": [
+      "OHLCVBar",
+      "Quote"
+    ],
+    "scripts/smoke_polygon.py": [
+      "main"
+    ],
+    "tests/__init__.py": [],
+    "tests/test_health.py": [
+      "test_health_returns_ok"
+    ],
+    "tests/test_polygon_adapter.py": [
+      "_load",
+      "adapter",
+      "test_parse_instruments_maps_exchange_and_active",
+      "test_merge_bars_uses_raw_close_and_adjusted_adj_close",
+      "test_merge_bars_matches_by_timestamp",
+      "test_prices_are_decimal_not_float",
+      "test_get_eod_bars_calls_both_adjusted_and_unadjusted",
+      "test_list_instruments_parses_and_stops_without_next_url",
+      "test_list_instruments_respects_max_pages",
+      "test_http_error_raises",
+      "test_adapter_requires_api_key"
+    ]
+  },
+  "batches": [
+    {
+      "batchIndex": 1,
+      "files": [
+        {
+          "path": "packages/core/providers/base.py",
+          "language": "python",
+          "sizeLines": 26,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/providers/polygon.py",
+          "language": "python",
+          "sizeLines": 138,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/schemas/__init__.py",
+          "language": "python",
+          "sizeLines": 4,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/schemas/instrument.py",
+          "language": "python",
+          "sizeLines": 19,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/schemas/market.py",
+          "language": "python",
+          "sizeLines": 42,
+          "fileCategory": "code"
+        },
+        {
+          "path": "tests/test_polygon_adapter.py",
+          "language": "python",
+          "sizeLines": 135,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "packages/core/providers/base.py": [
+          "packages/core/schemas/__init__.py"
+        ],
+        "packages/core/providers/polygon.py": [
+          "packages/core/providers/base.py",
+          "packages/core/schemas/__init__.py"
+        ],
+        "packages/core/schemas/__init__.py": [
+          "packages/core/schemas/instrument.py",
+          "packages/core/schemas/market.py"
+        ],
+        "packages/core/schemas/instrument.py": [],
+        "packages/core/schemas/market.py": [],
+        "tests/test_polygon_adapter.py": [
+          "packages/core/providers/polygon.py"
+        ]
+      },
+      "neighborMap": {
+        "packages/core/providers/polygon.py": [
+          {
+            "path": "scripts/smoke_polygon.py",
+            "batchIndex": 7,
+            "symbols": [
+              "main"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 2,
+      "files": [
+        {
+          "path": "migrations/env.py",
+          "language": "python",
+          "sizeLines": 49,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/models/__init__.py",
+          "language": "python",
+          "sizeLines": 5,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/models/base.py",
+          "language": "python",
+          "sizeLines": 11,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/models/instrument.py",
+          "language": "python",
+          "sizeLines": 48,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/models/profile.py",
+          "language": "python",
+          "sizeLines": 30,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "migrations/env.py": [
+          "packages/core/models/__init__.py"
+        ],
+        "packages/core/models/__init__.py": [
+          "packages/core/models/base.py",
+          "packages/core/models/instrument.py",
+          "packages/core/models/profile.py"
+        ],
+        "packages/core/models/base.py": [],
+        "packages/core/models/instrument.py": [
+          "packages/core/models/base.py"
+        ],
+        "packages/core/models/profile.py": [
+          "packages/core/models/base.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 3,
+      "files": [
+        {
+          "path": "apps/api/main.py",
+          "language": "python",
+          "sizeLines": 7,
+          "fileCategory": "code"
+        },
+        {
+          "path": "apps/api/routers/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "apps/api/routers/health.py",
+          "language": "python",
+          "sizeLines": 12,
+          "fileCategory": "code"
+        },
+        {
+          "path": "tests/test_health.py",
+          "language": "python",
+          "sizeLines": 11,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "apps/api/main.py": [
+          "apps/api/routers/__init__.py",
+          "apps/api/routers/health.py"
+        ],
+        "apps/api/routers/__init__.py": [],
+        "apps/api/routers/health.py": [],
+        "tests/test_health.py": [
+          "apps/api/main.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 4,
+      "files": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "language": "yaml",
+          "sizeLines": 32,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        ".github/workflows/ci.yml": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 5,
+      "files": [
+        {
+          "path": ".env.example",
+          "language": "config",
+          "sizeLines": 17,
+          "fileCategory": "config"
+        },
+        {
+          "path": "README.md",
+          "language": "markdown",
+          "sizeLines": 111,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "alembic.ini",
+          "language": "config",
+          "sizeLines": 148,
+          "fileCategory": "config"
+        },
+        {
+          "path": "docker-compose.yml",
+          "language": "yaml",
+          "sizeLines": 34,
+          "fileCategory": "infra"
+        },
+        {
+          "path": "pyproject.toml",
+          "language": "toml",
+          "sizeLines": 40,
+          "fileCategory": "config"
+        }
+      ],
+      "batchImportData": {
+        ".env.example": [],
+        "README.md": [],
+        "alembic.ini": [],
+        "docker-compose.yml": [],
+        "pyproject.toml": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 6,
+      "files": [
+        {
+          "path": "tests/fixtures/polygon_aggs_adjusted.json",
+          "language": "json",
+          "sizeLines": 30,
+          "fileCategory": "config"
+        },
+        {
+          "path": "tests/fixtures/polygon_aggs_unadjusted.json",
+          "language": "json",
+          "sizeLines": 30,
+          "fileCategory": "config"
+        },
+        {
+          "path": "tests/fixtures/polygon_tickers.json",
+          "language": "json",
+          "sizeLines": 58,
+          "fileCategory": "config"
+        }
+      ],
+      "batchImportData": {
+        "tests/fixtures/polygon_aggs_adjusted.json": [],
+        "tests/fixtures/polygon_aggs_unadjusted.json": [],
+        "tests/fixtures/polygon_tickers.json": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 7,
+      "files": [
+        {
+          "path": ".python-version",
+          "language": "unknown",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "apps/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "apps/api/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "apps/api/core/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "apps/api/core/config.py",
+          "language": "python",
+          "sizeLines": 16,
+          "fileCategory": "code"
+        },
+        {
+          "path": "apps/worker/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "apps/worker/main.py",
+          "language": "python",
+          "sizeLines": 12,
+          "fileCategory": "code"
+        },
+        {
+          "path": "migrations/README",
+          "language": "unknown",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "migrations/script.py.mako",
+          "language": "mako",
+          "sizeLines": 28,
+          "fileCategory": "code"
+        },
+        {
+          "path": "migrations/versions/0001_initial_schema.py",
+          "language": "python",
+          "sizeLines": 118,
+          "fileCategory": "code"
+        },
+        {
+          "path": "migrations/versions/0002_add_instrument_type.py",
+          "language": "python",
+          "sizeLines": 30,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/db/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/db/session.py",
+          "language": "python",
+          "sizeLines": 33,
+          "fileCategory": "code"
+        },
+        {
+          "path": "packages/core/providers/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/smoke_polygon.py",
+          "language": "python",
+          "sizeLines": 41,
+          "fileCategory": "code"
+        },
+        {
+          "path": "tests/__init__.py",
+          "language": "python",
+          "sizeLines": 0,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        ".python-version": [],
+        "apps/__init__.py": [],
+        "apps/api/__init__.py": [],
+        "apps/api/core/__init__.py": [],
+        "apps/api/core/config.py": [],
+        "apps/worker/__init__.py": [],
+        "apps/worker/main.py": [],
+        "migrations/README": [],
+        "migrations/script.py.mako": [],
+        "migrations/versions/0001_initial_schema.py": [],
+        "migrations/versions/0002_add_instrument_type.py": [],
+        "packages/core/__init__.py": [],
+        "packages/core/db/__init__.py": [],
+        "packages/core/db/session.py": [],
+        "packages/core/providers/__init__.py": [],
+        "scripts/smoke_polygon.py": [
+          "apps/api/core/config.py",
+          "packages/core/providers/polygon.py"
+        ],
+        "tests/__init__.py": []
+      },
+      "neighborMap": {
+        "scripts/smoke_polygon.py": [
+          {
+            "path": "packages/core/providers/polygon.py",
+            "batchIndex": 1,
+            "symbols": [
+              "_map_exchange",
+              "_to_decimal",
+              "_epoch_ms_to_date",
+              "PolygonAdapter"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

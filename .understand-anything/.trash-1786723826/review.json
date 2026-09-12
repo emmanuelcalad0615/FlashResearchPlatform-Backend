@@ -1,0 +1,45 @@
+{
+  "issues": [],
+  "warnings": [
+    "Node 'file:.python-version' has no edges (orphan)",
+    "Node 'file:apps/__init__.py' has no edges (orphan)",
+    "Node 'file:apps/api/__init__.py' has no edges (orphan)",
+    "Node 'file:apps/api/core/__init__.py' has no edges (orphan)",
+    "Node 'file:apps/worker/__init__.py' has no edges (orphan)",
+    "Node 'file:migrations/README' has no edges (orphan)",
+    "Node 'file:packages/core/__init__.py' has no edges (orphan)",
+    "Node 'file:packages/core/db/__init__.py' has no edges (orphan)",
+    "Node 'file:packages/core/providers/__init__.py' has no edges (orphan)",
+    "Node 'file:tests/__init__.py' has no edges (orphan)"
+  ],
+  "stats": {
+    "totalNodes": 76,
+    "totalEdges": 107,
+    "totalLayers": 7,
+    "tourSteps": 14,
+    "nodeTypes": {
+      "file": 32,
+      "class": 9,
+      "function": 17,
+      "pipeline": 1,
+      "resource": 5,
+      "config": 6,
+      "document": 1,
+      "service": 3,
+      "table": 2
+    },
+    "edgeTypes": {
+      "imports": 17,
+      "contains": 31,
+      "exports": 22,
+      "inherits": 3,
+      "calls": 8,
+      "tested_by": 2,
+      "depends_on": 6,
+      "configures": 9,
+      "documents": 4,
+      "migrates": 3,
+      "related": 2
+    }
+  }
+}

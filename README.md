@@ -78,6 +78,10 @@ uv run alembic check               # verificar que modelos == esquema
 
 # Worker (esqueleto)
 uv run python -m apps.worker.main
+
+# Contrato de la API (ver CONTRACT.md)
+uv run python scripts/export_openapi.py            # regenerar contract/openapi.json
+uv run python scripts/export_openapi.py --check    # verificar que está sincronizado
 ```
 
 ## Estructura
@@ -170,3 +174,6 @@ curl -i -b cookies.txt localhost:8000/api/auth/me
 - Precios y montos: **siempre `numeric`, nunca `float`**.
 - Instrumentos delistados: `is_active = false`, **nunca se borran** (evita survivorship bias).
 - Cambios de esquema: **solo con Alembic**, nada de SQL manual.
+- Contrato de la API: `contract/openapi.json` se genera, **no se edita a mano**.
+  Si cambias la forma de la API hay que regenerarlo y subir `CONTRACT_VERSION` —
+  el CI falla si no. Procedimiento completo en [`CONTRACT.md`](CONTRACT.md).

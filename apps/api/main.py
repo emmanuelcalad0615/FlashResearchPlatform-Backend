@@ -3,7 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from apps.api.config import settings
 from apps.api.infrastructure.logging import REQUEST_ID_HEADER, configure_logging
-from apps.api.infrastructure.middlewares.error_handlers import register_error_handlers
+from apps.api.infrastructure.middlewares.contract import CONTRACT_VERSION, operation_id_for
+from apps.api.infrastructure.middlewares.error_handlers import (
+    ERROR_RESPONSES,
+    register_error_handlers,
+)
 from apps.api.infrastructure.middlewares.rate_limit import RateLimitMiddleware
 from apps.api.infrastructure.middlewares.request_id import RequestIDMiddleware
 from apps.api.interfaces.routes import auth, health
@@ -16,7 +20,18 @@ API_PREFIX = "/api"
 # salgan ya con el formato configurado.
 configure_logging()
 
-app = FastAPI(title="Flash Research API", version="0.1.0")
+# version: la del CONTRATO (apps/api/infrastructure/middlewares/contract.py), no la del paquete
+# Python. Sale como info.version en el openapi.json y es lo que el frontend fija
+# como dependencia.
+# generate_unique_id_function: operationIds estables, que son los nombres de los
+# metodos del cliente TypeScript generado.
+# responses: el envelope de error entra al contrato para TODAS las rutas.
+app = FastAPI(
+    title="Flash Research API",
+    version=CONTRACT_VERSION,
+    generate_unique_id_function=operation_id_for,
+    responses=ERROR_RESPONSES,
+)
 
 # El orden de registro es al reves del orden de ejecucion: Starlette apila
 # cada middleware por FUERA del anterior. Queda, de afuera hacia adentro:

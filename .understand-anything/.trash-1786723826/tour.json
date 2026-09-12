@@ -1,0 +1,94 @@
+[
+  {
+    "order": 1,
+    "title": "Project Overview",
+    "description": "README.md introduces Flash Research as a momentum-trading intelligence platform for NYSE/NASDAQ market scanning, quantitative metrics, and a real-time dashboard. It explains that the repo hosts two deployables sharing code — the FastAPI-based `apps/api` and the batch-oriented `apps/worker` — plus `packages/core`, a shared library of models, schemas, and providers. It also lays out the stack (Python 3.12+, FastAPI, SQLAlchemy 2.x, Alembic, PostgreSQL 17 + TimescaleDB, Redis 7, uv, Docker Compose) and two hard conventions the rest of the tour will keep bumping into: prices are always `numeric`/`Decimal`, never `float`, and delisted instruments are marked inactive rather than deleted to avoid survivorship bias.",
+    "nodeIds": ["document:README.md"]
+  },
+  {
+    "order": 2,
+    "title": "API Entry Point",
+    "description": "apps/api/main.py is where the FastAPI application object is created and wired up — it is the top of the dependency graph for the API process and the file the README's `uvicorn apps.api.main:app` command actually boots. Right now its only job is to instantiate the app and register the health router, keeping the entry point thin and letting the real logic live in packages/core. This mirrors the README's description of `apps/api` as 'the HTTP face' of the platform.",
+    "nodeIds": ["file:apps/api/main.py"]
+  },
+  {
+    "order": 3,
+    "title": "Health Check Routes",
+    "description": "apps/api/routers/health.py defines the first (and currently only) set of HTTP routes, exposed through the empty routers/__init__.py package marker and registered by main.py from Step 2. tests/test_health.py exercises this wiring end-to-end using FastAPI's TestClient, hitting /health through the real app object rather than mocking it out — a pattern worth noticing before we look at how the Polygon adapter is tested differently in Step 8.",
+    "nodeIds": ["file:apps/api/routers/health.py", "file:apps/api/routers/__init__.py", "file:tests/test_health.py"]
+  },
+  {
+    "order": 4,
+    "title": "Application Settings",
+    "description": "apps/api/core/config.py centralizes configuration using pydantic-settings, loading the database URL, Redis URL, debug flag, and Polygon API key from environment variables. It has the third-highest fan-in in the codebase, meaning multiple parts of the system (and, as you'll see in Step 12, docker-compose's db and redis services) depend on this single source of truth for connection details rather than reading `os.environ` directly.",
+    "nodeIds": ["file:apps/api/core/config.py"],
+    "languageLesson": "pydantic-settings maps environment variables onto a typed class at import time, giving you validation and autocomplete for config values instead of untyped dict lookups — a common pattern for 12-factor-style Python services."
+  },
+  {
+    "order": 5,
+    "title": "The Market Data Port",
+    "description": "packages/core/providers/base.py defines MarketDataProvider, an abstract interface that any market data vendor adapter must implement. This is the 'port' half of a hexagonal (ports-and-adapters) architecture: the rest of the system depends on this abstraction, not on any specific vendor's API shape, which is what lets Polygon.io be swapped for another provider later without touching downstream code.",
+    "nodeIds": ["file:packages/core/providers/base.py"],
+    "languageLesson": "Hexagonal architecture inverts the usual dependency direction: instead of business logic depending on a vendor SDK, the vendor adapter depends on an interface (port) that the business logic defines. In Python this is typically an abc.ABC or typing.Protocol."
+  },
+  {
+    "order": 6,
+    "title": "Canonical Data Shapes",
+    "description": "The MarketDataProvider port from Step 5 speaks in terms of canonical, provider-agnostic pydantic models rather than raw vendor JSON: InstrumentDTO (instrument.py) and OHLCVBar/Quote (market.py), re-exported through schemas/__init__.py as the package's public API. Note that market.py uses Decimal rather than float for prices and volumes — the direct code-level enforcement of the README's 'never float for money' convention from Step 1.",
+    "nodeIds": ["file:packages/core/schemas/__init__.py", "file:packages/core/schemas/instrument.py", "file:packages/core/schemas/market.py"],
+    "languageLesson": "pydantic models validate and coerce data at the boundary of the system. Using Decimal instead of float for monetary fields avoids binary floating-point rounding errors that would silently corrupt price calculations."
+  },
+  {
+    "order": 7,
+    "title": "The Polygon.io Adapter",
+    "description": "packages/core/providers/polygon.py is the concrete adapter implementing the MarketDataProvider port from Step 5 for Polygon.io — the highest fan-out file in the codebase after README.md, since it pulls in both the port and the canonical schemas from Step 6. It handles paginated instrument listing and adjusted/unadjusted end-of-day bar fetching, translating Polygon's raw JSON responses into the InstrumentDTO and OHLCVBar shapes the rest of the system expects.",
+    "nodeIds": ["file:packages/core/providers/polygon.py"]
+  },
+  {
+    "order": 8,
+    "title": "Testing the Adapter",
+    "description": "tests/test_polygon_adapter.py has the highest fan-in of any file in the codebase, pulling together the Polygon adapter from Step 7 and three JSON fixtures capturing real Polygon response shapes: adjusted aggregates, unadjusted aggregates, and a tickers listing. Using respx to mock HTTP responses rather than hitting the live API keeps these tests fast and deterministic while still validating the adapter's JSON-to-DTO translation logic against realistic payloads.",
+    "nodeIds": ["file:tests/test_polygon_adapter.py", "config:tests/fixtures/polygon_aggs_adjusted.json", "config:tests/fixtures/polygon_aggs_unadjusted.json", "config:tests/fixtures/polygon_tickers.json"],
+    "languageLesson": "respx intercepts httpx requests at the transport layer, letting tests assert exact outbound calls and return canned JSON fixtures — useful for adapters that wrap third-party HTTP APIs, since it tests the real serialization/deserialization code path without network flakiness."
+  },
+  {
+    "order": 9,
+    "title": "ORM Models",
+    "description": "packages/core/models defines the persistence layer with SQLAlchemy: base.py's DeclarativeBase is the shared root that Instrument and Profile both inherit from, re-exported together through models/__init__.py. These models are the database-backed counterparts to the InstrumentDTO from Step 6 — the DTO is what providers speak, the ORM model is what gets persisted — and instrument.py's constraints and indexes encode the README's 'never delete, only deactivate' rule at the schema level.",
+    "nodeIds": ["file:packages/core/models/__init__.py", "file:packages/core/models/base.py", "file:packages/core/models/instrument.py", "file:packages/core/models/profile.py"],
+    "languageLesson": "SQLAlchemy 2.x's DeclarativeBase replaces the older declarative_base() factory function with a class you subclass directly, giving better static-typing support for ORM models."
+  },
+  {
+    "order": 10,
+    "title": "Database Session Factory",
+    "description": "packages/core/db/session.py provides a shared async SQLAlchemy engine and session factory built on asyncpg, used by both the API and worker processes so neither has to configure its own database connection independently. It's configured by the same docker-compose 'db' service you'll see in Step 12, and it's the runtime counterpart to the models defined in Step 9 — the engine that actually executes queries against those ORM classes.",
+    "nodeIds": ["file:packages/core/db/session.py"]
+  },
+  {
+    "order": 11,
+    "title": "Schema Migrations",
+    "description": "migrations/env.py wires the models/__init__.py barrel from Step 9 into Alembic as the migration target, so schema changes are always generated from the ORM models rather than written by hand — enforcing the README's 'schema changes only through Alembic' rule. 0001_initial_schema.py creates the TimescaleDB extension, the profiles table (row-level security scoping data to its owning user) and instruments table (the public, append-only catalog behind Step 9's is_active flag), while 0002_add_instrument_type.py layers on a nullable type column, showing how the schema evolves incrementally in production.",
+    "nodeIds": ["file:migrations/env.py", "file:migrations/versions/0001_initial_schema.py", "file:migrations/versions/0002_add_instrument_type.py", "table:migrations/versions/0001_initial_schema.py:profiles", "table:migrations/versions/0001_initial_schema.py:instruments"],
+    "languageLesson": "Alembic migrations are ordered, incremental Python scripts with an upgrade()/downgrade() pair. Each new migration should be additive and reversible so the schema can move forward or backward without manual SQL intervention."
+  },
+  {
+    "order": 12,
+    "title": "Local Infrastructure & Config",
+    "description": "docker-compose.yml stands up the TimescaleDB and Redis services that back the session factory (Step 10) and settings (Step 4) locally, while .env.example is the template developers copy to .env to point the app at those services — matching the README's five-step 'from zero' setup. alembic.ini and pyproject.toml round out the project's configuration surface: the former points Alembic at the right database and script location, the latter declares Python dependencies plus Ruff/pytest tool config.",
+    "nodeIds": ["service:docker-compose.yml", "config:.env.example", "config:alembic.ini", "config:pyproject.toml"],
+    "languageLesson": "Docker Compose service names (db, redis) become DNS hostnames other containers can reach on the shared network, which is why the DATABASE_URL and REDIS_URL in .env.example reference them by name rather than by IP or localhost."
+  },
+  {
+    "order": 13,
+    "title": "The Worker Process",
+    "description": "apps/worker/main.py is the entry point for the second deployable the README describes — the process meant to handle ingestion and batch calculations. Today it's a skeleton that only logs startup, but it already shares packages/core's providers, schemas, models, and db session with the API, so the momentum-scanning and metrics logic the README promises will slot in here without duplicating any of the persistence or data-provider code you've just walked through.",
+    "nodeIds": ["file:apps/worker/main.py"]
+  },
+  {
+    "order": 14,
+    "title": "Continuous Integration",
+    "description": "The GitHub Actions workflow in .github/workflows/ci.yml is what actually gates every pull request: it syncs dependencies, lints with Ruff, runs the Alembic migrations from Step 11 against a real TimescaleDB service container, and then runs the pytest suites from Steps 3 and 8. Running migrations in CI (rather than just linting the migration files) catches schema drift and broken migrations before they reach the docker-compose environment from Step 12 or production.",
+    "nodeIds": ["pipeline:.github/workflows/ci.yml"],
+    "languageLesson": "GitHub Actions service containers (like a TimescaleDB container defined under `services:`) run alongside the job's steps for the duration of the workflow, giving CI a real, ephemeral database instead of mocking the DB layer — trading a slower pipeline for higher-fidelity integration tests."
+  }
+]

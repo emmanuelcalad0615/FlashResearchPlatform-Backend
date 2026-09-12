@@ -1,0 +1,79 @@
+{
+  "scriptCompleted": true,
+  "stats": {
+    "filesScanned": 41,
+    "filesWithImports": 11,
+    "totalEdges": 17
+  },
+  "importMap": {
+    ".env.example": [],
+    ".github/workflows/ci.yml": [],
+    ".python-version": [],
+    "alembic.ini": [],
+    "apps/__init__.py": [],
+    "apps/api/__init__.py": [],
+    "apps/api/core/__init__.py": [],
+    "apps/api/core/config.py": [],
+    "apps/api/main.py": [
+      "apps/api/routers/__init__.py",
+      "apps/api/routers/health.py"
+    ],
+    "apps/api/routers/__init__.py": [],
+    "apps/api/routers/health.py": [],
+    "apps/worker/__init__.py": [],
+    "apps/worker/main.py": [],
+    "docker-compose.yml": [],
+    "migrations/env.py": [
+      "packages/core/models/__init__.py"
+    ],
+    "migrations/README": [],
+    "migrations/script.py.mako": [],
+    "migrations/versions/0001_initial_schema.py": [],
+    "migrations/versions/0002_add_instrument_type.py": [],
+    "packages/core/__init__.py": [],
+    "packages/core/db/__init__.py": [],
+    "packages/core/db/session.py": [],
+    "packages/core/models/__init__.py": [
+      "packages/core/models/base.py",
+      "packages/core/models/instrument.py",
+      "packages/core/models/profile.py"
+    ],
+    "packages/core/models/base.py": [],
+    "packages/core/models/instrument.py": [
+      "packages/core/models/base.py"
+    ],
+    "packages/core/models/profile.py": [
+      "packages/core/models/base.py"
+    ],
+    "packages/core/providers/__init__.py": [],
+    "packages/core/providers/base.py": [
+      "packages/core/schemas/__init__.py"
+    ],
+    "packages/core/providers/polygon.py": [
+      "packages/core/providers/base.py",
+      "packages/core/schemas/__init__.py"
+    ],
+    "packages/core/schemas/__init__.py": [
+      "packages/core/schemas/instrument.py",
+      "packages/core/schemas/market.py"
+    ],
+    "packages/core/schemas/instrument.py": [],
+    "packages/core/schemas/market.py": [],
+    "pyproject.toml": [],
+    "README.md": [],
+    "scripts/smoke_polygon.py": [
+      "apps/api/core/config.py",
+      "packages/core/providers/polygon.py"
+    ],
+    "tests/__init__.py": [],
+    "tests/fixtures/polygon_aggs_adjusted.json": [],
+    "tests/fixtures/polygon_aggs_unadjusted.json": [],
+    "tests/fixtures/polygon_tickers.json": [],
+    "tests/test_health.py": [
+      "apps/api/main.py"
+    ],
+    "tests/test_polygon_adapter.py": [
+      "packages/core/providers/polygon.py"
+    ]
+  }
+}

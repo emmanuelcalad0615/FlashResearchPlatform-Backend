@@ -26,8 +26,11 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
+# Claude
 CLAUDE.md
 .env
+!.claude 
+
 Flash_Research_Sprint2_Backend_Datos.md
 backlog.md
 HU-A07-auth-plan.md
@@ -39,4 +42,8 @@ coverage.xml
 # El token y la URL del servidor van por variable de entorno
 # (SONAR_TOKEN, SONAR_HOST_URL). Ver la cabecera del archivo.
 Personales
+
+# understand-anything
+!.understand-anything
+
 

@@ -1,0 +1,487 @@
+{
+  "scriptCompleted": true,
+  "commonPrefix": "",
+  "directoryGroups": {
+    "packages": [
+      "file:packages/core/providers/base.py",
+      "file:packages/core/providers/polygon.py",
+      "file:packages/core/schemas/__init__.py",
+      "file:packages/core/schemas/instrument.py",
+      "file:packages/core/schemas/market.py",
+      "file:packages/core/models/__init__.py",
+      "file:packages/core/models/base.py",
+      "file:packages/core/models/instrument.py",
+      "file:packages/core/models/profile.py",
+      "file:packages/core/__init__.py",
+      "file:packages/core/db/__init__.py",
+      "file:packages/core/db/session.py",
+      "file:packages/core/providers/__init__.py"
+    ],
+    "tests": [
+      "file:tests/test_polygon_adapter.py",
+      "file:tests/test_health.py",
+      "config:tests/fixtures/polygon_aggs_adjusted.json",
+      "config:tests/fixtures/polygon_aggs_unadjusted.json",
+      "config:tests/fixtures/polygon_tickers.json",
+      "file:tests/__init__.py"
+    ],
+    "migrations": [
+      "file:migrations/env.py",
+      "file:migrations/README",
+      "file:migrations/script.py.mako",
+      "file:migrations/versions/0001_initial_schema.py",
+      "file:migrations/versions/0002_add_instrument_type.py",
+      "table:migrations/versions/0001_initial_schema.py:profiles",
+      "table:migrations/versions/0001_initial_schema.py:instruments"
+    ],
+    "apps": [
+      "file:apps/api/main.py",
+      "file:apps/api/routers/__init__.py",
+      "file:apps/api/routers/health.py",
+      "file:apps/__init__.py",
+      "file:apps/api/__init__.py",
+      "file:apps/api/core/__init__.py",
+      "file:apps/api/core/config.py",
+      "file:apps/worker/__init__.py",
+      "file:apps/worker/main.py"
+    ],
+    ".github": [
+      "pipeline:.github/workflows/ci.yml",
+      "step:.github/workflows/ci.yml:lint-test",
+      "step:.github/workflows/ci.yml:uv-sync",
+      "step:.github/workflows/ci.yml:ruff-check",
+      "step:.github/workflows/ci.yml:alembic-upgrade-head",
+      "step:.github/workflows/ci.yml:pytest"
+    ],
+    "scripts": [
+      "file:scripts/smoke_polygon.py"
+    ],
+    "root": [
+      "config:.env.example",
+      "document:README.md",
+      "config:alembic.ini",
+      "service:docker-compose.yml",
+      "service:docker-compose.yml:db",
+      "service:docker-compose.yml:redis",
+      "config:pyproject.toml",
+      "file:.python-version"
+    ]
+  },
+  "nodeTypeGroups": {
+    "file": [
+      "file:packages/core/providers/base.py",
+      "file:packages/core/providers/polygon.py",
+      "file:packages/core/schemas/__init__.py",
+      "file:packages/core/schemas/instrument.py",
+      "file:packages/core/schemas/market.py",
+      "file:tests/test_polygon_adapter.py",
+      "file:migrations/env.py",
+      "file:packages/core/models/__init__.py",
+      "file:packages/core/models/base.py",
+      "file:packages/core/models/instrument.py",
+      "file:packages/core/models/profile.py",
+      "file:apps/api/main.py",
+      "file:apps/api/routers/__init__.py",
+      "file:apps/api/routers/health.py",
+      "file:tests/test_health.py",
+      "file:.python-version",
+      "file:apps/__init__.py",
+      "file:apps/api/__init__.py",
+      "file:apps/api/core/__init__.py",
+      "file:apps/api/core/config.py",
+      "file:apps/worker/__init__.py",
+      "file:apps/worker/main.py",
+      "file:migrations/README",
+      "file:migrations/script.py.mako",
+      "file:migrations/versions/0001_initial_schema.py",
+      "file:migrations/versions/0002_add_instrument_type.py",
+      "file:packages/core/__init__.py",
+      "file:packages/core/db/__init__.py",
+      "file:packages/core/db/session.py",
+      "file:packages/core/providers/__init__.py",
+      "file:scripts/smoke_polygon.py",
+      "file:tests/__init__.py"
+    ],
+    "pipeline": [
+      "pipeline:.github/workflows/ci.yml"
+    ],
+    "resource": [
+      "step:.github/workflows/ci.yml:lint-test",
+      "step:.github/workflows/ci.yml:uv-sync",
+      "step:.github/workflows/ci.yml:ruff-check",
+      "step:.github/workflows/ci.yml:alembic-upgrade-head",
+      "step:.github/workflows/ci.yml:pytest"
+    ],
+    "config": [
+      "config:.env.example",
+      "config:alembic.ini",
+      "config:pyproject.toml",
+      "config:tests/fixtures/polygon_aggs_adjusted.json",
+      "config:tests/fixtures/polygon_aggs_unadjusted.json",
+      "config:tests/fixtures/polygon_tickers.json"
+    ],
+    "document": [
+      "document:README.md"
+    ],
+    "service": [
+      "service:docker-compose.yml",
+      "service:docker-compose.yml:db",
+      "service:docker-compose.yml:redis"
+    ],
+    "table": [
+      "table:migrations/versions/0001_initial_schema.py:profiles",
+      "table:migrations/versions/0001_initial_schema.py:instruments"
+    ]
+  },
+  "crossCategoryEdges": [
+    {
+      "fromType": "pipeline",
+      "toType": "resource",
+      "edgeType": "contains",
+      "count": 1
+    },
+    {
+      "fromType": "config",
+      "toType": "service",
+      "edgeType": "configures",
+      "count": 2
+    },
+    {
+      "fromType": "service",
+      "toType": "file",
+      "edgeType": "configures",
+      "count": 3
+    },
+    {
+      "fromType": "config",
+      "toType": "service",
+      "edgeType": "depends_on",
+      "count": 1
+    },
+    {
+      "fromType": "config",
+      "toType": "file",
+      "edgeType": "configures",
+      "count": 4
+    },
+    {
+      "fromType": "document",
+      "toType": "file",
+      "edgeType": "documents",
+      "count": 1
+    },
+    {
+      "fromType": "document",
+      "toType": "service",
+      "edgeType": "documents",
+      "count": 1
+    },
+    {
+      "fromType": "document",
+      "toType": "config",
+      "edgeType": "documents",
+      "count": 2
+    },
+    {
+      "fromType": "file",
+      "toType": "table",
+      "edgeType": "migrates",
+      "count": 3
+    }
+  ],
+  "interGroupImports": [
+    {
+      "from": "tests",
+      "to": "packages",
+      "count": 1
+    },
+    {
+      "from": "migrations",
+      "to": "packages",
+      "count": 1
+    },
+    {
+      "from": "tests",
+      "to": "apps",
+      "count": 1
+    },
+    {
+      "from": "scripts",
+      "to": "apps",
+      "count": 1
+    },
+    {
+      "from": "scripts",
+      "to": "packages",
+      "count": 1
+    }
+  ],
+  "intraGroupDensity": {
+    "packages": {
+      "internalEdges": 10,
+      "totalEdges": 13,
+      "density": 0.769
+    },
+    "tests": {
+      "internalEdges": 0,
+      "totalEdges": 2,
+      "density": 0
+    },
+    "migrations": {
+      "internalEdges": 0,
+      "totalEdges": 1,
+      "density": 0
+    },
+    "apps": {
+      "internalEdges": 2,
+      "totalEdges": 4,
+      "density": 0.5
+    },
+    ".github": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    },
+    "scripts": {
+      "internalEdges": 0,
+      "totalEdges": 2,
+      "density": 0
+    },
+    "root": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    }
+  },
+  "patternMatches": {
+    "tests": "test",
+    "migrations": "data"
+  },
+  "deploymentTopology": {
+    "hasDockerfile": false,
+    "hasCompose": true,
+    "hasK8s": false,
+    "hasTerraform": false,
+    "hasCI": true,
+    "infraFiles": [
+      ".github/workflows/ci.yml",
+      "docker-compose.yml"
+    ]
+  },
+  "dataPipeline": {
+    "schemaFiles": [
+      "migrations/versions/0001_initial_schema.py"
+    ],
+    "migrationFiles": [
+      "migrations/versions/0001_initial_schema.py",
+      "migrations/versions/0002_add_instrument_type.py"
+    ],
+    "dataModelFiles": [
+      "packages/core/schemas/instrument.py",
+      "packages/core/schemas/market.py",
+      "packages/core/models/__init__.py",
+      "packages/core/models/base.py",
+      "packages/core/models/instrument.py",
+      "packages/core/models/profile.py"
+    ],
+    "apiHandlerFiles": [
+      "packages/core/providers/polygon.py",
+      "apps/api/main.py",
+      "apps/api/routers/__init__.py",
+      "apps/api/routers/health.py"
+    ]
+  },
+  "docCoverage": {
+    "groupsWithDocs": 1,
+    "totalGroups": 7,
+    "coverageRatio": 0.143,
+    "undocumentedGroups": [
+      "packages",
+      "tests",
+      "migrations",
+      ".github",
+      "scripts",
+      "root"
+    ]
+  },
+  "dependencyDirection": [
+    {
+      "dependent": "tests",
+      "dependsOn": "packages"
+    },
+    {
+      "dependent": "migrations",
+      "dependsOn": "packages"
+    },
+    {
+      "dependent": "tests",
+      "dependsOn": "apps"
+    },
+    {
+      "dependent": "scripts",
+      "dependsOn": "apps"
+    },
+    {
+      "dependent": "scripts",
+      "dependsOn": "packages"
+    }
+  ],
+  "fileStats": {
+    "totalFileNodes": 50,
+    "filesPerGroup": {
+      "packages": 13,
+      "tests": 6,
+      "migrations": 7,
+      "apps": 9,
+      ".github": 6,
+      "scripts": 1,
+      "root": 8
+    },
+    "nodeTypeCounts": {
+      "file": 32,
+      "pipeline": 1,
+      "resource": 5,
+      "config": 6,
+      "document": 1,
+      "service": 3,
+      "table": 2
+    }
+  },
+  "fileFanIn": {
+    "file:packages/core/providers/base.py": 1,
+    "file:packages/core/providers/polygon.py": 2,
+    "file:packages/core/schemas/__init__.py": 2,
+    "file:packages/core/schemas/instrument.py": 1,
+    "file:packages/core/schemas/market.py": 1,
+    "file:tests/test_polygon_adapter.py": 0,
+    "file:migrations/env.py": 0,
+    "file:packages/core/models/__init__.py": 1,
+    "file:packages/core/models/base.py": 3,
+    "file:packages/core/models/instrument.py": 1,
+    "file:packages/core/models/profile.py": 1,
+    "file:apps/api/main.py": 1,
+    "file:apps/api/routers/__init__.py": 1,
+    "file:apps/api/routers/health.py": 1,
+    "file:tests/test_health.py": 0,
+    "pipeline:.github/workflows/ci.yml": 0,
+    "step:.github/workflows/ci.yml:lint-test": 0,
+    "step:.github/workflows/ci.yml:uv-sync": 0,
+    "step:.github/workflows/ci.yml:ruff-check": 0,
+    "step:.github/workflows/ci.yml:alembic-upgrade-head": 0,
+    "step:.github/workflows/ci.yml:pytest": 0,
+    "config:.env.example": 0,
+    "document:README.md": 0,
+    "config:alembic.ini": 0,
+    "service:docker-compose.yml": 0,
+    "service:docker-compose.yml:db": 0,
+    "service:docker-compose.yml:redis": 0,
+    "config:pyproject.toml": 0,
+    "config:tests/fixtures/polygon_aggs_adjusted.json": 0,
+    "config:tests/fixtures/polygon_aggs_unadjusted.json": 0,
+    "config:tests/fixtures/polygon_tickers.json": 0,
+    "file:.python-version": 0,
+    "file:apps/__init__.py": 0,
+    "file:apps/api/__init__.py": 0,
+    "file:apps/api/core/__init__.py": 0,
+    "file:apps/api/core/config.py": 1,
+    "file:apps/worker/__init__.py": 0,
+    "file:apps/worker/main.py": 0,
+    "file:migrations/README": 0,
+    "file:migrations/script.py.mako": 0,
+    "file:migrations/versions/0001_initial_schema.py": 0,
+    "file:migrations/versions/0002_add_instrument_type.py": 0,
+    "file:packages/core/__init__.py": 0,
+    "file:packages/core/db/__init__.py": 0,
+    "file:packages/core/db/session.py": 0,
+    "file:packages/core/providers/__init__.py": 0,
+    "file:scripts/smoke_polygon.py": 0,
+    "file:tests/__init__.py": 0,
+    "table:migrations/versions/0001_initial_schema.py:profiles": 0,
+    "table:migrations/versions/0001_initial_schema.py:instruments": 0
+  },
+  "fileFanOut": {
+    "file:packages/core/providers/base.py": 1,
+    "file:packages/core/providers/polygon.py": 2,
+    "file:packages/core/schemas/__init__.py": 2,
+    "file:packages/core/schemas/instrument.py": 0,
+    "file:packages/core/schemas/market.py": 0,
+    "file:tests/test_polygon_adapter.py": 1,
+    "file:migrations/env.py": 1,
+    "file:packages/core/models/__init__.py": 3,
+    "file:packages/core/models/base.py": 0,
+    "file:packages/core/models/instrument.py": 1,
+    "file:packages/core/models/profile.py": 1,
+    "file:apps/api/main.py": 2,
+    "file:apps/api/routers/__init__.py": 0,
+    "file:apps/api/routers/health.py": 0,
+    "file:tests/test_health.py": 1,
+    "pipeline:.github/workflows/ci.yml": 0,
+    "step:.github/workflows/ci.yml:lint-test": 0,
+    "step:.github/workflows/ci.yml:uv-sync": 0,
+    "step:.github/workflows/ci.yml:ruff-check": 0,
+    "step:.github/workflows/ci.yml:alembic-upgrade-head": 0,
+    "step:.github/workflows/ci.yml:pytest": 0,
+    "config:.env.example": 0,
+    "document:README.md": 0,
+    "config:alembic.ini": 0,
+    "service:docker-compose.yml": 0,
+    "service:docker-compose.yml:db": 0,
+    "service:docker-compose.yml:redis": 0,
+    "config:pyproject.toml": 0,
+    "config:tests/fixtures/polygon_aggs_adjusted.json": 0,
+    "config:tests/fixtures/polygon_aggs_unadjusted.json": 0,
+    "config:tests/fixtures/polygon_tickers.json": 0,
+    "file:.python-version": 0,
+    "file:apps/__init__.py": 0,
+    "file:apps/api/__init__.py": 0,
+    "file:apps/api/core/__init__.py": 0,
+    "file:apps/api/core/config.py": 0,
+    "file:apps/worker/__init__.py": 0,
+    "file:apps/worker/main.py": 0,
+    "file:migrations/README": 0,
+    "file:migrations/script.py.mako": 0,
+    "file:migrations/versions/0001_initial_schema.py": 0,
+    "file:migrations/versions/0002_add_instrument_type.py": 0,
+    "file:packages/core/__init__.py": 0,
+    "file:packages/core/db/__init__.py": 0,
+    "file:packages/core/db/session.py": 0,
+    "file:packages/core/providers/__init__.py": 0,
+    "file:scripts/smoke_polygon.py": 2,
+    "file:tests/__init__.py": 0,
+    "table:migrations/versions/0001_initial_schema.py:profiles": 0,
+    "table:migrations/versions/0001_initial_schema.py:instruments": 0
+  },
+  "groupImportsFromMap": {
+    "packages": [],
+    "tests": [
+      "packages",
+      "apps"
+    ],
+    "migrations": [
+      "packages"
+    ],
+    "apps": [],
+    ".github": [],
+    "scripts": [
+      "apps",
+      "packages"
+    ],
+    "root": []
+  },
+  "groupImportedByMap": {
+    "packages": [
+      "tests",
+      "migrations",
+      "scripts"
+    ],
+    "tests": [],
+    "migrations": [],
+    "apps": [
+      "tests",
+      "scripts"
+    ],
+    ".github": [],
+    "scripts": [],
+    "root": []
+  }
+}

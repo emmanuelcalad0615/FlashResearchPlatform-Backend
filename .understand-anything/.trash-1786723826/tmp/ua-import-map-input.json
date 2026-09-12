@@ -1,0 +1,210 @@
+{
+  "projectRoot": "/Users/andrew/Documents/Projects/flash/FlashResearchPlatform-Backend",
+  "files": [
+    {
+      "path": ".env.example",
+      "language": "config",
+      "fileCategory": "config"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "language": "yaml",
+      "fileCategory": "infra"
+    },
+    {
+      "path": ".python-version",
+      "language": "unknown",
+      "fileCategory": "code"
+    },
+    {
+      "path": "alembic.ini",
+      "language": "config",
+      "fileCategory": "config"
+    },
+    {
+      "path": "apps/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/core/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/core/config.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/main.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/routers/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/api/routers/health.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/worker/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "apps/worker/main.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "docker-compose.yml",
+      "language": "yaml",
+      "fileCategory": "infra"
+    },
+    {
+      "path": "migrations/env.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/README",
+      "language": "unknown",
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/script.py.mako",
+      "language": "mako",
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/0001_initial_schema.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "migrations/versions/0002_add_instrument_type.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/db/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/db/session.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/models/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/models/base.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/models/instrument.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/models/profile.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/providers/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/providers/base.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/providers/polygon.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/schemas/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/schemas/instrument.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "packages/core/schemas/market.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "pyproject.toml",
+      "language": "toml",
+      "fileCategory": "config"
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "fileCategory": "docs"
+    },
+    {
+      "path": "scripts/smoke_polygon.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/__init__.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/fixtures/polygon_aggs_adjusted.json",
+      "language": "json",
+      "fileCategory": "config"
+    },
+    {
+      "path": "tests/fixtures/polygon_aggs_unadjusted.json",
+      "language": "json",
+      "fileCategory": "config"
+    },
+    {
+      "path": "tests/fixtures/polygon_tickers.json",
+      "language": "json",
+      "fileCategory": "config"
+    },
+    {
+      "path": "tests/test_health.py",
+      "language": "python",
+      "fileCategory": "code"
+    },
+    {
+      "path": "tests/test_polygon_adapter.py",
+      "language": "python",
+      "fileCategory": "code"
+    }
+  ]
+}

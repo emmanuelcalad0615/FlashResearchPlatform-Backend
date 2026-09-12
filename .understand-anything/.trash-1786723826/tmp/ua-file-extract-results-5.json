@@ -1,0 +1,187 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 5,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": ".env.example",
+      "language": "config",
+      "fileCategory": "config",
+      "totalLines": 17,
+      "nonEmptyLines": 15,
+      "definitions": [
+        {
+          "name": "DATABASE_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 4,
+          "endLine": 4
+        },
+        {
+          "name": "REDIS_URL",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 9,
+          "endLine": 9
+        },
+        {
+          "name": "DEBUG",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 16,
+          "endLine": 16
+        },
+        {
+          "name": "POLYGON_API_KEY",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 17,
+          "endLine": 17
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 4
+      }
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 111,
+      "nonEmptyLines": 83,
+      "sections": [
+        {
+          "heading": "Flash Research — API",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Stack",
+          "level": 2,
+          "line": 12
+        },
+        {
+          "heading": "Requisitos previos",
+          "level": 2,
+          "line": 27
+        },
+        {
+          "heading": "Arranque de cero",
+          "level": 2,
+          "line": 32
+        },
+        {
+          "heading": "Comandos útiles",
+          "level": 2,
+          "line": 63
+        },
+        {
+          "heading": "Estructura",
+          "level": 2,
+          "line": 83
+        },
+        {
+          "heading": "Notas de infraestructura",
+          "level": 2,
+          "line": 101
+        },
+        {
+          "heading": "Convenciones",
+          "level": 2,
+          "line": 107
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 8
+      }
+    },
+    {
+      "path": "alembic.ini",
+      "language": "config",
+      "fileCategory": "config",
+      "totalLines": 148,
+      "nonEmptyLines": 123,
+      "metrics": {}
+    },
+    {
+      "path": "docker-compose.yml",
+      "language": "yaml",
+      "fileCategory": "infra",
+      "totalLines": 34,
+      "nonEmptyLines": 32,
+      "sections": [
+        {
+          "heading": "services",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "volumes",
+          "level": 1,
+          "line": 32
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    },
+    {
+      "path": "pyproject.toml",
+      "language": "toml",
+      "fileCategory": "config",
+      "totalLines": 40,
+      "nonEmptyLines": 35,
+      "sections": [
+        {
+          "heading": "project",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "dependency-groups",
+          "level": 1,
+          "line": 18
+        },
+        {
+          "heading": "tool.ruff",
+          "level": 2,
+          "line": 27
+        },
+        {
+          "heading": "tool.ruff.lint",
+          "level": 3,
+          "line": 31
+        },
+        {
+          "heading": "tool.ruff.lint.isort",
+          "level": 4,
+          "line": 35
+        },
+        {
+          "heading": "tool.pytest.ini_options",
+          "level": 3,
+          "line": 38
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 6
+      }
+    }
+  ]
+}

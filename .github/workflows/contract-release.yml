@@ -1,0 +1,51 @@
+name: contract-release
+
+# Publicar el contrato es un acto deliberado, no un efecto de cada merge: se
+# dispara con un tag contract-vX.Y.Z. Asi el historial de versiones del contrato
+# es legible y no se queman numeros en cada PR.
+on:
+  push:
+    tags: ["contract-v*"]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+
+      # El frontend consume el paquete con pnpm; para PUBLICAR da igual el
+      # cliente: el tarball que sube npm es el mismo que pnpm descarga.
+      # setup-node ya trae npm, asi que no hay que instalar nada mas aqui.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://npm.pkg.github.com"
+
+      - run: uv sync
+
+      # El tag es la unica fuente de la version publicada. Si no coincide con el
+      # codigo, se estaria publicando una version que el backend no declara.
+      - name: El tag coincide con CONTRACT_VERSION
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#contract-v}"
+          CODE_VERSION="$(uv run python -c 'from apps.api.core.contract import CONTRACT_VERSION; print(CONTRACT_VERSION)')"
+          if [ "$TAG_VERSION" != "$CODE_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME no coincide con CONTRACT_VERSION $CODE_VERSION" >&2
+            exit 1
+          fi
+
+      # Se publica el snapshot commiteado, asi que tiene que ser el que genera
+      # este mismo codigo.
+      - name: El snapshot esta al dia
+        run: uv run python scripts/export_openapi.py --check
+
+      - name: Publicar el paquete
+        run: npm publish
+        working-directory: contract
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

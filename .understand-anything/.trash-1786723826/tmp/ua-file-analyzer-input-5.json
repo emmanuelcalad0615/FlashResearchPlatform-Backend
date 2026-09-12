@@ -1,0 +1,17 @@
+{
+  "projectRoot": "/Users/andrew/Documents/Projects/flash/FlashResearchPlatform-Backend",
+  "batchFiles": [
+    {"path": ".env.example", "language": "config", "sizeLines": 17, "fileCategory": "config"},
+    {"path": "README.md", "language": "markdown", "sizeLines": 111, "fileCategory": "docs"},
+    {"path": "alembic.ini", "language": "config", "sizeLines": 148, "fileCategory": "config"},
+    {"path": "docker-compose.yml", "language": "yaml", "sizeLines": 34, "fileCategory": "infra"},
+    {"path": "pyproject.toml", "language": "toml", "sizeLines": 40, "fileCategory": "config"}
+  ],
+  "batchImportData": {
+    ".env.example": [],
+    "README.md": [],
+    "alembic.ini": [],
+    "docker-compose.yml": [],
+    "pyproject.toml": []
+  }
+}
