@@ -34,6 +34,13 @@ jobs:
       REDIS_URL: redis://localhost:6379/0
       # Valor de usar y tirar: el CI no firma nada que salga de aqui.
       JWT_SECRET: ci-only-not-a-real-secret-at-least-32-bytes-long
+      # El runner es un entorno de DESARROLLO: no hay TLS ni servidor de correo
+      # real. Sin esto, `debug` toma su valor por defecto (false) y la guarda de
+      # arranque exige credenciales SMTP, con razon: con DEBUG=false el correo
+      # viajaria sin cifrar. Como Settings() se construye al importar, la
+      # excepcion rompe la RECOLECCION de los tests, no uno concreto: 20
+      # archivos fallan antes de ejecutar nada.
+      DEBUG: "true"
     steps:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v6
