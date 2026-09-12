@@ -43,7 +43,7 @@ jobs:
       DEBUG: "true"
     steps:
       - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v10.1.0
       - run: uv sync
       - run: uv run ruff check .
 
@@ -67,7 +67,7 @@ jobs:
       - name: tests with coverage
         run: uv run pytest -m "" --cov=apps --cov=packages --cov-report=xml --cov-report=term
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: coverage.xml
@@ -87,7 +87,7 @@ jobs:
     if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # Sonar necesita la historia completa para atribuir cada linea a su
           # commit y su autor. Con el clon superficial por defecto, el "codigo
@@ -97,15 +97,16 @@ jobs:
       # El coverage.xml lo produjo el job anterior. Se recupera en vez de
       # volver a correr los tests: mismo resultado, la mitad de tiempo, y sin
       # riesgo de que las dos ejecuciones difieran.
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: coverage
 
-      # v6 y no v4: la v4 esta fuera de soporte y GitHub la marca con una
-      # vulnerabilidad conocida. Un workflow corre con acceso a los secretos
-      # del repositorio, asi que una accion comprometida los ve todos.
+      # Version reciente y no v4: las mayores viejas quedan fuera de soporte y
+      # GitHub las marca con vulnerabilidades conocidas. Un workflow corre con
+      # acceso a los secretos del repositorio, asi que una accion comprometida
+      # los ve todos.
       - name: SonarQube scan
-        uses: SonarSource/sonarqube-scan-action@v6
+        uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
