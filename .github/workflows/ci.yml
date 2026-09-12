@@ -94,8 +94,11 @@ jobs:
         with:
           name: coverage
 
+      # v6 y no v4: la v4 esta fuera de soporte y GitHub la marca con una
+      # vulnerabilidad conocida. Un workflow corre con acceso a los secretos
+      # del repositorio, asi que una accion comprometida los ve todos.
       - name: SonarQube scan
-        uses: SonarSource/sonarqube-scan-action@v4
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
