@@ -16,6 +16,91 @@
 | ID | Decisión | Estado | Fecha |
 |---|---|---|---|
 | DD-001 | Un solo origen en producción, con reverse proxy | **Aceptada** | 2026-08-27 |
+| DD-002 | Las políticas RLS toleran `app.current_user_id` en blanco | **Aceptada** | 2026-09-11 |
+
+---
+
+## DD-002 — Las políticas RLS toleran `app.current_user_id` en blanco
+
+**Estado:** Aceptada
+**Fecha:** 2026-09-11
+**Afecta a:** las políticas de `profiles` · migración `0005`
+
+### Contexto
+
+Las políticas de RLS escritas en `0001` y `0004` comparan así:
+
+```sql
+USING (id = current_setting('app.current_user_id', true)::uuid)
+```
+
+El `true` del segundo argumento cubre el caso de la variable **nunca declarada**:
+`current_setting` devuelve `NULL`, el cast da `NULL`, la comparación no encuentra filas y
+la consulta responde vacío. Correcto.
+
+Lo que no estaba cubierto es la variable declarada **vacía**. Postgres distingue los dos
+estados, y no es evidente:
+
+| situación | `current_setting(..., true)` |
+|---|---|
+| nunca declarada | `NULL` |
+| `RESET app.current_user_id` | `''` |
+| `set_config(..., NULL, true)` | `''` |
+
+Y `''::uuid` no es `NULL`, es un error:
+
+```
+invalid input syntax for type uuid: ""
+```
+
+Consecuencia: cualquier consulta a `profiles` sobre una conexión donde la variable quedara
+en blanco devolvía un **error de Postgres** —un 500— en lugar de "no hay filas", que es la
+respuesta correcta cuando nadie se ha identificado.
+
+Se descubrió escribiendo los tests de `GET /api/auth/me`: para simular una conexión limpia
+en cada petición hay que limpiar la variable, y **la única forma de limpiarla produce justo
+el valor que rompía el cast**.
+
+### Decisión
+
+Las cuatro políticas de `profiles` —SELECT, UPDATE, INSERT, DELETE— pasan a:
+
+```sql
+USING (id = NULLIF(current_setting('app.current_user_id', true), '')::uuid)
+```
+
+`NULLIF` convierte la cadena vacía en `NULL` y unifica los dos caminos: nadie declarado y
+declarado en blanco se tratan igual.
+
+### Por qué
+
+**Una política de seguridad no debería poder tumbar la petición.** Su trabajo es decidir
+qué filas se ven; si además puede lanzar un error de tipo, se convierte en una fuente de
+500 que aparece justo en el escenario en que algo ya iba mal.
+
+**El fallo era silencioso de encontrar y ruidoso de sufrir.** No hay forma de deducirlo
+leyendo el código Python: hay que conocer la diferencia entre `NULL` y `''` en los
+parámetros de configuración de Postgres.
+
+**Es gratis.** `NULLIF` no cambia el comportamiento de ningún caso que ya funcionara.
+
+### Consecuencias
+
+- Una conexión sin usuario declarado responde "sin filas" en vez de reventar.
+- El `downgrade` de `0005` devuelve las políticas exactamente como estaban, con el error
+  incluido: revertir deja la base como estaba, no "como debería haber estado".
+- Cuando se creen políticas RLS para otras tablas, **deben usar la misma forma**. Queda
+  como patrón del proyecto.
+
+### Alternativas consideradas
+
+**Validar en la aplicación que la variable nunca quede vacía.** Rechazada: depende de que
+todo el código presente y futuro se acuerde, que es exactamente lo que la RLS existe para
+no tener que suponer.
+
+**`COALESCE(current_setting(...), '00000000-0000-0000-0000-000000000000')::uuid`.**
+Rechazada: un UUID centinela es un valor real que alguien podría llegar a tener. `NULL`
+no coincide con nada por definición.
 
 ---
 
@@ -243,14 +328,138 @@ Ver `HU-A07-auth-plan.md` §1.2 para el detalle.
 
 ## Decisiones pendientes
 
-No están tomadas. Se convertirán en `DD-002` y siguientes cuando se resuelvan.
+Ninguna está tomada. Cada una se convertirá en `DD-002` y siguientes cuando se
+resuelva, con su contexto, sus alternativas y sus consecuencias.
+
+Este registro se mantiene **vivo**: cuando aparece una tecnología o un ajuste que habrá
+que elegir en algún momento, se anota aquí en vez de dejarlo en la memoria de alguien.
+
+### Infraestructura
 
 | Tema | Opciones en juego | Cuándo decidir |
 |---|---|---|
-| Proveedor de servidor | VPS (Hetzner, DigitalOcean) · PaaS con dominio propio | Al preparar el despliegue |
-| Reverse proxy | **Caddy** (HTTPS automático) · Nginx (más control, más configuración) | Con lo anterior |
+| Proveedor de servidor | VPS (Hetzner, DigitalOcean, Vultr) · PaaS con dominio propio (Railway, Render, Fly.io) | Al preparar el despliegue |
+| Reverse proxy | **Caddy** (HTTPS automático, cero configuración) · Nginx (más control) · Traefik (nativo en Docker) | Con lo anterior |
 | Registrador del dominio | Cloudflare · Namecheap · Porkbun | Con lo anterior |
-| Estrategia de despliegue | Push desde CI · imágenes en un registry · `git pull` en el servidor | Al preparar el despliegue |
-| Backups de Postgres | Frecuencia, retención, destino | Antes de tener datos reales |
-| Proveedor SMTP | Resend · SendGrid · Amazon SES | Al desplegar la HU-A07 |
+| CDN / protección DDoS | Cloudflare (gratis) · ninguno al principio | Cuando haya tráfico real |
+| Orquestación | Docker Compose en un VPS · Kubernetes · PaaS gestionado | Al preparar el despliegue |
+
+### Observabilidad
+
+Hoy la API emite logs estructurados en JSON (HU-A08), pero **nadie los recoge**: se van a
+stdout y se pierden al reiniciar el contenedor. Todo lo de abajo está sin decidir.
+
+| Tema | Opciones en juego | Cuándo decidir |
+|---|---|---|
+| Agregación de logs | Grafana Loki (autoalojado, barato) · Datadog (gestionado, caro) · CloudWatch · Better Stack | Antes del primer despliegue: sin esto, un fallo nocturno no deja rastro |
+| Métricas | Prometheus + Grafana · Datadog · ninguna al principio | Cuando haya usuarios reales |
+| Seguimiento de errores | Sentry (tiene plan gratis) · Rollbar · solo logs | Con el primer despliegue |
+| Trazas distribuidas (APM) | OpenTelemetry · Datadog APM · ninguna | Cuando existan API + worker + gateway y haga falta seguir una petición entre servicios |
+| Alertas | ¿Qué dispara un aviso, y a dónde llega? (correo, Slack, Telegram) | Con la agregación de logs |
+| Uptime externo | UptimeRobot · Better Stack · ninguno | Con el primer despliegue |
+
+> El `request_id` de la HU-A08 solo rinde de verdad cuando existe un agregador donde poder
+> filtrar por él. Hoy solo sirve leyendo la terminal.
+
+### Correo
+
+| Tema | Opciones en juego | Cuándo decidir |
+|---|---|---|
+| Proveedor SMTP en producción | Resend · SendGrid · Amazon SES · Postmark · Mailgun | Al desplegar la HU-A07 |
+| Dominio remitente y verificación | Registros SPF, DKIM y DMARC del dominio propio | Con lo anterior — sin esto los correos van a spam |
+| Correo transaccional vs marketing | ¿Un solo proveedor o dos? | Cuando exista comunicación no transaccional |
+
+En desarrollo ya está resuelto: **Mailpit** en `docker-compose.yml`, bandeja en
+`http://localhost:8025`, sin salir a internet.
+
+### Base de datos
+
+| Tema | Opciones en juego | Cuándo decidir |
+|---|---|---|
+| **Rol de aplicación separado del dueño** | Crear `flash_app` sin privilegios de superusuario | **Antes de producción** — ver la nota de abajo |
+| Backups | Frecuencia, retención, destino (S3, Backblaze), y **prueba de restauración** | Antes de tener datos reales |
+| Pool de conexiones | El de SQLAlchemy · PgBouncer delante | Cuando haya varias instancias de la API |
+| Escalado de TimescaleDB | Políticas de retención y compresión de las hypertables | Con la Épica B, cuando lleguen las velas |
+
+> **Hallazgo pendiente (2026-08-27).** La RLS del esquema no se está aplicando. Alembic
+> crea las tablas como `flash`, la API se conecta como el mismo `flash`, y ese rol es
+> **superusuario**: los superusuarios se saltan la RLS incondicionalmente, y
+> `FORCE ROW LEVEL SECURITY` (migración `0004`) no los alcanza — solo cubre el caso del
+> dueño de la tabla.
+>
+> El arreglo es un rol `flash_app` sin privilegios especiales, con `GRANT` sobre las
+> tablas, usado por la API y el worker; `flash` queda solo para las migraciones. Implica
+> dos URLs de conexión y tocar el CI.
+>
+> No es urgente: la RLS es una **segunda** línea de defensa, y la primera —el
+> `WHERE user_id = ...` del código— sí funciona. Pero debe cerrarse antes de producción.
+
+### Despliegue y entornos
+
+| Tema | Opciones en juego | Cuándo decidir |
+|---|---|---|
+| Estrategia de despliegue | Push desde CI · imágenes en un registry (GHCR, Docker Hub) · `git pull` en el servidor | Al preparar el despliegue |
 | Entorno de staging | ¿Existe uno, o solo local y producción? | Antes del primer despliegue |
+| Gestión de secretos | `.env` en el servidor · Doppler · 1Password · los secretos del proveedor | Con el primer despliegue |
+| Migraciones en despliegue | ¿Automáticas al arrancar, o paso manual aprobado? | Antes del primer despliegue |
+| Rollback | ¿Cómo se vuelve atrás, y qué pasa con las migraciones ya aplicadas? | Con lo anterior |
+
+---
+
+## Configuración que cambia al salir a producción
+
+Estos valores **no** son decisiones abiertas: ya están decididos. Es una lista de
+verificación para el día del despliegue, porque son fáciles de olvidar y cada uno tiene
+consecuencias de seguridad.
+
+| Variable | Desarrollo | Producción | Por qué |
+|---|---|---|---|
+| `LOG_JSON` | `false` | **`true`** | En consola el texto plano es legible; en producción el agregador de logs necesita JSON para poder indexar y consultar |
+| `LOG_LEVEL` | `INFO` | `INFO` | Igual. `DEBUG` en producción llena el disco y ralentiza |
+| `DEBUG` | `true` | **`false`** | Activa las guardas de arranque que se describen abajo |
+| `COOKIE_SECURE` | `false` | **`true`** | En local no hay HTTPS; en producción la cookie no puede viajar en claro |
+| `ACCESS_TOKEN_MINUTES` | `60` | **`15`** | Es la ventana que tiene un token robado. En dev prima no re-loguearse a cada rato |
+| `REFRESH_TOKEN_DAYS` | `30` | **`7`** | Un refresh robado y no detectado caduca en una semana |
+| `JWT_SECRET` | uno cualquiera | **uno propio, en el gestor de secretos** | Compartirlo entre entornos permitiría firmar tokens válidos contra producción desde una máquina de desarrollo |
+| `CORS_ORIGINS` | `http://localhost:5173` | el dominio real | Nunca `*` |
+| `SMTP_HOST` / `SMTP_PORT` | Mailpit (`localhost:1025`) | el proveedor real | |
+| `SMTP_USER` / `SMTP_PASSWORD` | vacías | credenciales del proveedor | |
+| `SMTP_FROM` | `no-reply@flashresearch.local` | dirección de un dominio verificado | Sin SPF/DKIM los correos van a spam |
+| `FRONTEND_BASE_URL` | `http://localhost:5173` | `https://flashresearch.com` | Se usa para armar el enlace del correo de verificación |
+| `RATE_LIMIT_REQUESTS` | `60` | a revisar con tráfico real | 60/min es una estimación, no una medición. Es el límite **general**, el que se aplica a las rutas sin regla propia |
+| `RATE_LIMIT_RULES` | `/api/auth/login:5:60,/api/auth/signup:10:3600` | los mismos, a revisar con tráfico real | Límites por ruta, formato `prefijo:peticiones:segundos`. **Gana la primera regla que casa**, así que el orden importa: un prefijo genérico escrito antes tapa a uno más específico, en silencio |
+| `DATABASE_URL` | contenedor local | servidor real, contraseña fuerte, y con el rol `flash_app` cuando exista | |
+
+### Guardas de arranque (a implementar en la HU-A07)
+
+La aplicación debe **negarse a arrancar** si:
+
+- `DEBUG=false` y `COOKIE_SECURE=false` → configuración insegura en producción.
+- `JWT_SECRET` vacío, en cualquier entorno.
+- `len(JWT_SECRET) < 32`.
+- El adapter de correo que escribe en el log estuviera activo con `DEBUG=false`.
+- Una regla de `RATE_LIMIT_RULES` está mal escrita. Sin esta guarda la errata se
+  descartaría en silencio y la ruta se quedaría con el límite general: el síntoma sería
+  no tener síntoma.
+
+Una configuración insegura debe fallar ruidosamente, no pasar desapercibida.
+
+### Hallazgo pendiente — el rate limit cuenta por IP
+
+Los límites se llevan por IP del socket, no por cuenta. Contar por cuenta permitiría
+**bloquear a un usuario a propósito** fallando su login cinco veces, así que la decisión
+es correcta, pero arrastra dos consecuencias que hay que resolver antes de producción:
+
+1. **Detrás del reverse proxy (DD-001), todas las peticiones llegarán con la IP del
+   proxy.** El límite pasaría a ser global: el primer usuario que se equivoque cinco
+   veces dejaría sin login a todos los demás. Hay que leer `X-Forwarded-For`, pero
+   **solo tras declarar explícitamente en qué proxies se confía** — esa cabecera la
+   falsifica cualquiera, y leerla sin más convierte el límite en decorativo.
+
+2. **Una oficina detrás de un NAT comparte una sola IP.** Por eso el signup quedó en
+   10/hora y no en 3: tres registros por hora para un edificio entero bloquearía a
+   usuarios legítimos.
+
+Y la contrapartida ya aceptada: el rate limiter **falla abierto** si Redis no responde.
+Se prefiere un rato sin límite a un apagón total, pero significa que una caída de Redis
+deja la protección contra fuerza bruta en nada.

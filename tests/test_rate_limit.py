@@ -4,15 +4,15 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from redis.exceptions import ConnectionError as RedisConnectionError
 
-from apps.api.core.error_handlers import register_error_handlers
-from apps.api.core.logging import REQUEST_ID_HEADER
-from apps.api.core.middleware import RequestIDMiddleware
-from apps.api.core.rate_limit import (
+from apps.api.infrastructure.logging import REQUEST_ID_HEADER
+from apps.api.infrastructure.middlewares.error_handlers import register_error_handlers
+from apps.api.infrastructure.middlewares.rate_limit import (
     LIMIT_HEADER,
     REMAINING_HEADER,
     RETRY_AFTER_HEADER,
     RateLimitMiddleware,
 )
+from apps.api.infrastructure.middlewares.request_id import RequestIDMiddleware
 
 LIMIT = 3
 WINDOW = 60
@@ -135,12 +135,12 @@ async def test_window_expiry_is_set_only_once():
         None, limit=LIMIT, window_seconds=WINDOW, redis_factory=lambda: fake
     )
 
-    count, ttl = await limiter._register_hit("k")
+    count, ttl = await limiter._register_hit("k", WINDOW)
     assert (count, ttl) == (1, WINDOW)
 
     # Simula que la ventana ya avanzo y quedan 5 segundos.
     await fake.expire("k", 5)
 
-    count, ttl = await limiter._register_hit("k")
+    count, ttl = await limiter._register_hit("k", WINDOW)
     assert count == 2
     assert ttl == 5, "el EXPIRE reinicio la ventana: falta nx=True"

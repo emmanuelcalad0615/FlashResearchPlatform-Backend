@@ -2,10 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.testclient import TestClient
 
-from apps.api.core.config import settings
-from apps.api.core.error_handlers import register_error_handlers
-from apps.api.core.logging import REQUEST_ID_HEADER
-from apps.api.core.middleware import RequestIDMiddleware
+from apps.api.config import settings
+from apps.api.infrastructure.logging import REQUEST_ID_HEADER
+from apps.api.infrastructure.middlewares.error_handlers import register_error_handlers
+from apps.api.infrastructure.middlewares.request_id import RequestIDMiddleware
 from apps.api.main import app
 
 client = TestClient(app)
@@ -25,7 +25,7 @@ def test_wildcard_origin_is_never_allowed():
 
 
 def test_allowed_origin_gets_cors_headers():
-    response = client.get("/health", headers={"Origin": ALLOWED_ORIGIN})
+    response = client.get("/api/health", headers={"Origin": ALLOWED_ORIGIN})
     assert response.status_code == 200
     assert response.headers["access-control-allow-origin"] == ALLOWED_ORIGIN
     assert response.headers["access-control-allow-credentials"] == "true"
@@ -33,20 +33,20 @@ def test_allowed_origin_gets_cors_headers():
 
 def test_foreign_origin_gets_no_cors_headers():
     # El navegador bloquea la lectura al no ver la cabecera.
-    response = client.get("/health", headers={"Origin": FOREIGN_ORIGIN})
+    response = client.get("/api/health", headers={"Origin": FOREIGN_ORIGIN})
     assert "access-control-allow-origin" not in response.headers
 
 
 def test_request_id_header_is_exposed_to_the_browser():
     """Sin expose_headers el JavaScript del frontend no puede leer el id."""
-    response = client.get("/health", headers={"Origin": ALLOWED_ORIGIN})
+    response = client.get("/api/health", headers={"Origin": ALLOWED_ORIGIN})
     exposed = response.headers["access-control-expose-headers"]
     assert REQUEST_ID_HEADER.lower() in exposed.lower()
 
 
 def test_preflight_is_answered_for_the_allowed_origin():
     response = client.options(
-        "/health",
+        "/api/health",
         headers={
             "Origin": ALLOWED_ORIGIN,
             "Access-Control-Request-Method": "GET",
@@ -59,7 +59,7 @@ def test_preflight_is_answered_for_the_allowed_origin():
 
 def test_preflight_is_rejected_for_a_foreign_origin():
     response = client.options(
-        "/health",
+        "/api/health",
         headers={
             "Origin": FOREIGN_ORIGIN,
             "Access-Control-Request-Method": "GET",

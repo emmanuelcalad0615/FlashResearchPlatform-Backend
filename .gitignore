@@ -31,3 +31,12 @@ CLAUDE.md
 Flash_Research_Sprint2_Backend_Datos.md
 backlog.md
 HU-A07-auth-plan.md
+notas-seguridad-y-despliegue.md
+coverage.xml
+.scannerwork/
+
+# sonar-project.properties SE VERSIONA: no lleva credenciales.
+# El token y la URL del servidor van por variable de entorno
+# (SONAR_TOKEN, SONAR_HOST_URL). Ver la cabecera del archivo.
+Personales
+

@@ -29,6 +29,25 @@ services:
       timeout: 3s
       retries: 5
 
+  # Servidor de correo FALSO, solo para desarrollo. Atrapa los correos que
+  # manda la API y los muestra en una bandeja web; no reenvia nada a internet.
+  #   - puerto 1025: por donde la API le entrega los correos (SMTP)
+  #   - puerto 8025: la bandeja de entrada, en el navegador
+  # Nunca se despliega en produccion: alli va un proveedor SMTP real.
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: flash_mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      MP_MAX_MESSAGES: 500
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
 volumes:
   flash_db_data:
   flash_redis_data:
