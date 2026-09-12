@@ -74,5 +74,3 @@ class VerifyEmailUseCase:
             # Token gastado pero cuenta sin verificar: estado imposible, solo
             # puede venir de datos corruptos. No se trata como exito.
             raise InvalidTokenError
-
-        return

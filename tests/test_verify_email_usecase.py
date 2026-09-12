@@ -79,8 +79,10 @@ async def test_both_writes_are_committed_together(ctx):
 
 
 async def test_an_unknown_token_is_rejected(ctx):
+    inventado = generate_opaque_token()
+
     with pytest.raises(InvalidTokenError):
-        await ctx.caso.execute(generate_opaque_token())
+        await ctx.caso.execute(inventado)
 
 
 async def test_an_expired_token_raises_token_expired(ctx):

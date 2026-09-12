@@ -57,3 +57,47 @@ jobs:
         with:
           name: coverage
           path: coverage.xml
+
+  # ---------------------------------------------------------------------
+  # Analisis estatico en SonarQube Cloud
+  # ---------------------------------------------------------------------
+  # Corre DESPUES de lint-test, y solo si paso: analizar un commit cuyos tests
+  # fallan mide codigo que nadie va a mergear, y ademas el coverage.xml podria
+  # estar a medias.
+  sonar:
+    needs: lint-test
+    runs-on: ubuntu-latest
+    # Sin el secreto configurado el job se salta en vez de fallar. Asi un fork
+    # o un clon sin acceso a Sonar no ve el pipeline en rojo por algo que no
+    # puede arreglar.
+    if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Sonar necesita la historia completa para atribuir cada linea a su
+          # commit y su autor. Con el clon superficial por defecto, el "codigo
+          # nuevo" que evalua la Quality Gate sale mal calculado.
+          fetch-depth: 0
+
+      # El coverage.xml lo produjo el job anterior. Se recupera en vez de
+      # volver a correr los tests: mismo resultado, la mitad de tiempo, y sin
+      # riesgo de que las dos ejecuciones difieran.
+      - uses: actions/download-artifact@v4
+        with:
+          name: coverage
+
+      - name: SonarQube scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+
+      # Espera el veredicto de la Quality Gate y falla el job si no pasa.
+      # Sin este paso el analisis se sube pero el pipeline queda verde aunque
+      # la cobertura baje: el informe existiria y no protegeria de nada.
+      - name: Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

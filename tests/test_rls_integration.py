@@ -101,11 +101,14 @@ async def test_cannot_create_a_profile_for_someone_else(rls_session):
     try:
         await _declarar(rls_session, ana)
 
+        # La sentencia se arma FUERA del bloque, y dentro queda una sola
+        # llamada: asi no hay duda de cual lanzo. El INSERT viaja a Postgres en
+        # el execute, asi que la politica lo rechaza ahi mismo y el flush
+        # sobraba.
+        insercion = text("INSERT INTO profiles (id) VALUES (:i)")
+
         with pytest.raises((DBAPIError, ProgrammingError)) as capturado:
-            await rls_session.execute(
-                text("INSERT INTO profiles (id) VALUES (:i)"), {"i": carlos}
-            )
-            await rls_session.flush()
+            await rls_session.execute(insercion, {"i": carlos})
 
         assert "policy" in str(capturado.value).lower()
     finally:

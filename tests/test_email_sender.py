@@ -124,11 +124,15 @@ async def test_delivery_failures_surface_as_a_domain_error(fallo):
 
     Mismo patron que el adapter de Polygon con httpx.
     """
+    # El adapter se construye FUERA del bloque: dentro, la unica llamada que
+    # puede lanzar tiene que ser la que el test esta comprobando.
+    sender = _sender()
+
     with (
         patch("aiosmtplib.send", new=AsyncMock(side_effect=fallo)),
         pytest.raises(EmailDeliveryError) as capturado,
     ):
-        await _sender().send_verification(to="ana@ejemplo.com", link="http://x/y")
+        await sender.send_verification(to="ana@ejemplo.com", link="http://x/y")
 
     assert capturado.value.code == "email_delivery_failed"
     # La causa tecnica se conserva para el log, sin salir del adapter.
@@ -139,12 +143,14 @@ async def test_delivery_error_does_not_leak_the_link():
     """SEGURIDAD: el enlace es una credencial de un solo uso; no puede acabar
     en los detalles de un error que viajan a los logs o al cliente."""
     enlace = f"http://localhost:5173/verify?token={TOKEN}"
+    sender = _sender()
+    fallo = aiosmtplib.SMTPException("fallo de entrega")
 
     with (
-        patch("aiosmtplib.send", new=AsyncMock(side_effect=aiosmtplib.SMTPException("fallo de entrega"))),
+        patch("aiosmtplib.send", new=AsyncMock(side_effect=fallo)),
         pytest.raises(EmailDeliveryError) as capturado,
     ):
-        await _sender().send_verification(to="ana@ejemplo.com", link=enlace)
+        await sender.send_verification(to="ana@ejemplo.com", link=enlace)
 
     rendido = f"{capturado.value.message} {capturado.value.details}"
     assert TOKEN not in rendido

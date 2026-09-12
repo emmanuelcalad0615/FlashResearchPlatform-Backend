@@ -29,13 +29,16 @@ from apps.api.schemas.auth import (
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
+# Ninguna ruta declara `response_model`: FastAPI usa la ANOTACION DE RETORNO
+# como modelo de respuesta, con el mismo efecto. Sigue recortando la salida a
+# los campos declarados, asi que devolver de mas —la entidad completa con su
+# password_hash, por ejemplo— no llega al cliente. Escribir las dos cosas
+# duplicaba la misma verdad en dos sitios que podian divergir.
+
 
 @router.post(
     "/signup",
     status_code=status.HTTP_201_CREATED,
-    # response_model recorta la salida a lo declarado: si alguien devolviera de
-    # mas, no llegaria al cliente.
-    response_model=MessageResponse,
     summary="Registra una cuenta y envia el correo de verificacion",
 )
 async def signup(
@@ -48,7 +51,6 @@ async def signup(
 @router.post(
     "/verify-email",
     status_code=status.HTTP_200_OK,
-    response_model=MessageResponse,
     summary="Activa la cuenta con el token del correo",
 )
 async def verify_email(
@@ -64,7 +66,6 @@ async def verify_email(
 @router.post(
     "/login",
     status_code=status.HTTP_200_OK,
-    response_model=MessageResponse,
     summary="Inicia sesion y emite las cookies de sesion",
 )
 async def login(
@@ -81,7 +82,6 @@ async def login(
 @router.post(
     "/refresh",
     status_code=status.HTTP_200_OK,
-    response_model=MessageResponse,
     summary="Renueva la sesion con el refresh token",
 )
 async def refresh(
@@ -102,7 +102,6 @@ async def refresh(
 @router.get(
     "/me",
     status_code=status.HTTP_200_OK,
-    response_model=MeResponse,
     summary="Devuelve el usuario de la sesion actual",
 )
 async def me(
@@ -118,7 +117,6 @@ async def me(
 @router.post(
     "/logout",
     status_code=status.HTTP_200_OK,
-    response_model=MessageResponse,
     summary="Cierra la sesion actual",
 )
 async def logout(
@@ -135,7 +133,6 @@ async def logout(
 @router.post(
     "/logout-all",
     status_code=status.HTTP_200_OK,
-    response_model=MessageResponse,
     summary="Cierra todas las sesiones del usuario",
 )
 async def logout_all(
@@ -151,7 +148,6 @@ async def logout_all(
 @router.post(
     "/resend-verification",
     status_code=status.HTTP_200_OK,
-    response_model=MessageResponse,
     summary="Reenvia el correo de verificacion",
 )
 async def resend_verification(

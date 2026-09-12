@@ -35,7 +35,8 @@ notas-seguridad-y-despliegue.md
 coverage.xml
 .scannerwork/
 
-# Contiene el token de SonarQube
-sonar-project.properties
+# sonar-project.properties SE VERSIONA: no lleva credenciales.
+# El token y la URL del servidor van por variable de entorno
+# (SONAR_TOKEN, SONAR_HOST_URL). Ver la cabecera del archivo.
 Personales
 

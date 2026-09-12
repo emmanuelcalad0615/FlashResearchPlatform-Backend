@@ -165,6 +165,19 @@ async def get_access_claims(request: Request) -> AccessTokenClaims:
 
     No consulta la base. Quien necesite al usuario pide get_current_user, que
     se construye sobre esta.
+
+    ES `async def` AUNQUE NO ESPERE NADA, y es deliberado. FastAPI ejecuta las
+    dependencias sincronas en un threadpool y las asincronas en el event loop
+    directamente; quitar el `async` mandaria a un hilo aparte una funcion que
+    solo lee una cookie y verifica una firma, en CADA peticion autenticada.
+    Seria mas lento, no mas limpio.
+
+    SonarQube lo marca con python:S7503. Queda excluido en
+    sonar-project.properties, por regla y por archivo, junto a la misma
+    excepcion que ya tenia error_handlers.py. No se silencia con `# NOSONAR`
+    porque en Python ese comentario apaga TODAS las reglas de la linea,
+    incluida cualquier regla de seguridad futura sobre la lectura de la
+    cookie.
     """
     token = request.cookies.get(ACCESS_COOKIE)
     if token is None:
