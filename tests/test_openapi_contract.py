@@ -41,7 +41,9 @@ def test_export_is_deterministic():
     Sin esto el gate del CI daria falsos positivos: un reordenamiento de dict
     se veria como un cambio de contrato.
     """
-    assert render_spec() == render_spec()
+    first_export = render_spec()
+    second_export = render_spec()
+    assert first_export == second_export
 
 
 def test_committed_snapshot_matches_app():
