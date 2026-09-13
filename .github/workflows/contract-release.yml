@@ -14,6 +14,14 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Exportar el contrato importa apps.api.main -> apps.api.config, que
+    # construye Settings() al importarse. No hace falta Postgres/Redis reales
+    # (los campos son str planos, sin validar URL) pero si valores dummy para
+    # los campos obligatorios -- mismo patron que backend-ci.yml.
+    env:
+      DATABASE_URL: postgresql://flash:flash_ci_pw@localhost:5432/flash_ci
+      JWT_SECRET: ci-only-not-a-real-secret-at-least-32-bytes-long
+      DEBUG: "true"
     steps:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v6
