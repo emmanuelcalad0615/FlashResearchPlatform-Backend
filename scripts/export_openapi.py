@@ -30,7 +30,7 @@ STALE_MESSAGE = """El contrato exportado no coincide con contract/openapi.json.
 Cambiaste la forma de la API sin regenerar el snapshot.
   1. Ejecuta: uv run python scripts/export_openapi.py
   2. Revisa el diff de contract/openapi.json (que cambio, y si rompe).
-  3. Sube CONTRACT_VERSION en apps/api/core/contract.py segun semver.
+  3. Sube CONTRACT_VERSION en apps/api/infrastructure/middlewares/contract.py segun semver.
   4. Commitea ambos archivos."""
 
 

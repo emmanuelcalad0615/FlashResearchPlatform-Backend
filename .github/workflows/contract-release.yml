@@ -33,7 +33,7 @@ jobs:
       - name: El tag coincide con CONTRACT_VERSION
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#contract-v}"
-          CODE_VERSION="$(uv run python -c 'from apps.api.core.contract import CONTRACT_VERSION; print(CONTRACT_VERSION)')"
+          CODE_VERSION="$(uv run python -c 'from apps.api.infrastructure.middlewares.contract import CONTRACT_VERSION; print(CONTRACT_VERSION)')"
           if [ "$TAG_VERSION" != "$CODE_VERSION" ]; then
             echo "Tag $GITHUB_REF_NAME no coincide con CONTRACT_VERSION $CODE_VERSION" >&2
             exit 1
