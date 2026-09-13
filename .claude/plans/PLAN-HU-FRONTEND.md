@@ -18,10 +18,16 @@
 > — su `CLAUDE.md` lo exige: "Source code (comments, error messages, UI strings,
 > test names) is English only".
 >
-> **Última verificación contra el estado real de los dos repos: 2026-09-10.**
-> El backend ya ejecutó su lado (commit `bba9faf` en `app/feature`); ver
-> `REPORTE-IMPLEMENTACION-SPRINT7.md`. Lo que cambió desde la primera redacción
-> de este plan está marcado 🔄 en §0 y resumido en §9.
+> **Última verificación contra el estado real de los dos repos: 2026-09-12.**
+> El backend mergeó su PR a `main` (PR #3, commit `20a8be1`, que incluye
+> `beb574c` "feat(api): publish the API contract as a versioned package" — el
+> commit `bba9faf` citado en la primera versión de este plan quedó reescrito
+> por un rebase y ya no es ancestro de `main`). **El tag `contract-v0.1.0`
+> sigue sin existir**, así que el paquete npm sigue sin publicarse y el acceso
+> sigue sin concederse — de los tres pasos de §0.9 solo el primero está hecho.
+> Ver `REPORTE-IMPLEMENTACION-SPRINT7.md` y `PR-DESCRIPTION-SPRINT7.md` (backend).
+> Lo que cambió desde la primera redacción de este plan está marcado 🔄 en §0 y
+> resumido en §9; lo que cambió en esta pasada del 2026-09-12 está marcado 🆕.
 
 ---
 
@@ -89,20 +95,37 @@ primera redacción.
    El fondo del hallazgo original sigue en pie: el frontend ya escribió a mano los
    DTOs de todos los endpoints que espera y dejó firmado el punto de reemplazo.
 
-4. 🔄 **Ninguno de esos DTOs existe todavía en el contrato del backend — ahora
-   verificado contra el artefacto real, no predicho.** El backend ya generó
-   `contract/openapi.json` (commit `bba9faf`):
+4. 🔄🆕 **Ninguno de esos DTOs existe todavía en el contrato del backend — y el
+   contenido real del contrato creció desde la primera verificación.** El
+   backend regeneró `contract/openapi.json` al rebasar su rama sobre `main`
+   (`main` ya traía mergeado `feat/auth-backend`, PR #2), y el snapshot pasó a
+   incluir esas rutas (`PR-DESCRIPTION-SPRINT7.md`, "Cambios adicionales de
+   este PR"). Verificado leyendo `contract/openapi.json` en `main` hoy
+   (2026-09-12), tras el merge de PR #3 (commit `20a8be1`):
 
-   | | Contenido real de `contract-v0.1.0` |
-   |---|---|
-   | `info.version` | `0.1.0` |
-   | Operaciones | 2 — `getRoot` (`GET /`), `getHealth` (`GET /health`) |
-   | `components.schemas` | `ErrorDetail`, `ErrorResponse`, `HealthResponse`, `RootResponse` |
+   | | Contenido descrito originalmente | Contenido real hoy en `main` |
+   |---|---|---|
+   | `info.version` | `0.1.0` | `0.1.0` (sin cambios — sigue sin publicarse) |
+   | Rutas | 2, sin prefijo: `GET /`, `GET /health` | **10**, todas bajo `/api`: `GET /api/`, `GET /api/health`, `POST /api/auth/{signup,login,logout,logout-all,refresh,resend-verification,verify-email}`, `GET /api/auth/me` |
+   | `components.schemas` | 4: `ErrorDetail`, `ErrorResponse`, `HealthResponse`, `RootResponse` | **10**: las 4 anteriores + `LoginRequest`, `MeResponse`, `MessageResponse`, `ResendVerificationRequest`, `SignupRequest`, `VerifyEmailRequest` |
 
-   No hay `PriceBar`, ni `TickerQuote`, ni `BreakoutBreadthPoint`, ni
-   `/market/breakouts/history`. Los 17 schemas reales de §0.3 llegarán con la
-   Épica B, no con esta HU. **Esto sigue siendo el hecho que determina el alcance
-   realista de este plan** (§1.6 y Etapa F.7).
+   El prefijo `/api` no es nuevo del merge — ya estaba en el código antes del
+   commit que publica el contrato (`ec78298`, "refactor(api): serve every route
+   under /api"); la primera versión de este plan lo escribió sin el prefijo por
+   error, no por un cambio posterior. **Corrección real que sí introduce el
+   merge:** las 8 rutas y 6 schemas de auth, que no estaban en el snapshot que
+   se verificó el 2026-09-10 porque `app/feature` aún no se había rebasado
+   sobre el `main` que ya traía auth.
+
+   Esto **no cambia la conclusión de fondo**: ninguno de los 6 schemas de auth
+   coincide con los 17 schemas reales que esperan los mappers (§0.3) — `Login`,
+   `Signup`, etc. no son `PriceBar` ni `TickerQuote`. F.6 sigue reportando **0
+   ready to migrate**. Pero si `contract-v0.1.0` se publica hoy, el paquete
+   traerá esta superficie de auth, no la de "solo health y root" que describía
+   este plan — hay que corregir el test de tipos de F.7.1 en consecuencia (ver
+   esa etapa). Los 17 schemas de negocio de §0.3 siguen sin llegar; seguirán
+   llegando con la Épica B, no con esta HU. **Esto sigue siendo el hecho que
+   determina el alcance realista de este plan** (§1.6 y Etapa F.7).
 
    Dos cosas cambiaron a mejor respecto a lo que este plan supuso:
 
@@ -155,27 +178,35 @@ primera redacción.
    plano (Etapa F.4). *(Verificado el 2026-09-10; tampoco están
    `openapi-typescript` ni `openapi-fetch`.)*
 
-9. 🔄 **La precondición de la Etapa F.1 NO está cumplida: el paquete no existe.**
-   El backend terminó e hizo commit de su lado (`bba9faf`, "feat(api): publish the
-   API contract as a versioned package"), pero:
+9. 🔄🆕 **La precondición de la Etapa F.1 sigue sin cumplirse — pero avanzó un
+   paso de tres.** El 2026-09-12 se verificó contra el repo backend real
+   (`git fetch`, `git log`, lectura de `PR-DESCRIPTION-SPRINT7.md`):
 
-   | Paso | Estado el 2026-09-10 |
-   |---|---|
-   | Código del contrato commiteado | ✅ en `app/feature` |
-   | Mergeado a `main` | ❌ `git branch --contains bba9faf` → solo `app/feature` |
-   | Tag `contract-v0.1.0` | ❌ el repo no tiene **ningún** tag |
-   | Paquete publicado en GHCR npm | ❌ el workflow `contract-release.yml` solo dispara con el tag |
-   | Acceso concedido al repo frontend | ❌ es un paso de UI, sin hacer (§8.1) |
+   | Paso | Estado el 2026-09-10 | Estado el 2026-09-12 |
+   |---|---|---|
+   | Código del contrato commiteado | ✅ en `app/feature` | ✅ (rebasado sobre `main`) |
+   | Mergeado a `main` | ❌ solo `app/feature` | ✅ PR #3, commit `20a8be1` (merge), `beb574c` es el commit del contrato dentro de ese merge |
+   | Tag `contract-v0.1.0` | ❌ el repo no tiene ningún tag | ❌ **sigue sin ningún tag** (`git tag -l` vacío tras `git fetch --tags`) |
+   | Paquete publicado en GHCR npm | ❌ el workflow solo dispara con el tag | ❌ sigue sin publicarse — mismo motivo |
+   | Acceso concedido al repo frontend | ❌ paso de UI, sin hacer (§8.1) | ❌ sin hacer — no se puede conceder acceso a un paquete que no existe |
 
    `contract-release.yml` está escrito y **nunca se ha ejercitado** — solo corre
    con un tag real. Valida que el tag coincida con `CONTRACT_VERSION` y que el
    snapshot esté al día antes de `npm publish`. Hasta que ese tag exista,
    **F.1 no se puede empezar**: no se añade la dependencia de un paquete que no
-   está en ningún registro.
+   está en ningún registro. El propio `PR-DESCRIPTION-SPRINT7.md` del backend lo
+   deja explícito en su sección "Pendiente (fuera de este PR)": publicar el tag,
+   conceder el acceso, y solo entonces "arrancar el consumo del contrato en el
+   frontend (bloqueado por lo anterior)".
 
-   *(Nota menor: `REPORTE…SPRINT7.md` §4.7 dice "sin commit, todo en el working
-   tree" y ya no es cierto — sí hay commit. Y su §4.4 cita "Etapas F.1 → F.9";
-   este plan tiene F.1 → F.8.)*
+   **Lo que esto significa en la práctica: el merge que se acaba de hacer NO
+   desbloquea F.1 todavía.** Falta `git tag contract-v0.1.0 && git push origin
+   contract-v0.1.0` (dispara la publicación) y la concesión de acceso de §8.1,
+   en ese orden. Ninguno de los dos es un paso del repo frontend.
+
+   *(Nota menor, ya resuelta: `REPORTE…SPRINT7.md` §4.7 decía "sin commit, todo
+   en el working tree"; hoy sí hay commit — y de hecho ya está mergeado a
+   `main`. Su §4.4 cita "Etapas F.1 → F.9"; este plan tiene F.1 → F.8.)*
 
 10. 🔄 **Dos mappers reclaman el mismo schema `Theme`, y describen entidades
     distintas.** `thematic-radar/…/theme.mapper.ts` declara
@@ -280,13 +311,13 @@ un PR ("contract pipeline"); F.6–F.8 pueden ir en un segundo PR.
 
 ## Etapa F.1 — Acceso al registro y dependencia pinneada · HU-A10 (AC2)
 
-**Precondición — ⛔ NO CUMPLIDA el 2026-09-10 (§0.9).** El backend publicó
-`contract-v0.1.0` (Etapa 1.6 del PLAN-HU) y el acceso al paquete está concedido
-(§8.1). Hoy falta lo uno y lo otro: el código del contrato está commiteado en
-`app/feature` pero sin mergear, sin tag y sin publicar. Los tres pasos que
-desbloquean esta etapa, en orden, son los de `REPORTE…SPRINT7.md` §5:
-merge a `main` → `git tag contract-v0.1.0 && git push origin contract-v0.1.0` →
-conceder acceso al repo frontend (§8.1). **Nada de F.1 se puede empezar antes.**
+**Precondición — ⛔ NO CUMPLIDA el 2026-09-12, pero con 1 de 3 pasos hecho
+(§0.9).** El PR del contrato ya se mergeó a `main` (PR #3, commit `20a8be1`),
+así que el primer paso de la secuencia de `REPORTE…SPRINT7.md` §5 está
+completo. Faltan los otros dos: `git tag contract-v0.1.0 && git push origin
+contract-v0.1.0` (dispara `contract-release.yml`, nunca ejercitado) → conceder
+acceso al repo frontend (§8.1). **Nada de F.1 se puede empezar antes de esos
+dos pasos** — el merge por sí solo no publica nada en el registro npm.
 
 1. **`.npmrc`** (root) — añadir sin tocar la línea existente:
    ```
@@ -535,7 +566,13 @@ entrega en este sprint:
    🔄 **Ahora puede afirmar bastante más de lo que este plan previó**, porque el
    backend tipó las respuestas 200 antes de publicar (§0.4):
 
-   - `paths["/health"]["get"]` existe, y su 200 resuelve a
+   - 🆕 **La ruta lleva el prefijo `/api`.** Es `paths["/api/health"]["get"]`,
+     no `paths["/health"]["get"]` — corrección sobre la primera versión de este
+     plan, que escribió la ruta sin prefijo por error de transcripción, no
+     porque el backend lo haya cambiado (el prefijo ya estaba antes del commit
+     que publica el contrato). Verificado leyendo `contract/openapi.json` en
+     `main` el 2026-09-12: las claves reales son `"/api/"` y `"/api/health"`.
+   - `paths["/api/health"]["get"]` existe, y su 200 resuelve a
      `components["schemas"]["HealthResponse"]`, que es `{ status: string }`
      (requerido). Un `unknown` ahí significaría que se regeneró desde un contrato
      sin `response_model` y el test lo caza.
@@ -545,6 +582,13 @@ entrega en este sprint:
      propósito para que un valor nuevo no sea un `MAJOR`
      (`REPORTE…SPRINT7.md` §3.3). El test no debe pedir el literal, o se romperá
      por el lado equivocado.
+   - 🆕 **El contrato ya trae 6 schemas más, todos de auth** (`LoginRequest`,
+     `SignupRequest`, `MeResponse`, `MessageResponse`,
+     `ResendVerificationRequest`, `VerifyEmailRequest`) y 8 rutas más bajo
+     `/api/auth/*` (§0.4). El test de F.7.1 no necesita afirmar nada sobre
+     ellas — no son parte de esta HU — pero si se agrega una aserción de
+     "cuántos schemas trae el contrato", debe contar 10, no 4, o quedará roja
+     el día que se generen los tipos contra el contrato real.
 
    No inventa una feature; demuestra que los tipos generados compilan, se
    resuelven por el alias y son consumibles desde donde la regla de ESLint
@@ -638,8 +682,10 @@ AC sin trabajo adicional de infraestructura — todo lo demás ya estará puesto
 - [ ] `pnpm contract:coverage` imprime el estado real: **0 ready to migrate,
       18 mappers / 17 schemas distintos *awaiting backend*** (§0.3, F.6).
 - [ ] **Precondición del sprint, antes de F.1:** `contract-v0.1.0` publicado y
-      acceso concedido (§0.9). Si no se cumple, el entregable honesto de este
-      sprint es F.4/F.6 escritos y sin ejercitar, no un checklist verde.
+      acceso concedido (§0.9). **Estado el 2026-09-12: merge a `main` hecho,
+      tag y publicación siguen pendientes** — sigue sin cumplirse. Si no se
+      cumple, el entregable honesto de este sprint es F.4/F.6 escritos y sin
+      ejercitar, no un checklist verde.
 
 ## 5. Riesgos
 
@@ -911,3 +957,82 @@ es justo por lo que §F.4 la separó del I/O. Ejercitarlas de punta a punta, no.
 
 **A10.3 sigue parcialmente bloqueada** por la razón de siempre (F.7): el contrato
 no tiene un endpoint de negocio. Coincide con el `REPORTE…SPRINT7.md` §4.5.
+
+---
+
+## 10. Registro de verificación — 2026-09-12
+
+Repaso pedido tras el merge del PR del contrato a `main` en el repo backend.
+Verificado con `git fetch`/`git log`/lectura directa de `contract/openapi.json`
+en `/Users/andrew/Documents/Projects/flash/FlashResearchPlatform-Backend`, más
+`PR-DESCRIPTION-SPRINT7.md` (nuevo desde la pasada anterior).
+
+**Lo que cambió de verdad:**
+
+| § | Antes (2026-09-10) | Ahora (2026-09-12) |
+|---|---|---|
+| Cabecera / §0.9 | commit `bba9faf` sin mergear | mergeado a `main` vía PR #3 (`20a8be1`); `bba9faf` quedó reescrito por un rebase y ya no es ancestro de `main` — el commit real es `beb574c` |
+| §0.9 | 0 de 3 pasos hechos | **1 de 3**: merge ✅, tag ❌, acceso ❌ — `git tag -l` sigue vacío tras `git fetch --tags`, así que el paquete sigue sin publicarse |
+| §0.4 / F.7.1 | contrato con 2 rutas (`/`, `/health`) y 4 schemas | contrato real hoy: **10 rutas** (las 2 más 8 de `/api/auth/*`) y **10 schemas** (los 4 más 6 de auth) — creció porque `app/feature` se rebasó sobre un `main` que ya traía `feat/auth-backend` (PR #2) y el snapshot se regeneró |
+| F.7.1 | `paths["/health"]` | **`paths["/api/health"]`** — el prefijo `/api` ya existía antes del commit del contrato; el plan lo escribió sin prefijo por error, no por un cambio del backend |
+
+**Lo que NO cambió (conclusiones que siguen en pie):**
+
+- Ninguno de los 17 schemas de negocio que esperan los mappers del frontend
+  (§0.3) está en el contrato — los 6 schemas nuevos son de auth, no de trading.
+  F.6 sigue reportando **0 ready to migrate / 18 mappers awaiting backend**.
+- **F.1 sigue bloqueada.** El merge era condición necesaria pero no suficiente:
+  faltan el tag `contract-v0.1.0` (dispara `contract-release.yml`, escrito y
+  nunca ejercitado) y la concesión de acceso al paquete (§8.1) — ninguno de los
+  dos es un paso que el repo frontend pueda dar. El propio
+  `PR-DESCRIPTION-SPRINT7.md` del backend lo deja explícito en su sección
+  "Pendiente (fuera de este PR)".
+- A10.3 sigue parcialmente bloqueada por la ausencia de un endpoint de negocio
+  en el contrato (F.7) — los endpoints de auth no cambian esa conclusión.
+
+**Siguiente paso real, en el repo backend, para desbloquear F.1:**
+```bash
+git tag contract-v0.1.0
+git push origin contract-v0.1.0
+```
+y después conceder el acceso de §8.1. Solo entonces se puede empezar F.1 en
+este repo.
+
+---
+
+## 11. Registro de verificación — 2026-09-12 (segunda pasada, tag local)
+
+El backend creó el tag `contract-v0.1.0` en la rama `app/contractpre`
+(`REPORTE-TAG-CONTRATO-V0.1.0.md`), y preguntó si eso ya desbloquea el
+frontend. Verificado directamente contra el repo:
+
+```
+git tag -l                    → contract-v0.1.0        (existe LOCAL)
+git ls-remote --tags origin   → (vacío)                (NO existe en origin)
+git rev-parse contract-v0.1.0 == git rev-parse origin/main   → mismo commit (20a8be1)
+gh run list --workflow=contract-release.yml → (vacío)  (el workflow nunca corrió)
+```
+
+**Respuesta corta: no, todavía no desbloquea nada.** `contract-release.yml`
+dispara con `on: push: tags: ["contract-v*"]` — un tag que solo existe en el
+checkout local de una máquina no es un push, GitHub Actions no lo ve, y por
+tanto no hay `npm publish`. El propio `REPORTE-TAG-CONTRATO-V0.1.0.md` es
+explícito en esto: el tag se creó **a propósito sin empujarlo**, porque un
+`npm publish` fallido no se puede reintentar con el mismo número de versión, y
+el equipo prefirió dejar el `git push` como un paso deliberado y no como
+efecto colateral de un PR.
+
+**Consecuencia para §0.9 / Etapa F.1:** sigue **1 de 3** pasos completos (el
+merge). El tag local no cuenta como el paso 2 hasta que se empuje — es trabajo
+en curso sobre la misma máquina, no un estado publicado que el CI o un
+`pnpm install` en otra máquina puedan observar. Falta, en orden:
+
+1. `git push origin contract-v0.1.0` desde el repo backend (dispara
+   `contract-release.yml`; verificar que corre en verde en Actions — nunca se
+   ha ejercitado).
+2. Soltar la herencia de permisos del paquete y conceder acceso de lectura al
+   repo frontend (§8.1, pasos 2–3).
+3. Solo entonces, F.1 en este repo.
+
+Nada de esto es una acción que el repo frontend pueda ejecutar; los tres
+pasos son del lado backend / UI de GitHub.
